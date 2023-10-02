@@ -1,0 +1,257 @@
+{
+  "id": {
+    "checks": {
+      "type": "string",
+      "required": true
+    },
+    "resets": {
+      "trim": " ",
+      "removeMultipleSpaces": true
+    },
+    "name": "id",
+    "alias": null,
+    "entityName": "persona",
+    "refEntityName": null,
+    "refFieldName": null,
+    "dataType": "string",
+    "notNull": true,
+    "defaultValue": "guid",
+    "maxLength": 45
+  },
+  "nombres": {
+    "checks": {
+      "type": "string"
+    },
+    "resets": {
+      "trim": " ",
+      "removeMultipleSpaces": true,
+      "nullIfEmpty": true
+    },
+    "name": "nombres",
+    "alias": null,
+    "entityName": "persona",
+    "refEntityName": null,
+    "refFieldName": null,
+    "dataType": "string",
+    "notNull": false,
+    "defaultValue": null,
+    "maxLength": 255
+  },
+  "apellidos": {
+    "checks": {
+      "type": "string"
+    },
+    "resets": {
+      "trim": " ",
+      "removeMultipleSpaces": true,
+      "nullIfEmpty": true
+    },
+    "name": "apellidos",
+    "alias": null,
+    "entityName": "persona",
+    "refEntityName": null,
+    "refFieldName": null,
+    "dataType": "string",
+    "notNull": false,
+    "defaultValue": null,
+    "maxLength": 255
+  },
+  "legajo": {
+    "checks": {
+      "type": "string",
+      "required": true
+    },
+    "resets": {
+      "trim": " ",
+      "removeMultipleSpaces": true
+    },
+    "name": "legajo",
+    "alias": null,
+    "entityName": "persona",
+    "refEntityName": null,
+    "refFieldName": null,
+    "dataType": "string",
+    "notNull": true,
+    "defaultValue": null,
+    "maxLength": 45
+  },
+  "numero_documento": {
+    "checks": {
+      "type": "string"
+    },
+    "resets": {
+      "trim": " ",
+      "removeMultipleSpaces": true,
+      "nullIfEmpty": true
+    },
+    "name": "numero_documento",
+    "alias": null,
+    "entityName": "persona",
+    "refEntityName": null,
+    "refFieldName": null,
+    "dataType": "string",
+    "notNull": false,
+    "defaultValue": null,
+    "maxLength": 45
+  },
+  "telefono_laboral": {
+    "checks": {
+      "type": "string"
+    },
+    "resets": {
+      "trim": " ",
+      "removeMultipleSpaces": true,
+      "nullIfEmpty": true
+    },
+    "name": "telefono_laboral",
+    "alias": null,
+    "entityName": "persona",
+    "refEntityName": null,
+    "refFieldName": null,
+    "dataType": "string",
+    "notNull": false,
+    "defaultValue": null,
+    "maxLength": 255
+  },
+  "telefono_particular": {
+    "checks": {
+      "type": "string"
+    },
+    "resets": {
+      "trim": " ",
+      "removeMultipleSpaces": true,
+      "nullIfEmpty": true
+    },
+    "name": "telefono_particular",
+    "alias": null,
+    "entityName": "persona",
+    "refEntityName": null,
+    "refFieldName": null,
+    "dataType": "string",
+    "notNull": false,
+    "defaultValue": null,
+    "maxLength": 255
+  },
+  "fecha_nacimiento": {
+    "checks": {
+      "type": "DateTime"
+    },
+    "resets": {},
+    "name": "fecha_nacimiento",
+    "alias": null,
+    "entityName": "persona",
+    "refEntityName": null,
+    "refFieldName": null,
+    "dataType": "DateTime",
+    "notNull": false,
+    "defaultValue": null,
+    "maxLength": null
+  },
+  "email": {
+    "checks": {
+      "type": "string"
+    },
+    "resets": {
+      "trim": " ",
+      "removeMultipleSpaces": true,
+      "nullIfEmpty": true
+    },
+    "name": "email",
+    "alias": null,
+    "entityName": "persona",
+    "refEntityName": null,
+    "refFieldName": null,
+    "dataType": "string",
+    "notNull": false,
+    "defaultValue": null,
+    "maxLength": 255
+  },
+  "tribunal": {
+    "checks": {
+      "type": "string"
+    },
+    "resets": {
+      "trim": " ",
+      "removeMultipleSpaces": true,
+      "nullIfEmpty": true
+    },
+    "name": "tribunal",
+    "alias": null,
+    "entityName": "persona",
+    "refEntityName": null,
+    "refFieldName": null,
+    "dataType": "string",
+    "notNull": false,
+    "defaultValue": null,
+    "maxLength": 255
+  },
+  "creado": {
+    "checks": {
+      "type": "DateTime",
+      "required": true
+    },
+    "resets": {},
+    "name": "creado",
+    "alias": null,
+    "entityName": "persona",
+    "refEntityName": null,
+    "refFieldName": null,
+    "dataType": "DateTime",
+    "notNull": true,
+    "defaultValue": "current_timestamp()",
+    "maxLength": null
+  },
+  "eliminado": {
+    "checks": {
+      "type": "DateTime"
+    },
+    "resets": {},
+    "name": "eliminado",
+    "alias": null,
+    "entityName": "persona",
+    "refEntityName": null,
+    "refFieldName": null,
+    "dataType": "DateTime",
+    "notNull": false,
+    "defaultValue": null,
+    "maxLength": null
+  },
+  "cargo": {
+    "checks": {
+      "type": "string"
+    },
+    "resets": {
+      "trim": " ",
+      "removeMultipleSpaces": true,
+      "nullIfEmpty": true
+    },
+    "name": "cargo",
+    "alias": "car",
+    "entityName": "persona",
+    "refEntityName": "cargo",
+    "refFieldName": "id",
+    "dataType": "string",
+    "notNull": false,
+    "defaultValue": null,
+    "maxLength": 45
+  },
+  "tipo_documento": {
+    "checks": {
+      "type": "string"
+    },
+    "resets": {
+      "trim": " ",
+      "removeMultipleSpaces": true,
+      "nullIfEmpty": true
+    },
+    "name": "tipo_documento",
+    "alias": "tip",
+    "entityName": "persona",
+    "refEntityName": "tipo_documento",
+    "refFieldName": "id",
+    "dataType": "string",
+    "notNull": false,
+    "defaultValue": null,
+    "maxLength": 45
+  }
+}
