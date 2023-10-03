@@ -20,8 +20,8 @@ namespace MagistradosWpfApp.Data
             get { return _type; }
             set { _type = value; NotifyPropertyChanged(); }
         }
-        private mediumtext? _description;
-        public mediumtext? description
+        private string? _description;
+        public string? description
         {
             get { return _description; }
             set { _description = value; NotifyPropertyChanged(); }

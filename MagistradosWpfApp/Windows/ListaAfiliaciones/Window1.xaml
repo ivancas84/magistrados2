@@ -11,21 +11,91 @@
 
             <Grid.RowDefinitions>
                 <RowDefinition Height = "Auto" />
+                <RowDefinition Height = "Auto" />
+                <RowDefinition Height = "Auto" />
+                <RowDefinition Height = "Auto" />
+                <RowDefinition Height = "Auto" />
+                <RowDefinition Height = "Auto" />
+                <RowDefinition Height = "Auto" />
+                <RowDefinition Height = "Auto" />
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width = "Auto" />
                 <ColumnDefinition Width = "200" />
             </Grid.ColumnDefinitions>
-
+            
             <Label 
+                Margin = "2">_Motivo:</Label>
+
+            <TextBox 
+                Grid.Column="1"
+                Text="{Binding motivo}"
+                Margin = "2" />
+            
+            <Label 
+                Grid.Row="1"
                 Margin = "2">_Estado:</Label>
 
             <TextBox 
+                Grid.Row="1"
+                Grid.Column="1"
                 Text="{Binding estado}"
                 Margin = "2" />
 
-            <StackPanel Grid.Row = "4" Grid.ColumnSpan = "2">
+            <Label 
+                Grid.Row="2"
+                Margin = "2">_Está Modificado:</Label>
+
+            <TextBox 
+                Grid.Row="2"
+                Grid.Column="1"
+                Text="{Binding modificado_set}"
+                Margin = "2" />
+            
+            <Label 
+                Grid.Row="3"
+                Margin = "2">_Creado:</Label>
+
+            <TextBox 
+                Grid.Row="3"
+                Grid.Column="1"
+                Text="{Binding creado}"
+                Margin = "2" />
+
+            <Label 
+                Grid.Row="4"
+                Margin = "2">_Enviado:</Label>
+
+            <TextBox 
+                Grid.Row="4"
+                Grid.Column="1"
+                Text="{Binding enviado}"
+                Margin = "2" />
+
+            <Label 
+                Grid.Row="5"
+                Margin = "2">_Evaluado:</Label>
+
+            <TextBox 
+                Grid.Row="5"
+                Grid.Column="1"
+                Text="{Binding evaluado}"
+                Margin = "2" />
+
+            <Label 
+                Grid.Row="6"
+                Margin = "2">_Modificado:</Label>
+
+            <TextBox 
+                Grid.Row="6"
+                Grid.Column="1"
+                Text="{Binding modificado}"
+                Margin = "2" />
+
+            
+
+            <StackPanel Grid.Row = "7" Grid.ColumnSpan = "2">
                 <Button Content = "_Buscar..." Click="BuscarButton_Click" />
             </StackPanel>
         </Grid>

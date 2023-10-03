@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Utils;
 
-namespace WpfAppMy
+namespace MagistradosWpfApp
 {
     static class ContainerApp
     {
@@ -21,13 +21,6 @@ namespace WpfAppMy
             id = "id",
             fkId = true,
             connectionString = ConfigurationManager.AppSettings.Get("connectionString"),
-            modelPath = ConfigurationManager.AppSettings.Get("modelPath"),
-            emailDocenteUser = ConfigurationManager.AppSettings.Get("emailDocenteUser"),
-            emailDocentePassword = ConfigurationManager.AppSettings.Get("emailDocentePassword"),
-            emailDocenteHost = ConfigurationManager.AppSettings.Get("emailDocenteHost"),
-            emailDocenteFromAddress = ConfigurationManager.AppSettings.Get("emailDocenteFromAddress"),
-            emailDocenteFromName = ConfigurationManager.AppSettings.Get("emailDocenteFromName"),
-            emailDocenteBcc = ConfigurationManager.AppSettings.Get("emailDocenteBcc"),
         };
 
 

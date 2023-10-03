@@ -24,5 +24,11 @@ namespace MagistradosWpfApp
         {
             InitializeComponent();
         }
+
+        private void ListaRegistros40_Click(object sender, RoutedEventArgs e)
+        {
+            Windows.ListaAfiliaciones.Window1 win = new();
+            win.Show();
+        }
     }
 }

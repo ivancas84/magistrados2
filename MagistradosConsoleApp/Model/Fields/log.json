@@ -39,15 +39,19 @@
   },
   "description": {
     "checks": {
-      "type": "mediumtext"
+      "type": "string"
     },
-    "resets": {},
+    "resets": {
+      "trim": " ",
+      "removeMultipleSpaces": true,
+      "nullIfEmpty": true
+    },
     "name": "description",
     "alias": null,
     "entityName": "log",
     "refEntityName": null,
     "refFieldName": null,
-    "dataType": "mediumtext",
+    "dataType": "string",
     "notNull": false,
     "defaultValue": null,
     "maxLength": 16777215
