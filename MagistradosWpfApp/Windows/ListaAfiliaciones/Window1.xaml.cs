@@ -11,7 +11,7 @@ namespace MagistradosWpfApp.Windows.ListaAfiliaciones
     public partial class Window1 : Window
     {
 
-        private SqlOrganize.DAO dao = new(ContainerApp.db);
+        private DAO.Afiliacion dao = new();
         private AfiliacionSearch search = new();
         private ObservableCollection<Data_afiliacion_r> afiliacionData = new();
 
@@ -30,7 +30,7 @@ namespace MagistradosWpfApp.Windows.ListaAfiliaciones
 
         private void Load()
         {
-            var data = dao.Search("afiliacion", search);
+            var data = dao.Buscar(search.Dict());
             afiliacionData.Clear();
             afiliacionData.AddRange(data);
         }
