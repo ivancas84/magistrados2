@@ -179,7 +179,7 @@ namespace Utils
             return someObject;
         }
 
-        public static IDictionary<string, object?> Dict(this object source, BindingFlags bindingAttr = BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance)
+        public static IDictionary<string, object?> Dict(this object source, BindingFlags bindingAttr = BindingFlags.Public | BindingFlags.Instance)
         {
             return source.GetType().GetProperties(bindingAttr).ToDictionary
             (
@@ -189,7 +189,7 @@ namespace Utils
 
         }
 
-        public static IEnumerable<Dictionary<string, object?>> ColOfDict(this IEnumerable<object> source, BindingFlags bindingAttr = BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance)
+        public static IEnumerable<Dictionary<string, object?>> ColOfDict(this IEnumerable<object> source, BindingFlags bindingAttr = BindingFlags.Public | BindingFlags.Instance)
         {
             List<Dictionary<string, object>> response = new();
             foreach (var s in source)

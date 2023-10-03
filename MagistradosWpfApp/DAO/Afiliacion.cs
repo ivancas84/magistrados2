@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Utils;
 
 namespace MagistradosWpfApp.DAO
 {
@@ -16,10 +17,12 @@ namespace MagistradosWpfApp.DAO
                 .Order("$creado DESC, $persona-apellidos ASC");
 
             if (search.ContainsKey("modificado_set") && search["modificado_set"] != null) {
+                string conc = (q.where.IsNullOrEmpty()) ? "" : " AND ";
+
                 if ((bool)search["modificado_set"])
-                    q.Where("$modificado IS NOT NULL");
+                    q.Where(conc + "$modificado IS NOT NULL");
                 else
-                    q.Where("$modificado IS NULL");
+                    q.Where(conc + "$modificado IS NULL");
             }
 
             return q.ColOfDictCache();

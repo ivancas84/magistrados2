@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MagistradosWpfApp.Windows.ListaAfiliaciones
 {
-    internal class AfiliacionSearch : Data_afiliacion
+    public class AfiliacionSearch : Data_afiliacion
     {
         public bool? modificado_set { get; set; } = false;
     }
