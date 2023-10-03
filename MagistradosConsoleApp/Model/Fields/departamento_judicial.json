@@ -55,5 +55,24 @@
     "notNull": false,
     "defaultValue": null,
     "maxLength": 255
+  },
+  "organo": {
+    "checks": {
+      "type": "string",
+      "required": true
+    },
+    "resets": {
+      "trim": " ",
+      "removeMultipleSpaces": true
+    },
+    "name": "organo",
+    "alias": "org",
+    "entityName": "departamento_judicial",
+    "refEntityName": "organo",
+    "refFieldName": "id",
+    "dataType": "string",
+    "notNull": true,
+    "defaultValue": null,
+    "maxLength": 45
   }
 }

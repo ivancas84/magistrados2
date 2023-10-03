@@ -208,6 +208,12 @@ namespace MagistradosWpfApp.Data
             get { return _departamento_judicial__nombre; }
             set { _departamento_judicial__nombre = value; NotifyPropertyChanged(); }
         }
+        private string? _departamento_judicial__organo;
+        public string? departamento_judicial__organo
+        {
+            get { return _departamento_judicial__organo; }
+            set { _departamento_judicial__organo = value; NotifyPropertyChanged(); }
+        }
         private string? _organo__id;
         public string? organo__id
         {
@@ -219,6 +225,18 @@ namespace MagistradosWpfApp.Data
         {
             get { return _organo__descripcion; }
             set { _organo__descripcion = value; NotifyPropertyChanged(); }
+        }
+        private string? _organo_afi__id;
+        public string? organo_afi__id
+        {
+            get { return _organo_afi__id; }
+            set { _organo_afi__id = value; NotifyPropertyChanged(); }
+        }
+        private string? _organo_afi__descripcion;
+        public string? organo_afi__descripcion
+        {
+            get { return _organo_afi__descripcion; }
+            set { _organo_afi__descripcion = value; NotifyPropertyChanged(); }
         }
         private string? _departamento_judicial_informado__id;
         public string? departamento_judicial_informado__id
@@ -237,6 +255,24 @@ namespace MagistradosWpfApp.Data
         {
             get { return _departamento_judicial_informado__nombre; }
             set { _departamento_judicial_informado__nombre = value; NotifyPropertyChanged(); }
+        }
+        private string? _departamento_judicial_informado__organo;
+        public string? departamento_judicial_informado__organo
+        {
+            get { return _departamento_judicial_informado__organo; }
+            set { _departamento_judicial_informado__organo = value; NotifyPropertyChanged(); }
+        }
+        private string? _organo_de1__id;
+        public string? organo_de1__id
+        {
+            get { return _organo_de1__id; }
+            set { _organo_de1__id = value; NotifyPropertyChanged(); }
+        }
+        private string? _organo_de1__descripcion;
+        public string? organo_de1__descripcion
+        {
+            get { return _organo_de1__descripcion; }
+            set { _organo_de1__descripcion = value; NotifyPropertyChanged(); }
         }
     }
 }

@@ -22,5 +22,23 @@ namespace MagistradosWpfApp.Data
             get { return _departamento_judicial__nombre; }
             set { _departamento_judicial__nombre = value; NotifyPropertyChanged(); }
         }
+        private string? _departamento_judicial__organo;
+        public string? departamento_judicial__organo
+        {
+            get { return _departamento_judicial__organo; }
+            set { _departamento_judicial__organo = value; NotifyPropertyChanged(); }
+        }
+        private string? _organo__id;
+        public string? organo__id
+        {
+            get { return _organo__id; }
+            set { _organo__id = value; NotifyPropertyChanged(); }
+        }
+        private string? _organo__descripcion;
+        public string? organo__descripcion
+        {
+            get { return _organo__descripcion; }
+            set { _organo__descripcion = value; NotifyPropertyChanged(); }
+        }
     }
 }
