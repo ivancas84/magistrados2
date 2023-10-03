@@ -17,7 +17,7 @@ namespace MagistradosWpfApp.DAO
 
             if (search.ContainsKey("modificado_set") && search["modificado_set"] != null) {
                 if ((bool)search["modificado_set"])
-                
+                    q.Where("$modificado IS NOT NULL");
                 else
                     q.Where("$modificado IS NULL");
             }
