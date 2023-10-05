@@ -14,23 +14,11 @@ namespace MagistradosWpfApp.Data
             get { return _id; }
             set { _id = value; NotifyPropertyChanged(); }
         }
-        private string? _codigo;
-        public string? codigo
-        {
-            get { return _codigo; }
-            set { _codigo = value; NotifyPropertyChanged(); }
-        }
         private string? _nombre;
         public string? nombre
         {
             get { return _nombre; }
             set { _nombre = value; NotifyPropertyChanged(); }
-        }
-        private string? _organo;
-        public string? organo
-        {
-            get { return _organo; }
-            set { _organo = value; NotifyPropertyChanged(); }
         }
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void NotifyPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] String propertyName = "")
