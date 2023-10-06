@@ -6,7 +6,7 @@ namespace MagistradosWpfApp.Data
     public class Data_file : INotifyPropertyChanged
     {
 
-        public string? label { get; set; }
+        public string? Label { get; set; }
 
         private string? _id;
         public string? id

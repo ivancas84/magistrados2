@@ -6,7 +6,7 @@ namespace MagistradosWpfApp.Data
     public class Data_configuracion_valor : INotifyPropertyChanged
     {
 
-        public string? label { get; set; }
+        public string? Label { get; set; }
 
         private DateTime? _desde;
         public DateTime? desde
