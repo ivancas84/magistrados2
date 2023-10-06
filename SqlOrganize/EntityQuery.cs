@@ -653,7 +653,7 @@ namespace SqlOrganize
         /// Ejecuta consulta de datos (con relaciones).<br/>
         /// Verifica la cache para obtener el resultado de la consulta, si no existe en cache accede a la base de datos.
         /// </summary>
-        public IEnumerable<Dictionary<string, object>> ColOfDictCacheQuery()
+        public IEnumerable<Dictionary<string, object?>> ColOfDictCacheQuery()
         {
             List<string> queries;
             if (!Db.Cache.TryGetValue("queries", out queries))
@@ -697,7 +697,7 @@ namespace SqlOrganize
         /// Consulta de datos (uso de cache para consulta y resultados)<br/>
         /// </summary>
         /// <param name="query">Consulta</param>
-        public IEnumerable<Dictionary<string, object>> ColOfDictCache()
+        public IEnumerable<Dictionary<string, object?>> ColOfDictCache()
         {
             if (!this.select.IsNullOrEmpty() || !this.group.IsNullOrEmpty())
                 return ColOfDictCacheQuery();

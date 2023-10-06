@@ -21,6 +21,41 @@
 
             <GroupBox 
                 Header="Buscar Persona">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height = "Auto" />
+                        <RowDefinition Height = "Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width = "*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox 
+                        Name = "personaSearchTextBox"  
+                        TextChanged="PersonaSearchText_TextChanged"></TextBox>
+
+                    <WrapPanel
+	                    Panel.ZIndex="2" 
+	                    Grid.Row = "1"
+	                    Grid.Column="1">
+
+                        <ListBox 
+		                    Name="personaSearchList"    
+		                    Margin="2"
+		                    SelectionChanged="PersonaSearchList_SelectionChanged">
+
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Label}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </WrapPanel>
+
+                </Grid>
             </GroupBox>
 
             <GroupBox 

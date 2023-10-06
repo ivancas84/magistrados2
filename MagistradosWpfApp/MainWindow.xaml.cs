@@ -30,5 +30,11 @@ namespace MagistradosWpfApp
             Windows.ListaAfiliaciones.Window1 win = new();
             win.Show();
         }
+
+        private void AdministrarAfiliado_Click(object sender, RoutedEventArgs e)
+        {
+            Windows.AdministrarPersona.Window1 win = new();
+            win.Show();
+        }
     }
 }

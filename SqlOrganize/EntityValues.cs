@@ -28,13 +28,13 @@ namespace SqlOrganize
         {
         }
 
-        public EntityValues Values(IDictionary<string, object> row)
+        public EntityValues Values(IDictionary<string, object?> row)
         {
             values = row;
             return this;
         }
 
-        public EntityValues Set(IDictionary<string, object> row)
+        public EntityValues Set(IDictionary<string, object?> row)
         {
             foreach (var fieldName in db.FieldNames(entityName))
                 if (row.ContainsKey(Pf() + fieldName))
@@ -43,7 +43,7 @@ namespace SqlOrganize
             return this;
         }
 
-        public EntityValues Set(string fieldName, object value)
+        public EntityValues Set(string fieldName, object? value)
         {
             string fn = fieldName;
             if (!Pf().IsNullOrEmpty() && fieldName.Contains(Pf()))
@@ -60,24 +60,24 @@ namespace SqlOrganize
 
         public object Get(string fieldName)
         {
-            return values[fieldName];
+            return values[fieldName]!;
         }
 
         public object? GetOrNull(string fieldName)
         {
-            return (values.ContainsKey(fieldName) && !values[fieldName].IsNullOrEmptyOrDbNull()) ?
+            return (values.ContainsKey(fieldName) && !values[fieldName]!.IsNullOrEmptyOrDbNull()) ?
                  values[fieldName] : null;
 
         }
 
 
 
-        public IDictionary<string, object> Get()
+        public IDictionary<string, object?> Get()
         {
-            Dictionary<string, object> response = new();
+            Dictionary<string, object?> response = new();
             foreach (var fieldName in db.FieldNames(entityName))
                 if (values.ContainsKey(fieldName))
-                    response[Pf() + fieldName] = values[fieldName];
+                    response[Pf() + fieldName] = values[fieldName]!;
 
             return response;
         }
