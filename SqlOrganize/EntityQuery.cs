@@ -554,7 +554,23 @@ namespace SqlOrganize
 
 
 
+        #region metodos especiales que generan sql y devuelven directamente el valor
+        public ulong GetNextValue()
+        {
+            var q = Db.Query();
+            q.sql = @"
+                            SELECT auto_increment 
+                            FROM INFORMATION_SCHEMA.TABLES 
+                            WHERE TABLE_NAME = @0";
+            q.parameters.Add(entityName);
+            return q.Value<ulong>();
+        }
 
+        public long GetMaxValue(string fieldName)
+        {
+            return Db.Query(entityName).Select("MAX($" + fieldName + ")").Value<long>();
+        }
+        #endregion
 
 
 
