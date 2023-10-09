@@ -321,7 +321,7 @@ namespace SqlOrganize
                     }
                     else if (defaultValue.ToString().ToLower().Contains("max"))
                     {
-                        long max = db.Query(entityName).Select("MAX($" + fieldName + ")").Value<long>();
+                        long max = db.Query(entityName).GetMaxValue(fieldName);
                         return max + 1;
                     }
                     else if (defaultValue.ToString().ToLower().Contains("next"))
