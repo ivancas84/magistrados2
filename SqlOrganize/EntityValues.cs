@@ -268,80 +268,7 @@ namespace SqlOrganize
         }
 
 
-        /// <summary>
-        /// Método para generar valores por defecto
-        /// </summary>
-        /// <param name="fieldName"></param>
-        /// <param name="dataType"></param>
-        /// <param name="defaultValue"></param>
-        /// <returns></returns>
-        /// <exception cref="Exception"></exception>
-        /// <remarks>Se crea un método independiente para permitir crear valores por defecto en clases de datos ademas de EntityValues</remarks>
-        public object DefaultValue(string fieldName, string dataType, object defaultValue)
-        {
-            if (defaultValue is null)
-                return null;
-
-            switch (dataType)
-            {
-                case "string":
-                    if (defaultValue.ToString().ToLower().Contains("guid"))
-                        return (Guid.NewGuid()).ToString();
-
-                    //generate random strings
-                    else if (defaultValue.ToString()!.ToLower().Contains("random"))
-                    {
-                        string param = defaultValue.ToString()!.SubstringBetween("(", ")");
-                        return ValueTypesUtils.RandomString(Int32.Parse(param));
-                    }
-                    else
-                        return defaultValue;
-                case "DateTime":
-                    if (defaultValue.ToString().ToLower().Contains("cur") ||
-                        defaultValue.ToString().ToLower().Contains("getdate")
-                    )
-                        return DateTime.Now;
-                    else
-                        return defaultValue;
-
-                case "sbyte":
-                case "byte":
-                case "short":
-                case "ushort":
-                case "int":
-                case "uint":
-                case "long":
-                case "ulong":
-                case "nint":
-                case "nuint":
-                    if (defaultValue.ToString().ToLower().Contains("next"))
-                    {
-                        ulong next = db.Query(entityName).GetNextValue();
-                        return next;
-                    }
-                    else if (defaultValue.ToString().ToLower().Contains("max"))
-                    {
-                        long max = db.Query(entityName).GetMaxValue(fieldName);
-                        return max + 1;
-                    }
-                    else if (defaultValue.ToString().ToLower().Contains("next"))
-                    {
-                        throw new Exception("Not implemented"); //siguiente valor de la secuencia, cada motor debe tener su propia implementacion, definir subclase
-                    }
-                    else
-                    {
-                        return defaultValue;
-                    }
-                    break;
-
-                default:
-                    return defaultValue;
-                    break;
-            }
-
-            return null;
-
-        }
+      
 
         /// <summary>
         /// Definir valor por defecto
@@ -362,74 +289,7 @@ namespace SqlOrganize
                 return this;
             }
 
-            Field field = db.Field(entityName, fieldName);
-
-            if (field.defaultValue is null)
-            {
-                values[fieldName] = null;
-                return this;
-            }
-
-            switch (field.dataType)
-            {
-                case "string":
-                    if (field.defaultValue.ToString().ToLower().Contains("guid"))
-                        values[fieldName] = (Guid.NewGuid()).ToString();
-
-                    //generate random strings
-                    else if (field.defaultValue.ToString()!.ToLower().Contains("random"))
-                    {
-                        string param = field.defaultValue.ToString()!.SubstringBetween("(", ")");
-                        values[fieldName] = ValueTypesUtils.RandomString(Int32.Parse(param));
-                    }
-                    else
-                        values[fieldName] = field.defaultValue;
-                    break;
-                case "DateTime":
-                    if (field.defaultValue.ToString().ToLower().Contains("cur") ||
-                        field.defaultValue.ToString().ToLower().Contains("getdate")
-                        )
-                        values[fieldName] = DateTime.Now;
-                    else
-                        values[fieldName] = field.defaultValue;
-                    break;
-                
-                case "sbyte":
-                case "byte":
-                case "short":
-                case "ushort":
-                case "int":
-                case "uint":
-                case "long":
-                case "ulong":
-                case "nint":
-                case "nuint":
-                    if (field.defaultValue.ToString().ToLower().Contains("next"))
-                    {
-                        ulong next = GetNextValue(field);
-                      
-                        values[fieldName] = next;
-                    }
-                    else if (field.defaultValue.ToString().ToLower().Contains("max"))
-                    {
-                        long max = db.Query(entityName).Select("MAX($" + fieldName + ")").Value<long>();
-                        values[fieldName] = max + 1;
-                    }
-                    else if (field.defaultValue.ToString().ToLower().Contains("next"))
-                    {
-                        throw new Exception("Not implemented"); //siguiente valor de la secuencia, cada motor debe tener su propia implementacion, definir subclase
-                    }
-                    else
-                    {
-                        values[fieldName] = field.defaultValue;
-                    }
-                    break;
-
-                default:
-                    values[fieldName] = field.defaultValue;
-                    break;
-            }
-
+            values[fieldName] = db.DefaultValue(entityName, fieldName);
             return this;
         }
 
