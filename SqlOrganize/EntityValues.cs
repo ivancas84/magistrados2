@@ -267,6 +267,82 @@ namespace SqlOrganize
             return this;
         }
 
+
+        /// <summary>
+        /// Método para generar valores por defecto
+        /// </summary>
+        /// <param name="fieldName"></param>
+        /// <param name="dataType"></param>
+        /// <param name="defaultValue"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        /// <remarks>Se crea un método independiente para permitir crear valores por defecto en clases de datos ademas de EntityValues</remarks>
+        public object DefaultValue(string fieldName, string dataType, object defaultValue)
+        {
+            if (defaultValue is null)
+                return null;
+
+            switch (dataType)
+            {
+                case "string":
+                    if (defaultValue.ToString().ToLower().Contains("guid"))
+                        return (Guid.NewGuid()).ToString();
+
+                    //generate random strings
+                    else if (defaultValue.ToString()!.ToLower().Contains("random"))
+                    {
+                        string param = defaultValue.ToString()!.SubstringBetween("(", ")");
+                        return ValueTypesUtils.RandomString(Int32.Parse(param));
+                    }
+                    else
+                        return defaultValue;
+                case "DateTime":
+                    if (defaultValue.ToString().ToLower().Contains("cur") ||
+                        defaultValue.ToString().ToLower().Contains("getdate")
+                    )
+                        return DateTime.Now;
+                    else
+                        return defaultValue;
+
+                case "sbyte":
+                case "byte":
+                case "short":
+                case "ushort":
+                case "int":
+                case "uint":
+                case "long":
+                case "ulong":
+                case "nint":
+                case "nuint":
+                    if (defaultValue.ToString().ToLower().Contains("next"))
+                    {
+                        ulong next = db.Query(entityName).GetNextValue();
+                        return next;
+                    }
+                    else if (defaultValue.ToString().ToLower().Contains("max"))
+                    {
+                        long max = db.Query(entityName).Select("MAX($" + fieldName + ")").Value<long>();
+                        return max + 1;
+                    }
+                    else if (defaultValue.ToString().ToLower().Contains("next"))
+                    {
+                        throw new Exception("Not implemented"); //siguiente valor de la secuencia, cada motor debe tener su propia implementacion, definir subclase
+                    }
+                    else
+                    {
+                        return defaultValue;
+                    }
+                    break;
+
+                default:
+                    return defaultValue;
+                    break;
+            }
+
+            return null;
+
+        }
+
         /// <summary>
         /// Definir valor por defecto
         /// </summary>
@@ -474,6 +550,13 @@ namespace SqlOrganize
             q.parameters.Add(field.entityName);
             return q.Value<ulong>();
         }
+
+        public EntityValues Persist()
+        {
+            db.Persist(entityName).Persist(this).Exec();
+            return this;
+        }
+
 
         public EntityValues Update()
         {
