@@ -8,31 +8,31 @@ namespace MagistradosWpfApp.Data
 
         public string? Label { get; set; }
 
-        private string? _id;
+        protected string? _id = (string?)ContainerApp.db.DefaultValue("log", "id");
         public string? id
         {
             get { return _id; }
             set { _id = value; NotifyPropertyChanged(); }
         }
-        private string? _type;
+        protected string? _type = null;
         public string? type
         {
             get { return _type; }
             set { _type = value; NotifyPropertyChanged(); }
         }
-        private string? _description;
+        protected string? _description = null;
         public string? description
         {
             get { return _description; }
             set { _description = value; NotifyPropertyChanged(); }
         }
-        private string? _user;
+        protected string? _user = null;
         public string? user
         {
             get { return _user; }
             set { _user = value; NotifyPropertyChanged(); }
         }
-        private DateTime? _created;
+        protected DateTime? _created = (DateTime?)ContainerApp.db.DefaultValue("log", "created");
         public DateTime? created
         {
             get { return _created; }

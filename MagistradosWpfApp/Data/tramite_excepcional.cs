@@ -8,103 +8,103 @@ namespace MagistradosWpfApp.Data
 
         public string? Label { get; set; }
 
-        private string? _id;
+        protected string? _id = (string?)ContainerApp.db.DefaultValue("tramite_excepcional", "id");
         public string? id
         {
             get { return _id; }
             set { _id = value; NotifyPropertyChanged(); }
         }
-        private string? _motivo;
+        protected string? _motivo = null;
         public string? motivo
         {
             get { return _motivo; }
             set { _motivo = value; NotifyPropertyChanged(); }
         }
-        private string? _estado;
+        protected string? _estado = null;
         public string? estado
         {
             get { return _estado; }
             set { _estado = value; NotifyPropertyChanged(); }
         }
-        private DateTime? _creado;
+        protected DateTime? _creado = (DateTime?)ContainerApp.db.DefaultValue("tramite_excepcional", "creado");
         public DateTime? creado
         {
             get { return _creado; }
             set { _creado = value; NotifyPropertyChanged(); }
         }
-        private DateTime? _enviado;
+        protected DateTime? _enviado = null;
         public DateTime? enviado
         {
             get { return _enviado; }
             set { _enviado = value; NotifyPropertyChanged(); }
         }
-        private DateTime? _evaluado;
+        protected DateTime? _evaluado = null;
         public DateTime? evaluado
         {
             get { return _evaluado; }
             set { _evaluado = value; NotifyPropertyChanged(); }
         }
-        private DateTime? _modificado;
+        protected DateTime? _modificado = null;
         public DateTime? modificado
         {
             get { return _modificado; }
             set { _modificado = value; NotifyPropertyChanged(); }
         }
-        private string? _observaciones;
+        protected string? _observaciones = null;
         public string? observaciones
         {
             get { return _observaciones; }
             set { _observaciones = value; NotifyPropertyChanged(); }
         }
-        private string? _persona;
+        protected string? _persona = null;
         public string? persona
         {
             get { return _persona; }
             set { _persona = value; NotifyPropertyChanged(); }
         }
-        private DateTime? _desde;
+        protected DateTime? _desde = null;
         public DateTime? desde
         {
             get { return _desde; }
             set { _desde = value; NotifyPropertyChanged(); }
         }
-        private DateTime? _hasta;
+        protected DateTime? _hasta = null;
         public DateTime? hasta
         {
             get { return _hasta; }
             set { _hasta = value; NotifyPropertyChanged(); }
         }
-        private decimal? _monto;
+        protected decimal? _monto = null;
         public decimal? monto
         {
             get { return _monto; }
             set { _monto = value; NotifyPropertyChanged(); }
         }
-        private string? _sucursal;
+        protected string? _sucursal = (string?)ContainerApp.db.DefaultValue("tramite_excepcional", "sucursal");
         public string? sucursal
         {
             get { return _sucursal; }
             set { _sucursal = value; NotifyPropertyChanged(); }
         }
-        private int? _codigo;
+        protected int? _codigo = null;
         public int? codigo
         {
             get { return _codigo; }
             set { _codigo = value; NotifyPropertyChanged(); }
         }
-        private string? _departamento_judicial;
+        protected string? _departamento_judicial = null;
         public string? departamento_judicial
         {
             get { return _departamento_judicial; }
             set { _departamento_judicial = value; NotifyPropertyChanged(); }
         }
-        private string? _organo;
+        protected string? _organo = null;
         public string? organo
         {
             get { return _organo; }
             set { _organo = value; NotifyPropertyChanged(); }
         }
-        private string? _departamento_judicial_informado;
+        protected string? _departamento_judicial_informado = null;
         public string? departamento_judicial_informado
         {
             get { return _departamento_judicial_informado; }

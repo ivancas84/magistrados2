@@ -8,37 +8,37 @@ namespace MagistradosWpfApp.Data
 
         public string? Label { get; set; }
 
-        private string? _id;
+        protected string? _id = (string?)ContainerApp.db.DefaultValue("file", "id");
         public string? id
         {
             get { return _id; }
             set { _id = value; NotifyPropertyChanged(); }
         }
-        private string? _name;
+        protected string? _name = null;
         public string? name
         {
             get { return _name; }
             set { _name = value; NotifyPropertyChanged(); }
         }
-        private string? _type;
+        protected string? _type = null;
         public string? type
         {
             get { return _type; }
             set { _type = value; NotifyPropertyChanged(); }
         }
-        private string? _content;
+        protected string? _content = null;
         public string? content
         {
             get { return _content; }
             set { _content = value; NotifyPropertyChanged(); }
         }
-        private uint? _size;
+        protected uint? _size = null;
         public uint? size
         {
             get { return _size; }
             set { _size = value; NotifyPropertyChanged(); }
         }
-        private DateTime? _created;
+        protected DateTime? _created = (DateTime?)ContainerApp.db.DefaultValue("file", "created");
         public DateTime? created
         {
             get { return _created; }

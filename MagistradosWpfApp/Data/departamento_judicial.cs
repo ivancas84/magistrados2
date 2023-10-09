@@ -8,13 +8,13 @@ namespace MagistradosWpfApp.Data
 
         public string? Label { get; set; }
 
-        private string? _id;
+        protected string? _id = (string?)ContainerApp.db.DefaultValue("departamento_judicial", "id");
         public string? id
         {
             get { return _id; }
             set { _id = value; NotifyPropertyChanged(); }
         }
-        private string? _nombre;
+        protected string? _nombre = null;
         public string? nombre
         {
             get { return _nombre; }

@@ -8,31 +8,31 @@ namespace MagistradosWpfApp.Data
 
         public string? Label { get; set; }
 
-        private string? _id;
+        protected string? _id = (string?)ContainerApp.db.DefaultValue("importe_tramite_excepcional", "id");
         public string? id
         {
             get { return _id; }
             set { _id = value; NotifyPropertyChanged(); }
         }
-        private DateTime? _creado;
+        protected DateTime? _creado = (DateTime?)ContainerApp.db.DefaultValue("importe_tramite_excepcional", "creado");
         public DateTime? creado
         {
             get { return _creado; }
             set { _creado = value; NotifyPropertyChanged(); }
         }
-        private string? _tramite_excepcional;
+        protected string? _tramite_excepcional = null;
         public string? tramite_excepcional
         {
             get { return _tramite_excepcional; }
             set { _tramite_excepcional = value; NotifyPropertyChanged(); }
         }
-        private decimal? _valor;
+        protected decimal? _valor = null;
         public decimal? valor
         {
             get { return _valor; }
             set { _valor = value; NotifyPropertyChanged(); }
         }
-        private DateTime? _periodo;
+        protected DateTime? _periodo = null;
         public DateTime? periodo
         {
             get { return _periodo; }

@@ -8,31 +8,31 @@ namespace MagistradosWpfApp.Data
 
         public string? Label { get; set; }
 
-        private string? _id;
+        protected string? _id = (string?)ContainerApp.db.DefaultValue("viatico", "id");
         public string? id
         {
             get { return _id; }
             set { _id = value; NotifyPropertyChanged(); }
         }
-        private DateTime? _creado;
+        protected DateTime? _creado = (DateTime?)ContainerApp.db.DefaultValue("viatico", "creado");
         public DateTime? creado
         {
             get { return _creado; }
             set { _creado = value; NotifyPropertyChanged(); }
         }
-        private decimal? _valor;
+        protected decimal? _valor = (decimal?)ContainerApp.db.DefaultValue("viatico", "valor");
         public decimal? valor
         {
             get { return _valor; }
             set { _valor = value; NotifyPropertyChanged(); }
         }
-        private DateTime? _periodo;
+        protected DateTime? _periodo = null;
         public DateTime? periodo
         {
             get { return _periodo; }
             set { _periodo = value; NotifyPropertyChanged(); }
         }
-        private string? _departamento_judicial;
+        protected string? _departamento_judicial = null;
         public string? departamento_judicial
         {
             get { return _departamento_judicial; }
