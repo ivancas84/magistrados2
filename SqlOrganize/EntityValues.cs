@@ -411,28 +411,9 @@ namespace SqlOrganize
             return q.Value<ulong>();
         }
 
-        public EntityValues Persist()
-        {
-            db.Persist(entityName).Persist(this).Exec();
-            return this;
-        }
-
-
-        public EntityValues Update()
-        {
-            db.Persist(entityName).Update(values!).Exec();
-            return this;
-        }
-
         public EntityValues Update(EntityPersist persist)
         {
             persist.Update(this);
-            return this;
-        }
-
-        public EntityValues Insert()
-        {
-            db.Persist(entityName).Insert(values!).Exec();
             return this;
         }
 
@@ -442,7 +423,12 @@ namespace SqlOrganize
             return this;
         }
 
-    
+        public EntityValues Persist(EntityPersist persist)
+        {
+            persist.Persist(this);
+            return this;
+        }
+
         public EntityValues? ValuesTree(string fieldId)
         {
             Entity entity = db.Entity(entityName);
