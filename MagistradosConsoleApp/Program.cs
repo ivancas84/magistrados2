@@ -1,16 +1,17 @@
-﻿using ModelOrganizeMy;
+﻿using ModelOrganize;
+using ModelOrganizeMy;
 using System.Configuration;
 
-var c = new ConfigMy()
+var c = new Config()
 {
-    connectionString = ConfigurationManager.AppSettings.Get("connectionString"),
-    modelPath = ConfigurationManager.AppSettings.Get("modelPath"),
-    configPath = ConfigurationManager.AppSettings.Get("configPath"),
-    dbName = ConfigurationManager.AppSettings.Get("dbName"),
-    dataClassesPath = ConfigurationManager.AppSettings.Get("dataClassesPath"),
-    dataClassesNamespace = ConfigurationManager.AppSettings.Get("dataClassesNamespace"),
-    modelClassPath = ConfigurationManager.AppSettings.Get("modelClassPath"),
-    modelClassNamespace = ConfigurationManager.AppSettings.Get("modelClassNamespace"),
+    connectionString = ConfigurationManager.AppSettings.Get("connectionString")!,
+    modelPath = ConfigurationManager.AppSettings.Get("modelPath")!,
+    configPath = ConfigurationManager.AppSettings.Get("configPath")!,
+    dbName = ConfigurationManager.AppSettings.Get("dbName")!,
+    dataClassesPath = ConfigurationManager.AppSettings.Get("dataClassesPath")!,
+    dataClassesNamespace = ConfigurationManager.AppSettings.Get("dataClassesNamespace")!,
+    modelClassPath = ConfigurationManager.AppSettings.Get("modelClassPath")!,
+    modelClassNamespace = ConfigurationManager.AppSettings.Get("modelClassNamespace")!,
     idSource = "field_name",
 };
 

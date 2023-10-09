@@ -1,19 +1,9 @@
 ﻿using MagistradosWpfApp.Data;
-using SqlOrganize;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Utils;
 
 namespace MagistradosWpfApp.Windows.AdministrarPersona
@@ -25,8 +15,8 @@ namespace MagistradosWpfApp.Windows.AdministrarPersona
     {
 
         private DAO.Persona dao = new ();
-        private ObservableCollection<Persona> personaData = new();
-        Persona persona = new();
+        private ObservableCollection<Data_persona> personaData = new();
+        Data_persona persona = new();
 
         public Window1()
         {
@@ -44,7 +34,7 @@ namespace MagistradosWpfApp.Windows.AdministrarPersona
 
             if (this.personaSearchList.SelectedIndex > -1)
             {
-                persona = (Persona)this.personaSearchList.SelectedItem;
+                persona = (Data_persona)this.personaSearchList.SelectedItem;
                 DataContext = persona;
                 personaSearchTextBox.Text = persona.Label;
             }
@@ -54,7 +44,7 @@ namespace MagistradosWpfApp.Windows.AdministrarPersona
         private void PersonaSearchText_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (personaSearchList.SelectedIndex > -1)
-                if (personaSearchTextBox.Text.Equals(((Persona)personaSearchList.SelectedItem).Label))
+                if (personaSearchTextBox.Text.Equals(((Data_persona)personaSearchList.SelectedItem).Label))
                     return;
                 else
                     personaSearchList.SelectedIndex = -1;
@@ -74,7 +64,7 @@ namespace MagistradosWpfApp.Windows.AdministrarPersona
             foreach(Dictionary<string, object?> item in list)
             {
                 var v = ContainerApp.db.Values("persona").Set(item);
-                var o = item.Obj<Persona>();
+                var o = item.Obj<Data_persona>();
                 o.Label = v.ToString();
                 personaData.Add(o);
             }
