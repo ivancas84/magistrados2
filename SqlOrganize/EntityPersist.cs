@@ -161,13 +161,13 @@ WHERE " + id + " = @" + count + @";
         {
             _entityName = _entityName ?? entityName;
             string idKey = Db.config.id;
-            if (key.Contains(Db.config.idAttrSeparatorString))
+            if (key.Contains("__"))
             {
-                int indexSeparator = key.IndexOf(Db.config.idAttrSeparatorString);
+                int indexSeparator = key.IndexOf("__");
                 string fieldId = key.Substring(0, indexSeparator);
                 _entityName = Db.Entity(_entityName!).relations[fieldId].refEntityName;
-                idKey = fieldId + Db.config.idAttrSeparatorString + Db.config.id;
-                key = key.Substring(indexSeparator + Db.config.idAttrSeparatorString.Length); //se suma la cantidad de caracteres del separador
+                idKey = fieldId + "__" + Db.config.id;
+                key = key.Substring(indexSeparator + "__".Length); //se suma la cantidad de caracteres del separador
             }
 
             List<object> ids = new() { source[idKey] };
