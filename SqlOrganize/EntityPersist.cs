@@ -176,7 +176,7 @@ WHERE " + id + " = @" + count + @";
 
         public EntityPersist Insert(EntityValues v)
         {
-            if (!v.values.ContainsKey(Db.config.id))
+            if (!v.values.ContainsKey(Db.config.id) || v.values[Db.config.id].IsNullOrEmptyOrDbNull())
                 v.SetDefault(Db.config.id).Reset(Db.config.id);
             return Insert(v.values!, v.entityName);
         }
@@ -242,7 +242,7 @@ VALUES (";
         {
             _entityName = _entityName ?? entityName;
 
-            EntityValues v = Db.Values(_entityName!).Set(row).Reset();
+            EntityValues v = Db.Values(_entityName!).Set(row);
             return Persist(v);
         }
     
@@ -255,6 +255,7 @@ VALUES (";
         /// <exception cref="Exception"></exception>
         public EntityPersist Persist(EntityValues v)
         {
+            v.Reset();
             var q = Db.Query(v.entityName!).Unique(v.values);
             var rows = q.ColOfDict();
 
@@ -275,7 +276,11 @@ VALUES (";
                 return Update(v.values, v.entityName);
             }
 
-            v.Default().Reset().Check();
+
+            if (!v.values.ContainsKey(Db.config.id) || v.values[Db.config.id].IsNullOrEmptyOrDbNull())
+                v.SetDefault(Db.config.id);
+                    
+            v.Default().Reset(Db.config.id).Check();
 
             if (v.logging.HasErrors())
                 throw new Exception("Los campos a insertar poseen errores: " + v.logging.ToString());

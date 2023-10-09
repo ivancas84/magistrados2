@@ -1,4 +1,5 @@
 ﻿using MagistradosWpfApp.Data;
+using SqlOrganize;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -24,8 +25,8 @@ namespace MagistradosWpfApp.Windows.AdministrarPersona
     {
 
         private DAO.Persona dao = new ();
-        private ObservableCollection<Data_persona> personaData = new();
-
+        private ObservableCollection<Persona> personaData = new();
+        Persona persona = new();
 
         public Window1()
         {
@@ -33,7 +34,7 @@ namespace MagistradosWpfApp.Windows.AdministrarPersona
             personaSearchList.Visibility = Visibility.Collapsed;
             personaData = new();
             personaSearchList.ItemsSource = personaData;
-
+            DataContext = persona;
         }
 
 
@@ -43,7 +44,9 @@ namespace MagistradosWpfApp.Windows.AdministrarPersona
 
             if (this.personaSearchList.SelectedIndex > -1)
             {
-                this.personaSearchTextBox.Text = ((Data_persona)this.personaSearchList.SelectedItem).Label;
+                persona = (Persona)this.personaSearchList.SelectedItem;
+                DataContext = persona;
+                personaSearchTextBox.Text = persona.Label;
             }
     
         }
@@ -51,7 +54,7 @@ namespace MagistradosWpfApp.Windows.AdministrarPersona
         private void PersonaSearchText_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (personaSearchList.SelectedIndex > -1)
-                if (personaSearchTextBox.Text.Equals(((Data_persona)personaSearchList.SelectedItem).Label))
+                if (personaSearchTextBox.Text.Equals(((Persona)personaSearchList.SelectedItem).Label))
                     return;
                 else
                     personaSearchList.SelectedIndex = -1;
@@ -71,11 +74,24 @@ namespace MagistradosWpfApp.Windows.AdministrarPersona
             foreach(Dictionary<string, object?> item in list)
             {
                 var v = ContainerApp.db.Values("persona").Set(item);
-                var o = item.Obj<Data_persona>();
+                var o = item.Obj<Persona>();
                 o.Label = v.ToString();
                 personaData.Add(o);
             }
 
+        }
+
+        private void GuardarButton_Click(object sender, RoutedEventArgs e)
+        {
+            try {
+
+                ContainerApp.db.Persist("persona").Persist(persona.Dict()).Exec().RemoveCache();
+                MessageBox.Show("Registro guardado");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
     }
 }
