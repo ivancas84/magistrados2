@@ -1,3 +1,4 @@
+using SqlOrganize;
 using System;
 using System.ComponentModel;
 
@@ -6,9 +7,31 @@ namespace MagistradosWpfApp.Data
     public class Data_file : INotifyPropertyChanged
     {
 
+        public Data_file ()
+        {
+            Initialize();
+        }
+
+        public Data_file(DataInitMode mode = DataInitMode.Default)
+        {
+            Initialize(mode);
+        }
+
+        protected virtual void Initialize(DataInitMode mode = DataInitMode.Default)
+        {
+            switch(mode)
+            {
+                case DataInitMode.Default:
+                case DataInitMode.DefaultMain:
+                    _id = (string?)ContainerApp.db.DefaultValue("file", "id");
+                    _created = (DateTime?)ContainerApp.db.DefaultValue("file", "created");
+                break;
+            }
+        }
+
         public string? Label { get; set; }
 
-        protected string? _id = (string?)ContainerApp.db.DefaultValue("file", "id");
+        protected string? _id = null;
         public string? id
         {
             get { return _id; }
@@ -38,7 +61,7 @@ namespace MagistradosWpfApp.Data
             get { return _size; }
             set { _size = value; NotifyPropertyChanged(); }
         }
-        protected DateTime? _created = (DateTime?)ContainerApp.db.DefaultValue("file", "created");
+        protected DateTime? _created = null;
         public DateTime? created
         {
             get { return _created; }

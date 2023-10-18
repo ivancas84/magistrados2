@@ -1,3 +1,4 @@
+using SqlOrganize;
 using System;
 using System.ComponentModel;
 
@@ -5,6 +6,28 @@ namespace MagistradosWpfApp.Data
 {
     public class Data_configuracion_valor : INotifyPropertyChanged
     {
+
+        public Data_configuracion_valor ()
+        {
+            Initialize();
+        }
+
+        public Data_configuracion_valor(DataInitMode mode = DataInitMode.Default)
+        {
+            Initialize(mode);
+        }
+
+        protected virtual void Initialize(DataInitMode mode = DataInitMode.Default)
+        {
+            switch(mode)
+            {
+                case DataInitMode.Default:
+                case DataInitMode.DefaultMain:
+                    _creado = (DateTime?)ContainerApp.db.DefaultValue("configuracion_valor", "creado");
+                    _id = (string?)ContainerApp.db.DefaultValue("configuracion_valor", "id");
+                break;
+            }
+        }
 
         public string? Label { get; set; }
 
@@ -20,13 +43,13 @@ namespace MagistradosWpfApp.Data
             get { return _valor; }
             set { _valor = value; NotifyPropertyChanged(); }
         }
-        protected DateTime? _creado = (DateTime?)ContainerApp.db.DefaultValue("configuracion_valor", "creado");
+        protected DateTime? _creado = null;
         public DateTime? creado
         {
             get { return _creado; }
             set { _creado = value; NotifyPropertyChanged(); }
         }
-        protected string? _id = (string?)ContainerApp.db.DefaultValue("configuracion_valor", "id");
+        protected string? _id = null;
         public string? id
         {
             get { return _id; }

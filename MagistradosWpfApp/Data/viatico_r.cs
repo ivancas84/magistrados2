@@ -1,10 +1,33 @@
+using SqlOrganize;
 using System;
 
 namespace MagistradosWpfApp.Data
 {
     public class Data_viatico_r : Data_viatico
     {
-        protected string? _departamento_judicial__id = (string?)ContainerApp.db.DefaultValue("departamento_judicial", "id");
+
+        public Data_viatico_r () : base()
+        {
+            Initialize();
+        }
+
+        public Data_viatico_r (DataInitMode mode = DataInitMode.Default) : base(mode)
+        {
+            Initialize(mode);
+        }
+
+        protected override void Initialize(DataInitMode mode = DataInitMode.Default)
+        {
+            base.Initialize(mode);
+            switch(mode)
+            {
+                case DataInitMode.Default:
+                    _departamento_judicial__id = (string?)ContainerApp.db.DefaultValue("departamento_judicial", "id");
+                break;
+            }
+        }
+
+        protected string? _departamento_judicial__id = null;
         public string? departamento_judicial__id
         {
             get { return _departamento_judicial__id; }

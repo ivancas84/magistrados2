@@ -1,3 +1,4 @@
+using SqlOrganize;
 using System;
 using System.ComponentModel;
 
@@ -6,21 +7,44 @@ namespace MagistradosWpfApp.Data
     public class Data_viatico : INotifyPropertyChanged
     {
 
+        public Data_viatico ()
+        {
+            Initialize();
+        }
+
+        public Data_viatico(DataInitMode mode = DataInitMode.Default)
+        {
+            Initialize(mode);
+        }
+
+        protected virtual void Initialize(DataInitMode mode = DataInitMode.Default)
+        {
+            switch(mode)
+            {
+                case DataInitMode.Default:
+                case DataInitMode.DefaultMain:
+                    _id = (string?)ContainerApp.db.DefaultValue("viatico", "id");
+                    _creado = (DateTime?)ContainerApp.db.DefaultValue("viatico", "creado");
+                    _valor = (decimal?)ContainerApp.db.DefaultValue("viatico", "valor");
+                break;
+            }
+        }
+
         public string? Label { get; set; }
 
-        protected string? _id = (string?)ContainerApp.db.DefaultValue("viatico", "id");
+        protected string? _id = null;
         public string? id
         {
             get { return _id; }
             set { _id = value; NotifyPropertyChanged(); }
         }
-        protected DateTime? _creado = (DateTime?)ContainerApp.db.DefaultValue("viatico", "creado");
+        protected DateTime? _creado = null;
         public DateTime? creado
         {
             get { return _creado; }
             set { _creado = value; NotifyPropertyChanged(); }
         }
-        protected decimal? _valor = (decimal?)ContainerApp.db.DefaultValue("viatico", "valor");
+        protected decimal? _valor = null;
         public decimal? valor
         {
             get { return _valor; }

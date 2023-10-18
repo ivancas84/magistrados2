@@ -1,3 +1,4 @@
+using SqlOrganize;
 using System;
 using System.ComponentModel;
 
@@ -6,9 +7,30 @@ namespace MagistradosWpfApp.Data
     public class Data_departamento_judicial : INotifyPropertyChanged
     {
 
+        public Data_departamento_judicial ()
+        {
+            Initialize();
+        }
+
+        public Data_departamento_judicial(DataInitMode mode = DataInitMode.Default)
+        {
+            Initialize(mode);
+        }
+
+        protected virtual void Initialize(DataInitMode mode = DataInitMode.Default)
+        {
+            switch(mode)
+            {
+                case DataInitMode.Default:
+                case DataInitMode.DefaultMain:
+                    _id = (string?)ContainerApp.db.DefaultValue("departamento_judicial", "id");
+                break;
+            }
+        }
+
         public string? Label { get; set; }
 
-        protected string? _id = (string?)ContainerApp.db.DefaultValue("departamento_judicial", "id");
+        protected string? _id = null;
         public string? id
         {
             get { return _id; }

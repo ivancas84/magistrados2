@@ -1,3 +1,4 @@
+using SqlOrganize;
 using System;
 using System.ComponentModel;
 
@@ -6,9 +7,31 @@ namespace MagistradosWpfApp.Data
     public class Data_log : INotifyPropertyChanged
     {
 
+        public Data_log ()
+        {
+            Initialize();
+        }
+
+        public Data_log(DataInitMode mode = DataInitMode.Default)
+        {
+            Initialize(mode);
+        }
+
+        protected virtual void Initialize(DataInitMode mode = DataInitMode.Default)
+        {
+            switch(mode)
+            {
+                case DataInitMode.Default:
+                case DataInitMode.DefaultMain:
+                    _id = (string?)ContainerApp.db.DefaultValue("log", "id");
+                    _created = (DateTime?)ContainerApp.db.DefaultValue("log", "created");
+                break;
+            }
+        }
+
         public string? Label { get; set; }
 
-        protected string? _id = (string?)ContainerApp.db.DefaultValue("log", "id");
+        protected string? _id = null;
         public string? id
         {
             get { return _id; }
@@ -32,7 +55,7 @@ namespace MagistradosWpfApp.Data
             get { return _user; }
             set { _user = value; NotifyPropertyChanged(); }
         }
-        protected DateTime? _created = (DateTime?)ContainerApp.db.DefaultValue("log", "created");
+        protected DateTime? _created = null;
         public DateTime? created
         {
             get { return _created; }

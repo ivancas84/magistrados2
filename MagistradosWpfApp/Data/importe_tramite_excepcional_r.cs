@@ -1,10 +1,43 @@
+using SqlOrganize;
 using System;
 
 namespace MagistradosWpfApp.Data
 {
     public class Data_importe_tramite_excepcional_r : Data_importe_tramite_excepcional
     {
-        protected string? _tramite_excepcional__id = (string?)ContainerApp.db.DefaultValue("tramite_excepcional", "id");
+
+        public Data_importe_tramite_excepcional_r () : base()
+        {
+            Initialize();
+        }
+
+        public Data_importe_tramite_excepcional_r (DataInitMode mode = DataInitMode.Default) : base(mode)
+        {
+            Initialize(mode);
+        }
+
+        protected override void Initialize(DataInitMode mode = DataInitMode.Default)
+        {
+            base.Initialize(mode);
+            switch(mode)
+            {
+                case DataInitMode.Default:
+                    _tramite_excepcional__id = (string?)ContainerApp.db.DefaultValue("tramite_excepcional", "id");
+                    _tramite_excepcional__creado = (DateTime?)ContainerApp.db.DefaultValue("tramite_excepcional", "creado");
+                    _tramite_excepcional__sucursal = (string?)ContainerApp.db.DefaultValue("tramite_excepcional", "sucursal");
+                    _persona__id = (string?)ContainerApp.db.DefaultValue("persona", "id");
+                    _persona__creado = (DateTime?)ContainerApp.db.DefaultValue("persona", "creado");
+                    _cargo__id = (string?)ContainerApp.db.DefaultValue("cargo", "id");
+                    _tipo_documento__id = (string?)ContainerApp.db.DefaultValue("tipo_documento", "id");
+                    _sucursal__id = (string?)ContainerApp.db.DefaultValue("sucursal", "id");
+                    _departamento_judicial__id = (string?)ContainerApp.db.DefaultValue("departamento_judicial", "id");
+                    _organo__id = (string?)ContainerApp.db.DefaultValue("organo", "id");
+                    _departamento_judicial_informado__id = (string?)ContainerApp.db.DefaultValue("departamento_judicial", "id");
+                break;
+            }
+        }
+
+        protected string? _tramite_excepcional__id = null;
         public string? tramite_excepcional__id
         {
             get { return _tramite_excepcional__id; }
@@ -22,7 +55,7 @@ namespace MagistradosWpfApp.Data
             get { return _tramite_excepcional__estado; }
             set { _tramite_excepcional__estado = value; NotifyPropertyChanged(); }
         }
-        protected DateTime? _tramite_excepcional__creado = (DateTime?)ContainerApp.db.DefaultValue("tramite_excepcional", "creado");
+        protected DateTime? _tramite_excepcional__creado = null;
         public DateTime? tramite_excepcional__creado
         {
             get { return _tramite_excepcional__creado; }
@@ -76,7 +109,7 @@ namespace MagistradosWpfApp.Data
             get { return _tramite_excepcional__monto; }
             set { _tramite_excepcional__monto = value; NotifyPropertyChanged(); }
         }
-        protected string? _tramite_excepcional__sucursal = (string?)ContainerApp.db.DefaultValue("tramite_excepcional", "sucursal");
+        protected string? _tramite_excepcional__sucursal = null;
         public string? tramite_excepcional__sucursal
         {
             get { return _tramite_excepcional__sucursal; }
@@ -106,7 +139,7 @@ namespace MagistradosWpfApp.Data
             get { return _tramite_excepcional__departamento_judicial_informado; }
             set { _tramite_excepcional__departamento_judicial_informado = value; NotifyPropertyChanged(); }
         }
-        protected string? _persona__id = (string?)ContainerApp.db.DefaultValue("persona", "id");
+        protected string? _persona__id = null;
         public string? persona__id
         {
             get { return _persona__id; }
@@ -166,7 +199,7 @@ namespace MagistradosWpfApp.Data
             get { return _persona__tribunal; }
             set { _persona__tribunal = value; NotifyPropertyChanged(); }
         }
-        protected DateTime? _persona__creado = (DateTime?)ContainerApp.db.DefaultValue("persona", "creado");
+        protected DateTime? _persona__creado = null;
         public DateTime? persona__creado
         {
             get { return _persona__creado; }
@@ -190,7 +223,7 @@ namespace MagistradosWpfApp.Data
             get { return _persona__tipo_documento; }
             set { _persona__tipo_documento = value; NotifyPropertyChanged(); }
         }
-        protected string? _cargo__id = (string?)ContainerApp.db.DefaultValue("cargo", "id");
+        protected string? _cargo__id = null;
         public string? cargo__id
         {
             get { return _cargo__id; }
@@ -202,7 +235,7 @@ namespace MagistradosWpfApp.Data
             get { return _cargo__descripcion; }
             set { _cargo__descripcion = value; NotifyPropertyChanged(); }
         }
-        protected string? _tipo_documento__id = (string?)ContainerApp.db.DefaultValue("tipo_documento", "id");
+        protected string? _tipo_documento__id = null;
         public string? tipo_documento__id
         {
             get { return _tipo_documento__id; }
@@ -214,7 +247,7 @@ namespace MagistradosWpfApp.Data
             get { return _tipo_documento__descripcion; }
             set { _tipo_documento__descripcion = value; NotifyPropertyChanged(); }
         }
-        protected string? _sucursal__id = (string?)ContainerApp.db.DefaultValue("sucursal", "id");
+        protected string? _sucursal__id = null;
         public string? sucursal__id
         {
             get { return _sucursal__id; }
@@ -226,7 +259,7 @@ namespace MagistradosWpfApp.Data
             get { return _sucursal__descripcion; }
             set { _sucursal__descripcion = value; NotifyPropertyChanged(); }
         }
-        protected string? _departamento_judicial__id = (string?)ContainerApp.db.DefaultValue("departamento_judicial", "id");
+        protected string? _departamento_judicial__id = null;
         public string? departamento_judicial__id
         {
             get { return _departamento_judicial__id; }
@@ -238,7 +271,7 @@ namespace MagistradosWpfApp.Data
             get { return _departamento_judicial__nombre; }
             set { _departamento_judicial__nombre = value; NotifyPropertyChanged(); }
         }
-        protected string? _organo__id = (string?)ContainerApp.db.DefaultValue("organo", "id");
+        protected string? _organo__id = null;
         public string? organo__id
         {
             get { return _organo__id; }
@@ -250,7 +283,7 @@ namespace MagistradosWpfApp.Data
             get { return _organo__descripcion; }
             set { _organo__descripcion = value; NotifyPropertyChanged(); }
         }
-        protected string? _departamento_judicial_informado__id = (string?)ContainerApp.db.DefaultValue("departamento_judicial", "id");
+        protected string? _departamento_judicial_informado__id = null;
         public string? departamento_judicial_informado__id
         {
             get { return _departamento_judicial_informado__id; }

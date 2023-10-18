@@ -133,7 +133,9 @@
     "fk": [],
     "orderDefault": {},
     "noAdmin": [],
-    "unique": [],
+    "unique": [
+      "descripcion"
+    ],
     "notNull": [
       "id",
       "descripcion"

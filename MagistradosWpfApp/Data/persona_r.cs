@@ -1,10 +1,34 @@
+using SqlOrganize;
 using System;
 
 namespace MagistradosWpfApp.Data
 {
     public class Data_persona_r : Data_persona
     {
-        protected string? _cargo__id = (string?)ContainerApp.db.DefaultValue("cargo", "id");
+
+        public Data_persona_r () : base()
+        {
+            Initialize();
+        }
+
+        public Data_persona_r (DataInitMode mode = DataInitMode.Default) : base(mode)
+        {
+            Initialize(mode);
+        }
+
+        protected override void Initialize(DataInitMode mode = DataInitMode.Default)
+        {
+            base.Initialize(mode);
+            switch(mode)
+            {
+                case DataInitMode.Default:
+                    _cargo__id = (string?)ContainerApp.db.DefaultValue("cargo", "id");
+                    _tipo_documento__id = (string?)ContainerApp.db.DefaultValue("tipo_documento", "id");
+                break;
+            }
+        }
+
+        protected string? _cargo__id = null;
         public string? cargo__id
         {
             get { return _cargo__id; }
@@ -16,7 +40,7 @@ namespace MagistradosWpfApp.Data
             get { return _cargo__descripcion; }
             set { _cargo__descripcion = value; NotifyPropertyChanged(); }
         }
-        protected string? _tipo_documento__id = (string?)ContainerApp.db.DefaultValue("tipo_documento", "id");
+        protected string? _tipo_documento__id = null;
         public string? tipo_documento__id
         {
             get { return _tipo_documento__id; }

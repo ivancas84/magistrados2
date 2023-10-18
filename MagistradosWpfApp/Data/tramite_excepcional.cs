@@ -1,3 +1,4 @@
+using SqlOrganize;
 using System;
 using System.ComponentModel;
 
@@ -6,9 +7,32 @@ namespace MagistradosWpfApp.Data
     public class Data_tramite_excepcional : INotifyPropertyChanged
     {
 
+        public Data_tramite_excepcional ()
+        {
+            Initialize();
+        }
+
+        public Data_tramite_excepcional(DataInitMode mode = DataInitMode.Default)
+        {
+            Initialize(mode);
+        }
+
+        protected virtual void Initialize(DataInitMode mode = DataInitMode.Default)
+        {
+            switch(mode)
+            {
+                case DataInitMode.Default:
+                case DataInitMode.DefaultMain:
+                    _id = (string?)ContainerApp.db.DefaultValue("tramite_excepcional", "id");
+                    _creado = (DateTime?)ContainerApp.db.DefaultValue("tramite_excepcional", "creado");
+                    _sucursal = (string?)ContainerApp.db.DefaultValue("tramite_excepcional", "sucursal");
+                break;
+            }
+        }
+
         public string? Label { get; set; }
 
-        protected string? _id = (string?)ContainerApp.db.DefaultValue("tramite_excepcional", "id");
+        protected string? _id = null;
         public string? id
         {
             get { return _id; }
@@ -26,7 +50,7 @@ namespace MagistradosWpfApp.Data
             get { return _estado; }
             set { _estado = value; NotifyPropertyChanged(); }
         }
-        protected DateTime? _creado = (DateTime?)ContainerApp.db.DefaultValue("tramite_excepcional", "creado");
+        protected DateTime? _creado = null;
         public DateTime? creado
         {
             get { return _creado; }
@@ -80,7 +104,7 @@ namespace MagistradosWpfApp.Data
             get { return _monto; }
             set { _monto = value; NotifyPropertyChanged(); }
         }
-        protected string? _sucursal = (string?)ContainerApp.db.DefaultValue("tramite_excepcional", "sucursal");
+        protected string? _sucursal = null;
         public string? sucursal
         {
             get { return _sucursal; }

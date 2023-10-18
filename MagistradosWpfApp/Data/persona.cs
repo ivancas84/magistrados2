@@ -1,3 +1,4 @@
+using SqlOrganize;
 using System;
 using System.ComponentModel;
 
@@ -6,9 +7,31 @@ namespace MagistradosWpfApp.Data
     public class Data_persona : INotifyPropertyChanged
     {
 
+        public Data_persona ()
+        {
+            Initialize();
+        }
+
+        public Data_persona(DataInitMode mode = DataInitMode.Default)
+        {
+            Initialize(mode);
+        }
+
+        protected virtual void Initialize(DataInitMode mode = DataInitMode.Default)
+        {
+            switch(mode)
+            {
+                case DataInitMode.Default:
+                case DataInitMode.DefaultMain:
+                    _id = (string?)ContainerApp.db.DefaultValue("persona", "id");
+                    _creado = (DateTime?)ContainerApp.db.DefaultValue("persona", "creado");
+                break;
+            }
+        }
+
         public string? Label { get; set; }
 
-        protected string? _id = (string?)ContainerApp.db.DefaultValue("persona", "id");
+        protected string? _id = null;
         public string? id
         {
             get { return _id; }
@@ -68,7 +91,7 @@ namespace MagistradosWpfApp.Data
             get { return _tribunal; }
             set { _tribunal = value; NotifyPropertyChanged(); }
         }
-        protected DateTime? _creado = (DateTime?)ContainerApp.db.DefaultValue("persona", "creado");
+        protected DateTime? _creado = null;
         public DateTime? creado
         {
             get { return _creado; }

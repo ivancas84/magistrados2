@@ -1,3 +1,4 @@
+using SqlOrganize;
 using System;
 using System.ComponentModel;
 
@@ -6,15 +7,37 @@ namespace MagistradosWpfApp.Data
     public class Data_importe_afiliacion : INotifyPropertyChanged
     {
 
+        public Data_importe_afiliacion ()
+        {
+            Initialize();
+        }
+
+        public Data_importe_afiliacion(DataInitMode mode = DataInitMode.Default)
+        {
+            Initialize(mode);
+        }
+
+        protected virtual void Initialize(DataInitMode mode = DataInitMode.Default)
+        {
+            switch(mode)
+            {
+                case DataInitMode.Default:
+                case DataInitMode.DefaultMain:
+                    _id = (string?)ContainerApp.db.DefaultValue("importe_afiliacion", "id");
+                    _creado = (DateTime?)ContainerApp.db.DefaultValue("importe_afiliacion", "creado");
+                break;
+            }
+        }
+
         public string? Label { get; set; }
 
-        protected string? _id = (string?)ContainerApp.db.DefaultValue("importe_afiliacion", "id");
+        protected string? _id = null;
         public string? id
         {
             get { return _id; }
             set { _id = value; NotifyPropertyChanged(); }
         }
-        protected DateTime? _creado = (DateTime?)ContainerApp.db.DefaultValue("importe_afiliacion", "creado");
+        protected DateTime? _creado = null;
         public DateTime? creado
         {
             get { return _creado; }
