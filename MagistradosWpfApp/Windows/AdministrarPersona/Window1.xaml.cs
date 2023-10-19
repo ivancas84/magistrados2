@@ -14,9 +14,12 @@ namespace MagistradosWpfApp.Windows.AdministrarPersona
     public partial class Window1 : Window
     {
 
-        private DAO.Persona dao = new ();
+        private DAO.Persona personaDAO = new ();
         private ObservableCollection<Data_persona> personaData = new();
         Data_persona persona = new();
+
+        private ObservableCollection<Data_afiliacion_r> afiliacionData = new();
+        private ObservableCollection<Data_tramite_excepcional_r> tramiteExcepcionalData = new();
 
         public Window1()
         {
@@ -25,6 +28,9 @@ namespace MagistradosWpfApp.Windows.AdministrarPersona
             personaData = new();
             personaSearchList.ItemsSource = personaData;
             DataContext = persona;
+
+            afiliacionGrid.ItemsSource = afiliacionData;
+            tramiteExcepcionalGrid.ItemsSource = tramiteExcepcionalData;
         }
 
 
@@ -37,6 +43,14 @@ namespace MagistradosWpfApp.Windows.AdministrarPersona
                 persona = (Data_persona)this.personaSearchList.SelectedItem;
                 DataContext = persona;
                 personaSearchTextBox.Text = persona.Label;
+
+                var data = ContainerApp.db.Query("afiliacion").Size(0).Where("persona = @0").Parameters(persona.id!).ColOfDictCache();
+                afiliacionData.Clear();
+                afiliacionData.AddRange(data);
+
+                data = ContainerApp.db.Query("tramite_excepcional").Size(0).Where("persona = @0").Parameters(persona.id!).ColOfDictCache();
+                tramiteExcepcionalData.Clear();
+                tramiteExcepcionalData.AddRange(data);
             }
     
         }
@@ -58,7 +72,7 @@ namespace MagistradosWpfApp.Windows.AdministrarPersona
 
             personaSearchList.Visibility = Visibility.Visible;
 
-            IEnumerable<Dictionary<string, object?>> list = dao.BuscarTexto(personaSearchTextBox.Text); //busqueda de valores a mostrar en funcion del texto
+            IEnumerable<Dictionary<string, object?>> list = personaDAO.BuscarTexto(personaSearchTextBox.Text); //busqueda de valores a mostrar en funcion del texto
 
             personaData.Clear();
             foreach(Dictionary<string, object?> item in list)

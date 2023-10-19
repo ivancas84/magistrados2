@@ -231,12 +231,12 @@
             <GroupBox
                 Grid.Row = "2" 
                 Header="Registro 40">
-            </GroupBox>
+                <DataGrid Name="afiliacionGrid" />            </GroupBox>
 
             <GroupBox
                 Grid.Row = "3" 
                 Header="Registro 80">
-            </GroupBox>
+                <DataGrid Name="tramiteExcepcionalGrid" />            </GroupBox>
         </Grid>
     </ScrollViewer>
 </Window>
