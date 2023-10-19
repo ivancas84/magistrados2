@@ -22,11 +22,13 @@ namespace MagistradosWpfApp.Data
             switch(mode)
             {
                 case DataInitMode.Default:
-                    _cargo__id = (string?)ContainerApp.db.DefaultValue("cargo", "id");
-                    _tipo_documento__id = (string?)ContainerApp.db.DefaultValue("tipo_documento", "id");
+                    _cargo__id = (string?)ContainerApp.db.Values("cargo").Default("id").Get("id");
+                    _tipo_documento__id = (string?)ContainerApp.db.Values("tipo_documento").Default("id").Get("id");
                 break;
             }
         }
+
+        public string? cargo__Label { get; set; }
 
         protected string? _cargo__id = null;
         public string? cargo__id
@@ -40,6 +42,9 @@ namespace MagistradosWpfApp.Data
             get { return _cargo__descripcion; }
             set { _cargo__descripcion = value; NotifyPropertyChanged(); }
         }
+
+        public string? tipo_documento__Label { get; set; }
+
         protected string? _tipo_documento__id = null;
         public string? tipo_documento__id
         {

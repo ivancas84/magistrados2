@@ -23,9 +23,9 @@ namespace MagistradosWpfApp.Data
             {
                 case DataInitMode.Default:
                 case DataInitMode.DefaultMain:
-                    _id = (string?)ContainerApp.db.DefaultValue("tramite_excepcional", "id");
-                    _creado = (DateTime?)ContainerApp.db.DefaultValue("tramite_excepcional", "creado");
-                    _sucursal = (string?)ContainerApp.db.DefaultValue("tramite_excepcional", "sucursal");
+                    _id = (string?)ContainerApp.db.Values("tramite_excepcional").Default("id").Get("id");
+                    _creado = (DateTime?)ContainerApp.db.Values("tramite_excepcional").Default("creado").Get("creado");
+                    _sucursal = (string?)ContainerApp.db.Values("tramite_excepcional").Default("sucursal").Get("sucursal");
                 break;
             }
         }

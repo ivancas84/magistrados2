@@ -23,7 +23,7 @@ namespace MagistradosWpfApp.Data
             {
                 case DataInitMode.Default:
                 case DataInitMode.DefaultMain:
-                    _id = (string?)ContainerApp.db.DefaultValue("codigo_departamento", "id");
+                    _id = (string?)ContainerApp.db.Values("codigo_departamento").Default("id").Get("id");
                 break;
             }
         }

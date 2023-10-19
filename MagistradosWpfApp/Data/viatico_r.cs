@@ -22,10 +22,12 @@ namespace MagistradosWpfApp.Data
             switch(mode)
             {
                 case DataInitMode.Default:
-                    _departamento_judicial__id = (string?)ContainerApp.db.DefaultValue("departamento_judicial", "id");
+                    _departamento_judicial__id = (string?)ContainerApp.db.Values("departamento_judicial").Default("id").Get("id");
                 break;
             }
         }
+
+        public string? departamento_judicial__Label { get; set; }
 
         protected string? _departamento_judicial__id = null;
         public string? departamento_judicial__id

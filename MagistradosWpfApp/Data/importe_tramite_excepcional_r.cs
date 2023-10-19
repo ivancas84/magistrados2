@@ -22,20 +22,22 @@ namespace MagistradosWpfApp.Data
             switch(mode)
             {
                 case DataInitMode.Default:
-                    _tramite_excepcional__id = (string?)ContainerApp.db.DefaultValue("tramite_excepcional", "id");
-                    _tramite_excepcional__creado = (DateTime?)ContainerApp.db.DefaultValue("tramite_excepcional", "creado");
-                    _tramite_excepcional__sucursal = (string?)ContainerApp.db.DefaultValue("tramite_excepcional", "sucursal");
-                    _persona__id = (string?)ContainerApp.db.DefaultValue("persona", "id");
-                    _persona__creado = (DateTime?)ContainerApp.db.DefaultValue("persona", "creado");
-                    _cargo__id = (string?)ContainerApp.db.DefaultValue("cargo", "id");
-                    _tipo_documento__id = (string?)ContainerApp.db.DefaultValue("tipo_documento", "id");
-                    _sucursal__id = (string?)ContainerApp.db.DefaultValue("sucursal", "id");
-                    _departamento_judicial__id = (string?)ContainerApp.db.DefaultValue("departamento_judicial", "id");
-                    _organo__id = (string?)ContainerApp.db.DefaultValue("organo", "id");
-                    _departamento_judicial_informado__id = (string?)ContainerApp.db.DefaultValue("departamento_judicial", "id");
+                    _tramite_excepcional__id = (string?)ContainerApp.db.Values("tramite_excepcional").Default("id").Get("id");
+                    _tramite_excepcional__creado = (DateTime?)ContainerApp.db.Values("tramite_excepcional").Default("creado").Get("creado");
+                    _tramite_excepcional__sucursal = (string?)ContainerApp.db.Values("tramite_excepcional").Default("sucursal").Get("sucursal");
+                    _persona__id = (string?)ContainerApp.db.Values("persona").Default("id").Get("id");
+                    _persona__creado = (DateTime?)ContainerApp.db.Values("persona").Default("creado").Get("creado");
+                    _cargo__id = (string?)ContainerApp.db.Values("cargo").Default("id").Get("id");
+                    _tipo_documento__id = (string?)ContainerApp.db.Values("tipo_documento").Default("id").Get("id");
+                    _sucursal__id = (string?)ContainerApp.db.Values("sucursal").Default("id").Get("id");
+                    _departamento_judicial__id = (string?)ContainerApp.db.Values("departamento_judicial").Default("id").Get("id");
+                    _organo__id = (string?)ContainerApp.db.Values("organo").Default("id").Get("id");
+                    _departamento_judicial_informado__id = (string?)ContainerApp.db.Values("departamento_judicial").Default("id").Get("id");
                 break;
             }
         }
+
+        public string? tramite_excepcional__Label { get; set; }
 
         protected string? _tramite_excepcional__id = null;
         public string? tramite_excepcional__id
@@ -139,6 +141,9 @@ namespace MagistradosWpfApp.Data
             get { return _tramite_excepcional__departamento_judicial_informado; }
             set { _tramite_excepcional__departamento_judicial_informado = value; NotifyPropertyChanged(); }
         }
+
+        public string? persona__Label { get; set; }
+
         protected string? _persona__id = null;
         public string? persona__id
         {
@@ -223,6 +228,9 @@ namespace MagistradosWpfApp.Data
             get { return _persona__tipo_documento; }
             set { _persona__tipo_documento = value; NotifyPropertyChanged(); }
         }
+
+        public string? cargo__Label { get; set; }
+
         protected string? _cargo__id = null;
         public string? cargo__id
         {
@@ -235,6 +243,9 @@ namespace MagistradosWpfApp.Data
             get { return _cargo__descripcion; }
             set { _cargo__descripcion = value; NotifyPropertyChanged(); }
         }
+
+        public string? tipo_documento__Label { get; set; }
+
         protected string? _tipo_documento__id = null;
         public string? tipo_documento__id
         {
@@ -247,6 +258,9 @@ namespace MagistradosWpfApp.Data
             get { return _tipo_documento__descripcion; }
             set { _tipo_documento__descripcion = value; NotifyPropertyChanged(); }
         }
+
+        public string? sucursal__Label { get; set; }
+
         protected string? _sucursal__id = null;
         public string? sucursal__id
         {
@@ -259,6 +273,9 @@ namespace MagistradosWpfApp.Data
             get { return _sucursal__descripcion; }
             set { _sucursal__descripcion = value; NotifyPropertyChanged(); }
         }
+
+        public string? departamento_judicial__Label { get; set; }
+
         protected string? _departamento_judicial__id = null;
         public string? departamento_judicial__id
         {
@@ -271,6 +288,9 @@ namespace MagistradosWpfApp.Data
             get { return _departamento_judicial__nombre; }
             set { _departamento_judicial__nombre = value; NotifyPropertyChanged(); }
         }
+
+        public string? organo__Label { get; set; }
+
         protected string? _organo__id = null;
         public string? organo__id
         {
@@ -283,6 +303,9 @@ namespace MagistradosWpfApp.Data
             get { return _organo__descripcion; }
             set { _organo__descripcion = value; NotifyPropertyChanged(); }
         }
+
+        public string? departamento_judicial_informado__Label { get; set; }
+
         protected string? _departamento_judicial_informado__id = null;
         public string? departamento_judicial_informado__id
         {

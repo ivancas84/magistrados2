@@ -231,7 +231,7 @@
             <GroupBox
                 Grid.Row = "2" 
                 Header="Registro 40">
-                <DataGrid Name="afiliacionGrid" />            </GroupBox>
+                <DataGrid Name="afiliacionGrid" AutoGenerateColumns="False">                </DataGrid>            </GroupBox>
 
             <GroupBox
                 Grid.Row = "3" 

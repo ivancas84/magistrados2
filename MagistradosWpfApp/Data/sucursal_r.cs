@@ -25,6 +25,5 @@ namespace MagistradosWpfApp.Data
                 break;
             }
         }
-
     }
 }

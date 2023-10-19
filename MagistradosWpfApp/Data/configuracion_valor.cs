@@ -23,8 +23,8 @@ namespace MagistradosWpfApp.Data
             {
                 case DataInitMode.Default:
                 case DataInitMode.DefaultMain:
-                    _creado = (DateTime?)ContainerApp.db.DefaultValue("configuracion_valor", "creado");
-                    _id = (string?)ContainerApp.db.DefaultValue("configuracion_valor", "id");
+                    _creado = (DateTime?)ContainerApp.db.Values("configuracion_valor").Default("creado").Get("creado");
+                    _id = (string?)ContainerApp.db.Values("configuracion_valor").Default("id").Get("id");
                 break;
             }
         }

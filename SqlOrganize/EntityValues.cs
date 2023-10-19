@@ -296,7 +296,7 @@ namespace SqlOrganize
                 return this;
             }
 
-            values[fieldName] = db.DefaultValue(entityName, fieldName);
+            values[fieldName] = DefaultValue(fieldName);
             return this;
         }
 
@@ -525,6 +525,97 @@ namespace SqlOrganize
             }
 
             return (newFieldId, fieldName, entityName, value);
+        }
+
+
+
+        /// <summary>
+        /// Valor por defecto de field
+        /// </summary>
+        /// <param name="entityName"></param>
+        /// <param name="fieldName"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        public object? DefaultValue(string fieldName)
+        {
+            var field = db.Field(entityName, fieldName);
+
+            if (field.defaultValue is null)
+                return null;
+
+            switch (field.dataType)
+            {
+                case "string":
+                    if (field.defaultValue.ToString()!.ToLower().Contains("guid"))
+                        return (Guid.NewGuid()).ToString();
+
+                    //generate random strings
+                    else if (field.defaultValue.ToString()!.ToLower().Contains("random"))
+                    {
+                        string param = field.defaultValue.ToString()!.SubstringBetween("(", ")");
+                        return ValueTypesUtils.RandomString(Int32.Parse(param));
+                    }
+                    else
+                        return field.defaultValue;
+                case "DateTime":
+                    if (field.defaultValue.ToString()!.ToLower().Contains("cur") ||
+                        field.defaultValue.ToString()!.ToLower().Contains("getdate")
+                    )
+                        return DateTime.Now;
+                    else
+                        return field.defaultValue;
+
+                case "sbyte":
+                    return Convert.ToSByte(DefaultValueInt(field));
+
+                case "byte":
+                    return Convert.ToByte(DefaultValueInt(field));
+
+                case "long":
+                    return Convert.ToInt64(DefaultValueInt(field));
+
+                case "ulong":
+                    return Convert.ToUInt64(DefaultValueInt(field));
+
+                case "int":
+                case "nint":
+                    return Convert.ToInt32(DefaultValueInt(field));
+
+                case "uint":
+                case "nuint":
+                    return Convert.ToUInt32(DefaultValueInt(field));
+
+                case "short":
+                    return Convert.ToInt16(DefaultValueInt(field));
+
+                case "ushort":
+                    return Convert.ToUInt16(DefaultValueInt(field));
+
+                default:
+                    return field.defaultValue;
+            }
+        }
+
+        protected object? DefaultValueInt(Field field)
+        {
+            if (field.defaultValue.ToString()!.ToLower().Contains("next"))
+            {
+                ulong next = db.Query(field.entityName).GetNextValue();
+                return next;
+            }
+            else if (field.defaultValue.ToString()!.ToLower().Contains("max"))
+            {
+                long max = db.Query(field.entityName).GetMaxValue(field.name);
+                return max + 1;
+            }
+            else if (field.defaultValue.ToString()!.ToLower().Contains("next"))
+            {
+                throw new NotImplementedException(); //siguiente valor de la secuencia, cada motor debe tener su propia implementacion, definir subclase
+            }
+            else
+            {
+                return field.defaultValue;
+            }
         }
     }
 
