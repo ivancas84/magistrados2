@@ -296,7 +296,7 @@ namespace SqlOrganize
                 return this;
             }
 
-            values[fieldName] = DefaultValue(fieldName);
+            values[fieldName] = DefaultField(fieldName);
             return this;
         }
 
@@ -536,7 +536,7 @@ namespace SqlOrganize
         /// <param name="fieldName"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public object? DefaultValue(string fieldName)
+        public object? DefaultField(string fieldName)
         {
             var field = db.Field(entityName, fieldName);
 
@@ -566,37 +566,37 @@ namespace SqlOrganize
                         return field.defaultValue;
 
                 case "sbyte":
-                    return Convert.ToSByte(DefaultValueInt(field));
+                    return Convert.ToSByte(DefaultFieldInt(field));
 
                 case "byte":
-                    return Convert.ToByte(DefaultValueInt(field));
+                    return Convert.ToByte(DefaultFieldInt(field));
 
                 case "long":
-                    return Convert.ToInt64(DefaultValueInt(field));
+                    return Convert.ToInt64(DefaultFieldInt(field));
 
                 case "ulong":
-                    return Convert.ToUInt64(DefaultValueInt(field));
+                    return Convert.ToUInt64(DefaultFieldInt(field));
 
                 case "int":
                 case "nint":
-                    return Convert.ToInt32(DefaultValueInt(field));
+                    return Convert.ToInt32(DefaultFieldInt(field));
 
                 case "uint":
                 case "nuint":
-                    return Convert.ToUInt32(DefaultValueInt(field));
+                    return Convert.ToUInt32(DefaultFieldInt(field));
 
                 case "short":
-                    return Convert.ToInt16(DefaultValueInt(field));
+                    return Convert.ToInt16(DefaultFieldInt(field));
 
                 case "ushort":
-                    return Convert.ToUInt16(DefaultValueInt(field));
+                    return Convert.ToUInt16(DefaultFieldInt(field));
 
                 default:
                     return field.defaultValue;
             }
         }
 
-        protected object? DefaultValueInt(Field field)
+        protected object? DefaultFieldInt(Field field)
         {
             if (field.defaultValue.ToString()!.ToLower().Contains("next"))
             {
