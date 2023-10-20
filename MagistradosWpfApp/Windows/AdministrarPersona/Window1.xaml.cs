@@ -1,4 +1,4 @@
-﻿using MagistradosWpfApp.Data;
+﻿using MagistradosWpfApp.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -46,7 +46,13 @@ namespace MagistradosWpfApp.Windows.AdministrarPersona
 
                 var data = ContainerApp.db.Query("afiliacion").Size(0).Where("persona = @0").Parameters(persona.id!).ColOfDictCache();
                 afiliacionData.Clear();
-                afiliacionData.AddRange(data);
+                foreach(var item in data)
+                {
+                    var o = item.Obj<Data_afiliacion_r>();
+                    var v = ContainerApp.db.Values("afiliacion").Set(item);
+                    o.persona__Label = v.ValuesTree("persona")?.ToString();
+                    afiliacionData.Add(o);
+                }
 
                 data = ContainerApp.db.Query("tramite_excepcional").Size(0).Where("persona = @0").Parameters(persona.id!).ColOfDictCache();
                 tramiteExcepcionalData.Clear();

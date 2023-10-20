@@ -231,12 +231,22 @@
             <GroupBox
                 Grid.Row = "2" 
                 Header="Registro 40">
-                <DataGrid Name="afiliacionGrid" AutoGenerateColumns="False">                </DataGrid>            </GroupBox>
+                <DataGrid Name="afiliacionGrid" AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+
+                        <DataGridTextColumn Header="Motivo" Binding="{Binding motivo}"></DataGridTextColumn>                        <DataGridTextColumn Header="Estado" Binding="{Binding estado}"></DataGridTextColumn>                        <DataGridTextColumn Header="Código" Binding="{Binding codigo}"></DataGridTextColumn>                        <DataGridTextColumn Header="Departamento" Binding="{Binding departamento_judicial__nombre}"></DataGridTextColumn>                        <DataGridTextColumn Header="Organo" Binding="{Binding organo__descripcion}"></DataGridTextColumn>                        <DataGridTextColumn Header="Creado" Binding="{Binding creado, StringFormat={}{0:dd/MM/yyyy HH:mm}}"/>
+                        <DataGridTextColumn Header="Enviado" Binding="{Binding enviado, StringFormat={}{0:dd/MM/yyyy HH:mm}}"/>                        <DataGridTextColumn Header="Evaluado" Binding="{Binding evaluado, StringFormat={}{0:dd/MM/yyyy HH:mm}}"/>                        <DataGridTextColumn Header="Modificado" Binding="{Binding modificado, StringFormat={}{0:dd/MM/yyyy HH:mm}}"/>                        <DataGridTextColumn Header="Observaciones" Binding="{Binding observaciones, StringFormat={}{0:dd/MM/yyyy HH:mm}}"/>
+                    </DataGrid.Columns>
+
+
+                </DataGrid>
+            </GroupBox>
 
             <GroupBox
                 Grid.Row = "3" 
                 Header="Registro 80">
-                <DataGrid Name="tramiteExcepcionalGrid" />            </GroupBox>
+                <DataGrid Name="tramiteExcepcionalGrid" />
+            </GroupBox>
         </Grid>
     </ScrollViewer>
 </Window>
