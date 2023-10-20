@@ -23,8 +23,8 @@ namespace MagistradosWpfApp
 
             MemoryCache cache = new MemoryCache(new MemoryCacheOptions());
 
-            Model model = new Model();
-            db = new DbApp(config, model, cache);
+            Schema sch = new Schema();
+            db = new DbApp(config, sch, cache);
 
             dao = new SqlOrganize.DAO(db);
         }

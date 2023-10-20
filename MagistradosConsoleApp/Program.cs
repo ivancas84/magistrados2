@@ -5,13 +5,13 @@ using System.Configuration;
 var c = new Config()
 {
     connectionString = ConfigurationManager.AppSettings.Get("connectionString")!,
-    modelPath = ConfigurationManager.AppSettings.Get("modelPath")!,
+    docPath = ConfigurationManager.AppSettings.Get("docPath")!,
     configPath = ConfigurationManager.AppSettings.Get("configPath")!,
     dbName = ConfigurationManager.AppSettings.Get("dbName")!,
     dataClassesPath = ConfigurationManager.AppSettings.Get("dataClassesPath")!,
     dataClassesNamespace = ConfigurationManager.AppSettings.Get("dataClassesNamespace")!,
-    modelClassPath = ConfigurationManager.AppSettings.Get("modelClassPath")!,
-    modelClassNamespace = ConfigurationManager.AppSettings.Get("modelClassNamespace")!,
+    schemaClassPath = ConfigurationManager.AppSettings.Get("schemaClassPath")!,
+    schemaClassNamespace = ConfigurationManager.AppSettings.Get("schemaClassNamespace")!,
     idSource = "field_name",
 };
 

@@ -1,4 +1,4 @@
-﻿using MagistradosWpfApp.Data;
+﻿using MagistradosWpfApp.Model;
 using System.Collections.ObjectModel;
 using System.Windows;
 using Utils;

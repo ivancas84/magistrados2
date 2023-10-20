@@ -1,4 +1,4 @@
-﻿using MagistradosWpfApp.Data;
+﻿using MagistradosWpfApp.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
