@@ -107,7 +107,6 @@ namespace SqlOrganize
             for (var i = 0; i < parameters.Count; i++)
             {
                 var list = parameters[i] as IList;
-
                 int j = 0;
                 List<Tuple<string, object>> _parameters = new();
                 if (list != null)
