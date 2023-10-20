@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics.Metrics;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using Utils;
+﻿using Utils;
 
 namespace SqlOrganize
 {
@@ -72,7 +64,7 @@ namespace SqlOrganize
                 sql += @"WHERE " + idMap + " IN (@" + count + @");
 ";
                 count++;
-                parameters.Add(ids);
+                parameters.Add(ids.ToList());
 
                 foreach (var id in ids)
                     detail.Add((entityName!, id));
