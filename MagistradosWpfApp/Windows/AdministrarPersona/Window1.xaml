@@ -235,7 +235,13 @@
                     <DataGrid.Columns>
 
                         <DataGridTextColumn Header="Motivo" Binding="{Binding motivo}"></DataGridTextColumn>                        <DataGridTextColumn Header="Estado" Binding="{Binding estado}"></DataGridTextColumn>                        <DataGridTextColumn Header="Código" Binding="{Binding codigo}"></DataGridTextColumn>                        <DataGridTextColumn Header="Departamento" Binding="{Binding departamento_judicial__nombre}"></DataGridTextColumn>                        <DataGridTextColumn Header="Organo" Binding="{Binding organo__descripcion}"></DataGridTextColumn>                        <DataGridTextColumn Header="Creado" Binding="{Binding creado, StringFormat={}{0:dd/MM/yyyy HH:mm}}"/>
-                        <DataGridTextColumn Header="Enviado" Binding="{Binding enviado, StringFormat={}{0:dd/MM/yyyy HH:mm}}"/>                        <DataGridTextColumn Header="Evaluado" Binding="{Binding evaluado, StringFormat={}{0:dd/MM/yyyy HH:mm}}"/>                        <DataGridTextColumn Header="Modificado" Binding="{Binding modificado, StringFormat={}{0:dd/MM/yyyy HH:mm}}"/>                        <DataGridTextColumn Header="Observaciones" Binding="{Binding observaciones, StringFormat={}{0:dd/MM/yyyy HH:mm}}"/>
+                        <DataGridTextColumn Header="Enviado" Binding="{Binding enviado, StringFormat={}{0:dd/MM/yyyy HH:mm}}"/>                        <DataGridTextColumn Header="Evaluado" Binding="{Binding evaluado, StringFormat={}{0:dd/MM/yyyy HH:mm}}"/>                        <DataGridTextColumn Header="Modificado" Binding="{Binding modificado, StringFormat={}{0:dd/MM/yyyy HH:mm}}"/>                        <DataGridTextColumn Header="Observaciones" Binding="{Binding observaciones, StringFormat={}{0:dd/MM/yyyy HH:mm}}"/>                        <DataGridTemplateColumn>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Click="EliminarAfiliacion_Click">Eliminar</Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
                     </DataGrid.Columns>
 
 
@@ -245,7 +251,21 @@
             <GroupBox
                 Grid.Row = "3" 
                 Header="Registro 80">
-                <DataGrid Name="tramiteExcepcionalGrid" />
+                <DataGrid Name="tramiteExcepcionalGrid" AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+
+                        <DataGridTextColumn Header="Motivo" Binding="{Binding motivo}"></DataGridTextColumn>                        <DataGridTextColumn Header="Estado" Binding="{Binding estado}"></DataGridTextColumn>                        <DataGridTextColumn Header="Código" Binding="{Binding codigo}"></DataGridTextColumn>                        <DataGridTextColumn Header="Departamento" Binding="{Binding departamento_judicial__nombre}"></DataGridTextColumn>                        <DataGridTextColumn Header="Organo" Binding="{Binding organo__descripcion}"></DataGridTextColumn>                        <DataGridTextColumn Header="Creado" Binding="{Binding creado, StringFormat={}{0:dd/MM/yyyy HH:mm}}"/>
+                        <DataGridTextColumn Header="Enviado" Binding="{Binding enviado, StringFormat={}{0:dd/MM/yyyy HH:mm}}"/>                        <DataGridTextColumn Header="Evaluado" Binding="{Binding evaluado, StringFormat={}{0:dd/MM/yyyy HH:mm}}"/>                        <DataGridTextColumn Header="Modificado" Binding="{Binding modificado, StringFormat={}{0:dd/MM/yyyy HH:mm}}"/>                        <DataGridTextColumn Header="Desde" Binding="{Binding desde, StringFormat={}{0:dd/MM/yyyy}}"/>                        <DataGridTextColumn Header="Hasta" Binding="{Binding hasta, StringFormat={}{0:dd/MM/yyyy}}"/>                        <DataGridTextColumn Header="Monto" Binding="{Binding monto}"/>                        <DataGridTextColumn Header="Observaciones" Binding="{Binding observaciones, StringFormat={}{0:dd/MM/yyyy HH:mm}}"/>                        <DataGridTemplateColumn>
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Click="EliminarTramiteExcepcional_Click">Eliminar</Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+
+
+                </DataGrid>
             </GroupBox>
         </Grid>
     </ScrollViewer>

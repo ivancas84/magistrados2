@@ -1,4 +1,5 @@
 ﻿using MagistradosWpfApp.Model;
+using SqlOrganize;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -95,8 +96,48 @@ namespace MagistradosWpfApp.Windows.AdministrarPersona
         {
             try {
 
+
                 ContainerApp.db.Persist("persona").Persist(persona.Dict()).Exec().RemoveCache();
                 MessageBox.Show("Registro guardado");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void EliminarAfiliacion_Click(object sender, RoutedEventArgs e)
+        {
+            var button = (e.OriginalSource as Button);
+            var afiliacion = (Data_afiliacion_r)button.DataContext;
+            if (afiliacion.estado != "Creado")
+            {
+                MessageBox.Show("Solo pueden eliminarse registros con estado 'Creado'");
+                return;
+            }
+            try { 
+                ContainerApp.db.Persist("afiliacion").DeleteIds(new object[]{ afiliacion.id! }).Exec().RemoveCache();
+                afiliacionData.Remove(afiliacion);
+
+            } catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void EliminarTramiteExcepcional_Click(object sender, RoutedEventArgs e)
+        {
+            var button = (e.OriginalSource as Button);
+            var te = (Data_tramite_excepcional_r)button.DataContext;
+            if (te.estado != "Creado")
+            {
+                MessageBox.Show("Solo pueden eliminarse registros con estado 'Creado'");
+                return;
+            }
+            try
+            {
+                ContainerApp.db.Persist("afiliacion").DeleteIds(new object[] { te.id! }).Exec().RemoveCache();
+                tramiteExcepcionalData.Remove(te);
             }
             catch (Exception ex)
             {
