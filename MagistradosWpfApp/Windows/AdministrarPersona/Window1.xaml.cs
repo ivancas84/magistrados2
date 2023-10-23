@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using Utils;
+using WpfUtils;
 
 namespace MagistradosWpfApp.Windows.AdministrarPersona
 {
@@ -31,9 +32,43 @@ namespace MagistradosWpfApp.Windows.AdministrarPersona
             DataContext = persona;
 
             afiliacionGrid.ItemsSource = afiliacionData;
+            afiliacionGrid.CellEditEnding += AfiliacionGrid_CellEditEnding;
+
             tramiteExcepcionalGrid.ItemsSource = tramiteExcepcionalData;
         }
 
+        private void AfiliacionGrid_CellEditEnding(object? sender, DataGridCellEditEndingEventArgs e)
+        {
+            if (e.EditAction != DataGridEditAction.Commit)
+                return;
+
+            var result = e.GetKeyAndValue();
+            string key = result.key;
+            object? value = result.value;
+            IDictionary<string, object?> source = e.Row.DataContext.Dict();
+            string? fieldId = null;
+            string entityName = "afiliacion";
+            string fieldName = key;
+
+            if (key.Contains("__"))
+                (fieldId, fieldName, entityName) = ContainerApp.db.KeyDeconstruction(entityName, key);
+
+            EntityValues v = ContainerApp.db.Values(entityName, fieldId).Set(source);
+            if (!v.GetOrNull(fieldName).IsNullOrEmptyOrDbNull() && v.values[fieldName]!.Equals(value))
+                return;
+
+            v.Sset(fieldName, value);
+            IDictionary<string, object>? row = ContainerApp.dao.RowByUniqueFieldOrValues(fieldName, v);
+            if (!row.IsNullOrEmpty()) //con el nuevo valor ingresados se obtuvo un nuevo campo unico, no se realiza persistencia y se cambian los valores para reflejar el nuevo valor consultado
+            {
+                v.Set(row);
+                (e.Row.Item as Data_afiliacion_r).CopyValues<Data_afiliacion_r>(v.Get().Obj<Data_afiliacion_r>());
+            }
+            else
+            {
+                e.Row.Item.SetPropertyValue(fieldName, v.Get(fieldName));
+            }
+        }
 
         private void PersonaSearchList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -109,15 +144,11 @@ namespace MagistradosWpfApp.Windows.AdministrarPersona
         private void EliminarAfiliacion_Click(object sender, RoutedEventArgs e)
         {
             var button = (e.OriginalSource as Button);
-            var afiliacion = (Data_afiliacion_r)button.DataContext;
-            if (afiliacion.estado != "Creado")
-            {
-                MessageBox.Show("Solo pueden eliminarse registros con estado 'Creado'");
-                return;
-            }
-            try { 
-                ContainerApp.db.Persist("afiliacion").DeleteIds(new object[]{ afiliacion.id! }).Exec().RemoveCache();
-                afiliacionData.Remove(afiliacion);
+            var a = (Data_afiliacion_r)button.DataContext;
+            try {
+                if (!a.id.IsNullOrEmpty())
+                    ContainerApp.db.Persist("afiliacion").DeleteIds(new object[]{ a.id! }).Exec().RemoveCache();
+                afiliacionData.Remove(a);
 
             } catch(Exception ex)
             {
@@ -129,14 +160,10 @@ namespace MagistradosWpfApp.Windows.AdministrarPersona
         {
             var button = (e.OriginalSource as Button);
             var te = (Data_tramite_excepcional_r)button.DataContext;
-            if (te.estado != "Creado")
-            {
-                MessageBox.Show("Solo pueden eliminarse registros con estado 'Creado'");
-                return;
-            }
             try
             {
-                ContainerApp.db.Persist("afiliacion").DeleteIds(new object[] { te.id! }).Exec().RemoveCache();
+                if(!te.id.IsNullOrEmpty())
+                    ContainerApp.db.Persist("tramite_excepcional").DeleteIds(new object[] { te.id! }).Exec().RemoveCache();
                 tramiteExcepcionalData.Remove(te);
             }
             catch (Exception ex)
@@ -144,5 +171,97 @@ namespace MagistradosWpfApp.Windows.AdministrarPersona
                 MessageBox.Show(ex.Message);
             }
         }
+
+        private void AgregarAfiliacion_Click(object sender, RoutedEventArgs e)
+        {
+            var a = new Data_afiliacion_r();
+            a.persona = persona.id;
+            afiliacionData.Add(a);
+        }
+
+        private void GuardarAfiliacion_Click(object sender, RoutedEventArgs e)
+        {
+            var button = (e.OriginalSource as Button);
+            var afiliacion = (Data_afiliacion_r)button.DataContext;
+            var p = ContainerApp.db.Persist("afiliacion");
+            try
+            {
+                p.Persist(afiliacion.Dict()).Exec().RemoveCache();
+                MessageBox.Show("Registro realizado");
+            } 
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
     }
+
+    public class DepartamentoData
+    {
+        public ObservableCollection<Data_departamento_judicial> Departamentos()
+        {
+            ObservableCollection<Data_departamento_judicial> response = new ();
+            var data = ContainerApp.db.Query("departamento_judicial").Size(0).Order("$nombre ASC").ColOfDictCache();
+            response.Clear();
+            response.AddRange(data);
+            return response;
+        }
+    }
+
+    public class OrganoData
+    {
+        public ObservableCollection<Data_organo> Organos()
+        {
+            ObservableCollection<Data_organo> response = new();
+            var data = ContainerApp.db.Query("organo").Size(0).Order("descripcion ASC").ColOfDictCache();
+            response.Clear();
+            response.AddRange(data);
+            return response;
+        }
+    }
+
+    public class EstadoData
+    {
+        public ObservableCollection<string> Estados()
+        {
+            return new()
+            {
+                "Creado",
+                "Enviado",
+                "Aprobado",
+                "Rechazado",
+            };
+        }
+    }
+
+    public class CodigoData
+    {
+        public ObservableCollection<Int32> Codigos()
+        {
+            return new()
+            {
+                161,
+                162,
+                1621,
+                1622,
+            };
+        }
+    }
+
+    public class MotivoData
+    {
+        public ObservableCollection<string> Motivos()
+        {
+            return new()
+            {
+                "Alta",
+                "Baja",
+                "Pendiente",
+            };
+        }
+    }
+
+
+
+
 }
