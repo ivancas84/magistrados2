@@ -17,6 +17,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MagistradosWpfApp", "Magist
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MagistradosConsoleApp", "MagistradosConsoleApp\MagistradosConsoleApp.csproj", "{3198BBCD-C948-453E-B6F4-EE96D3F9E62C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MagistradosApp", "MagistradosApp\MagistradosApp.csproj", "{0F816AB7-6847-47F0-932F-F564C70AFC29}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MagistradosApp.Core", "MagistradosApp.Core\MagistradosApp.Core.csproj", "{54749BB0-8B86-4594-AB97-E5CF076EC196}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +55,14 @@ Global
 		{3198BBCD-C948-453E-B6F4-EE96D3F9E62C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3198BBCD-C948-453E-B6F4-EE96D3F9E62C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3198BBCD-C948-453E-B6F4-EE96D3F9E62C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F816AB7-6847-47F0-932F-F564C70AFC29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F816AB7-6847-47F0-932F-F564C70AFC29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F816AB7-6847-47F0-932F-F564C70AFC29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F816AB7-6847-47F0-932F-F564C70AFC29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54749BB0-8B86-4594-AB97-E5CF076EC196}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54749BB0-8B86-4594-AB97-E5CF076EC196}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54749BB0-8B86-4594-AB97-E5CF076EC196}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54749BB0-8B86-4594-AB97-E5CF076EC196}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

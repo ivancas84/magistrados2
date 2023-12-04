@@ -1,0 +1,480 @@
+{
+  "afiliacion": {
+    "name": "afiliacion",
+    "alias": "afil",
+    "schema": null,
+    "pk": [
+      "id"
+    ],
+    "fields": [
+      "id",
+      "motivo",
+      "estado",
+      "creado",
+      "enviado",
+      "evaluado",
+      "modificado",
+      "observaciones",
+      "persona",
+      "codigo",
+      "departamento_judicial",
+      "organo",
+      "departamento_judicial_informado"
+    ],
+    "fk": [],
+    "orderDefault": {},
+    "noAdmin": [],
+    "unique": [],
+    "notNull": [
+      "id",
+      "motivo",
+      "estado",
+      "creado",
+      "persona"
+    ],
+    "uniqueMultiple": [],
+    "id": [
+      "id"
+    ],
+    "tree": {},
+    "relations": {}
+  },
+  "cargo": {
+    "name": "cargo",
+    "alias": "carg",
+    "schema": null,
+    "pk": [
+      "id"
+    ],
+    "fields": [
+      "id",
+      "descripcion"
+    ],
+    "fk": [],
+    "orderDefault": {},
+    "noAdmin": [],
+    "unique": [
+      "descripcion"
+    ],
+    "notNull": [
+      "id",
+      "descripcion"
+    ],
+    "uniqueMultiple": [],
+    "id": [
+      "id"
+    ],
+    "tree": {},
+    "relations": {}
+  },
+  "codigo_departamento": {
+    "name": "codigo_departamento",
+    "alias": "codi",
+    "schema": null,
+    "pk": [
+      "id"
+    ],
+    "fields": [
+      "id",
+      "codigo",
+      "departamento_judicial",
+      "organo"
+    ],
+    "fk": [],
+    "orderDefault": {},
+    "noAdmin": [],
+    "unique": [],
+    "notNull": [
+      "id",
+      "codigo",
+      "departamento_judicial",
+      "organo"
+    ],
+    "uniqueMultiple": [],
+    "id": [
+      "id"
+    ],
+    "tree": {},
+    "relations": {}
+  },
+  "configuracion_valor": {
+    "name": "configuracion_valor",
+    "alias": "conf",
+    "schema": null,
+    "pk": [
+      "id"
+    ],
+    "fields": [
+      "desde",
+      "valor",
+      "creado",
+      "id",
+      "nombre"
+    ],
+    "fk": [],
+    "orderDefault": {},
+    "noAdmin": [],
+    "unique": [],
+    "notNull": [
+      "desde",
+      "valor",
+      "creado",
+      "id",
+      "nombre"
+    ],
+    "uniqueMultiple": [],
+    "id": [
+      "id"
+    ],
+    "tree": {},
+    "relations": {}
+  },
+  "departamento_judicial": {
+    "name": "departamento_judicial",
+    "alias": "depa",
+    "schema": null,
+    "pk": [
+      "id"
+    ],
+    "fields": [
+      "id",
+      "nombre"
+    ],
+    "fk": [],
+    "orderDefault": {},
+    "noAdmin": [],
+    "unique": [],
+    "notNull": [
+      "id"
+    ],
+    "uniqueMultiple": [],
+    "id": [
+      "id"
+    ],
+    "tree": {},
+    "relations": {}
+  },
+  "file": {
+    "name": "file",
+    "alias": "file",
+    "schema": null,
+    "pk": [
+      "id"
+    ],
+    "fields": [
+      "id",
+      "name",
+      "type",
+      "content",
+      "size",
+      "created"
+    ],
+    "fk": [],
+    "orderDefault": {},
+    "noAdmin": [],
+    "unique": [],
+    "notNull": [
+      "id",
+      "name",
+      "type",
+      "content",
+      "size",
+      "created"
+    ],
+    "uniqueMultiple": [],
+    "id": [
+      "id"
+    ],
+    "tree": {},
+    "relations": {}
+  },
+  "importe_afiliacion": {
+    "name": "importe_afiliacion",
+    "alias": "impo",
+    "schema": null,
+    "pk": [
+      "id"
+    ],
+    "fields": [
+      "id",
+      "creado",
+      "afiliacion",
+      "valor",
+      "periodo"
+    ],
+    "fk": [],
+    "orderDefault": {},
+    "noAdmin": [],
+    "unique": [],
+    "notNull": [
+      "id",
+      "creado",
+      "afiliacion",
+      "valor",
+      "periodo"
+    ],
+    "uniqueMultiple": [],
+    "id": [
+      "id"
+    ],
+    "tree": {},
+    "relations": {}
+  },
+  "importe_tramite_excepcional": {
+    "name": "importe_tramite_excepcional",
+    "alias": "imp1",
+    "schema": null,
+    "pk": [
+      "id"
+    ],
+    "fields": [
+      "id",
+      "creado",
+      "tramite_excepcional",
+      "valor",
+      "periodo"
+    ],
+    "fk": [],
+    "orderDefault": {},
+    "noAdmin": [],
+    "unique": [],
+    "notNull": [
+      "id",
+      "creado",
+      "tramite_excepcional",
+      "valor",
+      "periodo"
+    ],
+    "uniqueMultiple": [],
+    "id": [
+      "id"
+    ],
+    "tree": {},
+    "relations": {}
+  },
+  "log": {
+    "name": "log",
+    "alias": "log",
+    "schema": null,
+    "pk": [
+      "id"
+    ],
+    "fields": [
+      "id",
+      "type",
+      "description",
+      "user",
+      "created"
+    ],
+    "fk": [],
+    "orderDefault": {},
+    "noAdmin": [],
+    "unique": [],
+    "notNull": [
+      "id",
+      "created"
+    ],
+    "uniqueMultiple": [],
+    "id": [
+      "id"
+    ],
+    "tree": {},
+    "relations": {}
+  },
+  "organo": {
+    "name": "organo",
+    "alias": "orga",
+    "schema": null,
+    "pk": [
+      "id"
+    ],
+    "fields": [
+      "id",
+      "descripcion"
+    ],
+    "fk": [],
+    "orderDefault": {},
+    "noAdmin": [],
+    "unique": [],
+    "notNull": [
+      "id",
+      "descripcion"
+    ],
+    "uniqueMultiple": [],
+    "id": [
+      "id"
+    ],
+    "tree": {},
+    "relations": {}
+  },
+  "persona": {
+    "name": "persona",
+    "alias": "pers",
+    "schema": null,
+    "pk": [
+      "id"
+    ],
+    "fields": [
+      "id",
+      "nombres",
+      "apellidos",
+      "legajo",
+      "numero_documento",
+      "telefono_laboral",
+      "telefono_particular",
+      "fecha_nacimiento",
+      "email",
+      "tribunal",
+      "creado",
+      "eliminado",
+      "cargo",
+      "tipo_documento"
+    ],
+    "fk": [],
+    "orderDefault": {},
+    "noAdmin": [],
+    "unique": [
+      "numero_documento"
+    ],
+    "notNull": [
+      "id",
+      "legajo",
+      "creado"
+    ],
+    "uniqueMultiple": [],
+    "id": [
+      "id"
+    ],
+    "tree": {},
+    "relations": {}
+  },
+  "sucursal": {
+    "name": "sucursal",
+    "alias": "sucu",
+    "schema": null,
+    "pk": [
+      "id"
+    ],
+    "fields": [
+      "id",
+      "descripcion"
+    ],
+    "fk": [],
+    "orderDefault": {},
+    "noAdmin": [],
+    "unique": [],
+    "notNull": [
+      "id",
+      "descripcion"
+    ],
+    "uniqueMultiple": [],
+    "id": [
+      "id"
+    ],
+    "tree": {},
+    "relations": {}
+  },
+  "tipo_documento": {
+    "name": "tipo_documento",
+    "alias": "tipo",
+    "schema": null,
+    "pk": [
+      "id"
+    ],
+    "fields": [
+      "id",
+      "descripcion"
+    ],
+    "fk": [],
+    "orderDefault": {},
+    "noAdmin": [],
+    "unique": [],
+    "notNull": [
+      "id",
+      "descripcion"
+    ],
+    "uniqueMultiple": [],
+    "id": [
+      "id"
+    ],
+    "tree": {},
+    "relations": {}
+  },
+  "tramite_excepcional": {
+    "name": "tramite_excepcional",
+    "alias": "tram",
+    "schema": null,
+    "pk": [
+      "id"
+    ],
+    "fields": [
+      "id",
+      "motivo",
+      "estado",
+      "creado",
+      "enviado",
+      "evaluado",
+      "modificado",
+      "observaciones",
+      "persona",
+      "desde",
+      "hasta",
+      "monto",
+      "sucursal",
+      "codigo",
+      "departamento_judicial",
+      "organo",
+      "departamento_judicial_informado"
+    ],
+    "fk": [],
+    "orderDefault": {},
+    "noAdmin": [],
+    "unique": [],
+    "notNull": [
+      "id",
+      "motivo",
+      "estado",
+      "creado",
+      "persona",
+      "sucursal"
+    ],
+    "uniqueMultiple": [],
+    "id": [
+      "id"
+    ],
+    "tree": {},
+    "relations": {}
+  },
+  "viatico": {
+    "name": "viatico",
+    "alias": "viat",
+    "schema": null,
+    "pk": [
+      "id"
+    ],
+    "fields": [
+      "id",
+      "creado",
+      "valor",
+      "periodo",
+      "departamento_judicial"
+    ],
+    "fk": [],
+    "orderDefault": {},
+    "noAdmin": [],
+    "unique": [],
+    "notNull": [
+      "id",
+      "creado",
+      "valor",
+      "periodo",
+      "departamento_judicial"
+    ],
+    "uniqueMultiple": [],
+    "id": [
+      "id"
+    ],
+    "tree": {},
+    "relations": {}
+  }
+}

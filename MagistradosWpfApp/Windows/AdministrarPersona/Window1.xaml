@@ -6,13 +6,6 @@
         xmlns:local="clr-namespace:MagistradosWpfApp.Windows.AdministrarPersona"
         mc:Ignorable="d"
         Title="Window1" Height="450" Width="800">
-    <Window.Resources>
-        <ObjectDataProvider x:Key="organos" ObjectType="{x:Type local:OrganoData}" MethodName="Organos" />
-        <ObjectDataProvider x:Key="departamentos" ObjectType="{x:Type local:DepartamentoData}" MethodName="Departamentos" />
-        <ObjectDataProvider x:Key="motivos" ObjectType="{x:Type local:MotivoData}" MethodName="Motivos" />
-        <ObjectDataProvider x:Key="codigos" ObjectType="{x:Type local:CodigoData}" MethodName="Codigos" />
-        <ObjectDataProvider x:Key="estados" ObjectType="{x:Type local:EstadoData}" MethodName="Estados" />
-    </Window.Resources>
     
     <ScrollViewer ScrollViewer.HorizontalScrollBarVisibility="Auto">
         
