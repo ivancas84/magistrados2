@@ -32,7 +32,7 @@ namespace SqlOrganizeMy
             return reader.ColOfObj<T>();
         }
 
-        public override Dictionary<string, object> Dict()
+        public override Dictionary<string, object?>? Dict()
         {
             using MySqlConnection connection = new(db.config.connectionString);
             using MySqlCommand command = new();
@@ -41,7 +41,7 @@ namespace SqlOrganizeMy
             return reader.SerializeRow();
         }
 
-        public override T Obj<T>()
+        public override T? Obj<T>() where T : class
         {
             using MySqlConnection connection = new(db.config.connectionString);
             using MySqlCommand command = new();
@@ -50,7 +50,7 @@ namespace SqlOrganizeMy
             return reader.Obj<T>();
         }
 
-        public override List<T> Column<T>(string columnName)
+        public override IEnumerable<T> Column<T>(string columnName)
         {
             using MySqlConnection connection = new(db.config.connectionString);
             using MySqlCommand command = new();
@@ -59,7 +59,7 @@ namespace SqlOrganizeMy
             return reader.ColumnValues<T>(columnName);
         }
 
-        public override List<T> Column<T>(int columnNumber = 0)
+        public override IEnumerable<T> Column<T>(int columnNumber = 0)
         {
             using MySqlConnection connection = new(db.config.connectionString);
             using MySqlCommand command = new();

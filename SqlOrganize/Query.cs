@@ -51,11 +51,11 @@ namespace SqlOrganize
         /// </summary>
         /// <returns>Resultado como List -Dictionary -string, object- -</returns>
         /// <remarks>Convert the result to json with "JsonConvert.SerializeObject(data, Formatting.Indented)"</remarks>
-        public abstract IEnumerable<Dictionary<string, object>> ColOfDict();
+        public abstract IEnumerable<Dictionary<string, object?>> ColOfDict();
 
         public abstract IEnumerable<T> ColOfObj<T>() where T : class, new();
 
-        public abstract IDictionary<string, object> Dict();
+        public abstract IDictionary<string, object>? Dict();
         public abstract T Obj<T>() where T : class, new();
 
         public abstract IEnumerable<T> Column<T>(string columnName);

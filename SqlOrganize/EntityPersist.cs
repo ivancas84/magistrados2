@@ -112,7 +112,7 @@ WHERE " + id + " = @" + count + @";
             return this;
         }
 
-        public EntityPersist UpdateIds(Dictionary<string, object> row, IEnumerable<object> ids, string? _entityName = null)
+        public EntityPersist UpdateIds(Dictionary<string, object?> row, IEnumerable<object> ids, string? _entityName = null)
         {
             _entityName = _entityName ?? entityName;
 
@@ -170,9 +170,9 @@ WHERE " + id + " = @" + count + @";
         /// <param name="id">Identificacion de la fila a actualizar</param>
         /// <param name="_entityName">Nombre de la entidad, si no se especifica se toma el atributo</param>
         /// <returns>Mismo objeto</returns>
-        public EntityPersist UpdateValue(string key, object value, IEnumerable<object> ids, string? _entityName = null)
+        public EntityPersist UpdateValue(string key, object? value, IEnumerable<object> ids, string? _entityName = null)
         {
-            Dictionary<string, object> row = new Dictionary<string, object>()
+            Dictionary<string, object?> row = new Dictionary<string, object?>()
             {
                 { key, value }
             };
@@ -205,7 +205,7 @@ WHERE " + id + " = @" + count + @";
         /// <param name="source">Fuente con todos los valores sin actualizar</param>
         /// <param name="_entityName">Opcional nombre de la entidad, si no existe toma el atributo</param>
         /// <returns>Mismo objeto</returns>
-        public EntityPersist UpdateValueRel(string key, object value, Dictionary<string, object> source, string? _entityName = null)
+        public EntityPersist UpdateValueRel(string key, object? value, IDictionary<string, object?> source, string? _entityName = null)
         {
             _entityName = _entityName ?? entityName;
             string idKey = Db.config.id;
@@ -218,8 +218,14 @@ WHERE " + id + " = @" + count + @";
                 key = key.Substring(indexSeparator + "__".Length); //se suma la cantidad de caracteres del separador
             }
 
-            List<object> ids = new() { source[idKey] };
+            List<object> ids = new() { source[idKey]! };
             return UpdateValue(key, value, ids, _entityName);
+        }
+
+        public EntityPersist InsertObj(object obj, string? entityName = null)
+        {
+            IDictionary<string, object?> dict = obj.Dict();
+            return Insert(dict, entityName);
         }
 
         public EntityPersist Insert(EntityValues v)
@@ -236,7 +242,7 @@ WHERE " + id + " = @" + count + @";
         /// <param name="_entityName"></param>
         /// <returns></returns>
         /// <remarks>Debe estar definido el id</remarks>
-        public EntityPersist Insert(IDictionary<string, object> row, string? _entityName = null)
+        public EntityPersist Insert(IDictionary<string, object?> row, string? _entityName = null)
         {
             _entityName = _entityName ?? entityName;
 
@@ -274,6 +280,14 @@ VALUES (";
         {
             return sql;
         }
+        
+
+        public EntityPersist PersistObj(object obj)
+        {
+            IDictionary<string, object?> row = obj.Dict();
+            return Persist(row);
+        }
+
 
         /// <summary>
         /// Verifica existencia de valor unico en base a la configuracion de la entidad
@@ -312,8 +326,9 @@ VALUES (";
 
             if (rows.Count() == 1)
             {
-                if (v.values.ContainsKey(Db.config.id) && v.Get(Db.config.id).ToString() != rows.ElementAt(0)[Db.config.id].ToString())
-                    throw new Exception("Los id son diferentes");
+                //Se controla la existencia de id diferente?
+                //if (v.values.ContainsKey(Db.config.id) && v.Get(Db.config.id).ToString() != rows.ElementAt(0)[Db.config.id].ToString())
+                //    throw new Exception("Los id son diferentes");
 
                 v.Set(Db.config.id, rows.ElementAt(0)[Db.config.id]).Reset().Check();
                 if (v.logging.HasErrors())

@@ -1,10 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Xml;
 using Utils;
 
 namespace ModelOrganize
@@ -24,13 +18,13 @@ namespace ModelOrganize
         {
             f.checks = new()
                     {
-                        { "type", f.dataType },
+                        { "type", f.type },
                     };
 
             if (f.notNull)
                 f.checks["required"] = true;
 
-            if (f.dataType == "string")
+            if (f.type == "string")
             {
                 f.resets = new()
                         {
@@ -41,10 +35,10 @@ namespace ModelOrganize
                     f.resets["nullIfEmpty"] = true;
             }
 
-            if (f.dataType == "bool" && f.defaultValue is not null)
+            if (f.type == "bool" && f.defaultValue is not null)
                 f.defaultValue = ((string)f.defaultValue).ToBool();
 
-            if (f.dataType == "string" && f.defaultValue is not null)
+            if (f.type == "string" && f.defaultValue is not null)
                 f.defaultValue = f.defaultValue.ToString()!.Trim('\'');
         }
 
@@ -55,6 +49,7 @@ namespace ModelOrganize
             else if (!c.MAX_LENGTH.IsNullOrEmpty() && !c.MAX_LENGTH.IsDbNull())
                 f.maxLength = Convert.ToUInt64(c.MAX_LENGTH)!;
 
+            f.dataType = c.DATA_TYPE;
             switch (c.DATA_TYPE)
             {
                 case "varchar":
@@ -63,50 +58,51 @@ namespace ModelOrganize
                 case "nvarchar":
                 case "text":
                 case "mediumtext":
-                    f.dataType = "string";
+                case "tinytext":
+                case "longtext":
+                    f.type = "string";
                     break;
                 case "real":
-                    f.dataType = "float";
+                    f.type = "float";
                     break;
                 case "bit":
-                    f.dataType = "bool";
+                    f.type = "bool";
                     break;
 
                 case "datetime":
                 case "timestamp":
                 case "date":
                 case "time":
-                    f.dataType = "DateTime";
+                    f.type = "DateTime";
                     break;
 
                 case "smallint":
                 case "year":
-                    f.dataType = (c.IS_UNSIGNED == 1) ? "ushort" : "short";
+                    f.type = (c.IS_UNSIGNED == 1) ? "ushort" : "short";
                     break;
 
                 case "int":
-                    f.dataType = (c.IS_UNSIGNED == 1) ? "uint" : "int";
+                case "mediumint":
+                    f.type = (c.IS_UNSIGNED == 1) ? "uint" : "int";
                     break;
 
                 case "tinyint":
                     if (f.maxLength == 1)
-                        f.dataType = "bool";
-                    else if (c.IS_UNSIGNED == 1)
-                        f.dataType = "ubyte";
+                        f.type = "bool";
                     else
-                        f.dataType = "byte";
+                        f.type = "byte";
                     break;
 
                 case "bigint":
-                    f.dataType = (c.IS_UNSIGNED == 1) ? "ulong" : "long";
+                    f.type = (c.IS_UNSIGNED == 1) ? "ulong" : "long";
                     break;
 
                 case "uniqueidentifier":
-                    f.dataType = "Guid";
+                    f.type = "Guid";
                     break;
 
                 default:
-                    f.dataType = c.DATA_TYPE!;
+                    f.type = c.DATA_TYPE!;
                     break;
             }
 
@@ -308,7 +304,7 @@ namespace ModelOrganize
                             {
                                 if (fields[entityName].ContainsKey(e.Key))
                                 {
-                                    fields[entityName][e.Key].CopyValues(e.Value);
+                                    fields[entityName][e.Key].CopyValues(e.Value, targetNull:false, sourceNotNull:true, compareNotNull:false);
 
                                     resetField(fields[entityName][e.Key]);
 
@@ -391,7 +387,7 @@ namespace ModelOrganize
             return aliasAux;
         }
 
-        protected abstract List<String> GetTableNames();
+        protected abstract List<string> GetTableNames();
 
         protected abstract List<Column> GetColumns(string tableName);
 
@@ -488,34 +484,32 @@ namespace ModelOrganize
             if (!Directory.Exists(Config.dataClassesPath))
                 Directory.CreateDirectory(Config.dataClassesPath);
 
-            foreach(var (entityName, entity) in entities)
+            foreach (var (entityName, entity) in entities)
             {
                 using StreamWriter sw = File.CreateText(Config.dataClassesPath + entityName + ".cs");
+                sw.WriteLine("#nullable enable");
                 sw.WriteLine("using SqlOrganize;");
                 sw.WriteLine("using System;");
                 sw.WriteLine("using System.ComponentModel;");
+                sw.WriteLine("using System.Collections.Generic;");
+                sw.WriteLine("using System.Reflection;");
+                sw.WriteLine("using Utils;");
                 sw.WriteLine("");
                 sw.WriteLine("namespace " + Config.dataClassesNamespace);
                 sw.WriteLine("{");
-                sw.WriteLine("    public class Data_"+ entityName + " : INotifyPropertyChanged");
+                sw.WriteLine("    public class Data_" + entityName + " : SqlOrganize.Data");
                 sw.WriteLine("    {");
-
                 sw.WriteLine("");
-
                 sw.WriteLine("        public Data_" + entityName + " ()");
                 sw.WriteLine("        {");
                 sw.WriteLine("            Initialize();");
                 sw.WriteLine("        }");
-
                 sw.WriteLine("");
-
                 sw.WriteLine("        public Data_" + entityName + "(DataInitMode mode = DataInitMode.Default)");
                 sw.WriteLine("        {");
                 sw.WriteLine("            Initialize(mode);");
                 sw.WriteLine("        }");
-
                 sw.WriteLine("");
-
                 sw.WriteLine("        protected virtual void Initialize(DataInitMode mode = DataInitMode.Default)");
                 sw.WriteLine("        {");
                 sw.WriteLine("            switch(mode)");
@@ -527,7 +521,7 @@ namespace ModelOrganize
                 {
                     if (field.defaultValue != null)
                     {
-                        string df = "(" + field.dataType + "?)ContainerApp.db.Values(\"" + entityName + "\").Default(\"" + fieldName + "\").Get(\"" + fieldName + "\")";
+                        string df = "(" + field.type + "?)ContainerApp.db.Values(\"" + entityName + "\").Default(\"" + fieldName + "\").Get(\"" + fieldName + "\")";
                         sw.WriteLine("                    _" + fieldName + " = " + df + ";");
                     }
                 }
@@ -541,35 +535,76 @@ namespace ModelOrganize
                 sw.WriteLine("        public string? Label { get; set; }");
                 sw.WriteLine("");
 
-                foreach (var (fieldName, field) in fields[entityName])
+                Dictionary<string, Field> _fields = new(fields[entityName]);
+                if (!_fields.ContainsKey(Config.id))
                 {
-                    sw.WriteLine("        protected " + field.dataType + "? _" + fieldName + " = null;");
-                    sw.WriteLine("        public " + field.dataType + "? " + fieldName);
+                    Field _Id = new Field()
+                    {
+                        entityName = entityName,
+                        name = Config.id,
+                        type = "string"
+                    };
+                    _fields[Config.id] = _Id;
+                }
+
+                foreach (var (fieldName, field) in _fields)
+                {
+                    sw.WriteLine("        protected " + field.type + "? _" + fieldName + " = null;");
+                    sw.WriteLine("        public " + field.type + "? " + fieldName);
                     sw.WriteLine("        {");
                     sw.WriteLine("            get { return _" + fieldName + "; }");
                     sw.WriteLine("            set { _" + fieldName + " = value; NotifyPropertyChanged(); }");
                     sw.WriteLine("        }");
                 }
 
-                sw.WriteLine("        public event PropertyChangedEventHandler? PropertyChanged;");
-                sw.WriteLine("        protected void NotifyPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] String propertyName = \"\")");
+                sw.WriteLine("        protected override string ValidateField(string columnName)");
                 sw.WriteLine("        {");
-                sw.WriteLine("            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));");
+                sw.WriteLine("");
+                sw.WriteLine("            switch (columnName)");
+                sw.WriteLine("            {");
+                sw.WriteLine("");
+                foreach (var (fieldName, field) in fields[entityName])
+                {
+                    sw.WriteLine("                case \"" + fieldName + "\":");
+
+                    if (field.notNull)
+                    {
+                        sw.WriteLine("                    if (_" + fieldName + " == null)");
+                        sw.WriteLine("                        return \"Debe completar valor.\";");
+
+                    }
+                    if (entity.unique.Contains(field.name))
+                    {
+                        sw.WriteLine("                    if (!_" + fieldName + ".IsNullOrEmptyOrDbNull()) {");
+                        sw.WriteLine("                        var row = ContainerApp.db.Query(\"" + entityName + "\").Where(\"$" + fieldName + " = @0\").Parameters(_" + fieldName + ").DictCache();");
+                        sw.WriteLine("                        if (!row.IsNullOrEmpty() && !_" + Config.id + ".ToString().Equals(row![\"" + Config.id + "\"]!.ToString()))");
+                        sw.WriteLine("                            return \"Valor existente.\";");
+                        sw.WriteLine("                    }");
+                    }
+                    sw.WriteLine("                    return \"\";");
+                    sw.WriteLine("");
+
+                }
+                sw.WriteLine("            }");
+                sw.WriteLine("");
+                sw.WriteLine("            return \"\";");
                 sw.WriteLine("        }");
                 sw.WriteLine("    }");
                 sw.WriteLine("}");
+
             }
         }
 
         public void _CreateFileDataRel()
         {
 
-            if (!Directory.Exists(Config.dataClassesPath))
-                Directory.CreateDirectory(Config.dataClassesPath);
-
             foreach (var (entityName, entity) in entities)
             {
-                using StreamWriter sw = File.CreateText(Config.dataClassesPath + entityName + "_r.cs");                
+                if (entities[entityName].relations.Count() == 0)
+                    continue;
+
+                using StreamWriter sw = File.CreateText(Config.dataClassesPath + entityName + "_r.cs");
+                sw.WriteLine("#nullable enable");
                 sw.WriteLine("using SqlOrganize;");
                 sw.WriteLine("using System;");
                 sw.WriteLine("");
@@ -600,29 +635,44 @@ namespace ModelOrganize
                 sw.WriteLine("                case DataInitMode.Default:");
 
                 foreach (var (fieldId, relation) in entities[entityName].relations)
+                {
                     foreach (var (fieldName, field) in fields[relation.refEntityName])
                         if (field.defaultValue != null)
                         {
-                            string df = "(" + field.dataType + "?)ContainerApp.db.Values(\"" + relation.refEntityName + "\").Default(\"" + fieldName + "\").Get(\"" + fieldName + "\")";
-                            sw.WriteLine("                    _" + fieldId + "__" + fieldName + " = " + df + ";");
+                            string df = "(" + field.type + "?)ContainerApp.db.Values(\"" + relation.refEntityName + "\").Default(\"" + fieldName + "\").Get(\"" + fieldName + "\")";
+                            sw.WriteLine("                    " + fieldId + "__" + fieldName + " = " + df + ";");
                         }
 
+                    
+                }
                 sw.WriteLine("                break;");
                 sw.WriteLine("            }");
                 sw.WriteLine("        }");
 
                 foreach (var (fieldId, relation) in entities[entityName].relations)
                 {
+                    var fs = "";
+
+                    if (!relation.parentId.IsNullOrEmpty())
+                        fs = relation.parentId + "__" + relation.fieldName;
+                    else
+                        fs = relation.fieldName;
+
+
                     sw.WriteLine("");
                     sw.WriteLine("        public string? " + fieldId + "__Label { get; set; }");
                     sw.WriteLine("");
                     foreach (var (fieldName, field) in fields[relation.refEntityName])
                     {
-                        sw.WriteLine("        protected " + field.dataType + "? _" + fieldId + "__" + fieldName + " = null;");
-                        sw.WriteLine("        public " + field.dataType + "? " + fieldId + "__" + fieldName);
+                        sw.WriteLine("        protected " + field.type + "? _" + fieldId + "__" + fieldName + " = null;");
+                        sw.WriteLine("        public " + field.type + "? " + fieldId + "__" + fieldName);
                         sw.WriteLine("        {");
                         sw.WriteLine("            get { return _" + fieldId + "__" + fieldName + "; }");
-                        sw.WriteLine("            set { _" + fieldId + "__" + fieldName + " = value; NotifyPropertyChanged(); }");
+                        if(fieldName != relation.refFieldName)
+                            sw.WriteLine("            set { _" + fieldId + "__" + fieldName + " = value; NotifyPropertyChanged(); }");
+                        else
+                            sw.WriteLine("            set { _" + fieldId + "__" + fieldName + " = value; _" + fs + " = value; NotifyPropertyChanged(); }");
+
                         sw.WriteLine("        }");
                     }
                 }

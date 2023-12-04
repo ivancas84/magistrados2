@@ -59,7 +59,7 @@ namespace SqlOrganize
             this.entityName = entityName;
         }
 
-        public EntityQuery WhereAnd(string w)
+        public EntityQuery And(string w)
         {
             if(where.IsNullOrEmpty())
                 where += w;
@@ -68,7 +68,7 @@ namespace SqlOrganize
             return this;
         }
 
-        public EntityQuery WhereOr(string w)
+        public EntityQuery Or(string w)
         {
             if (where.IsNullOrEmpty())
                 where += w;
@@ -83,7 +83,7 @@ namespace SqlOrganize
             return this;
         }
 
-        public EntityQuery Search<T>(T param) where T : class
+        public EntityQuery SearchObj(object param)
         {
             var d = param.Dict();
             return Search(d);
@@ -107,13 +107,18 @@ namespace SqlOrganize
                     if (!where.IsNullOrEmpty())
                         Where(" AND ");
                     Where("$"+key+" = @" + count.ToString());
-                    Parameters(value);
+                    Parameters(value!);
                     count++;
                 }
             }
             return this;
         }
 
+        public EntityQuery UniqueObj(object obj)
+        {
+            var d = obj.Dict();
+            return Unique(d);
+        }
 
         public EntityQuery Unique(EntityValues values)
         {
@@ -481,7 +486,7 @@ namespace SqlOrganize
         /// </summary>
         /// <remarks>Convert the result to json with "JsonConvert.SerializeObject(data, Formatting.Indented)</remarks>
         /// <returns></returns>
-        public IEnumerable<Dictionary<string, object>> ColOfDict()
+        public IEnumerable<Dictionary<string, object?>> ColOfDict()
         {
             var q = Db.Query();
             q.sql = Sql();
@@ -499,13 +504,21 @@ namespace SqlOrganize
             return q.ColOfObj<T>();
         }
 
-        public IDictionary<string, object> Dict()
+        public IDictionary<string, object>? Dict()
         {
             var q = Db.Query();
             q.sql = Sql();
             q.parameters.AddRange(parameters);
             q.parametersDict.Merge(parametersDict);
             return q.Dict();
+        }
+
+        public EntityValues? Values()
+        {
+            IDictionary<string, object>? dict = Dict();
+            if (dict.IsNullOrEmpty())
+                return null;
+            return Db.Values(entityName).Values(dict!);
         }
 
         public T Obj<T>() where T : class, new()
@@ -648,7 +661,7 @@ namespace SqlOrganize
         /// <param name="ids"></param>
         /// <remarks>IMPORTANTE! No devuelve relaciones!!!</remarks>
         /// <returns></returns>
-        public List<Dictionary<string, object>> _CacheByIds(IEnumerable<object> ids)
+        public List<Dictionary<string, object?>> _CacheByIds(IEnumerable<object> ids)
         {
             ids = ids.Distinct().ToArray();
 
@@ -659,7 +672,7 @@ namespace SqlOrganize
             for (var i = 0; i < ids.Count(); i++)
             {
                 object? data;
-                if (Db.Cache.TryGetValue(entityName + ids.ElementAt(i), out data))
+                if (Db.Cache!.TryGetValue(entityName + ids.ElementAt(i), out data))
                 {
                     response.Insert(i, (Dictionary<string, object>)data!);
                 }
@@ -795,9 +808,9 @@ namespace SqlOrganize
         {
             FieldsOrganize fo = new(Db, entityName, fields);
 
-            List<Dictionary<string, object>> data = _CacheByIds(ids);
+            List<Dictionary<string, object?>> data = _CacheByIds(ids);
 
-            List<Dictionary<string, object>> response = new();
+            List<Dictionary<string, object?>> response = new();
 
             for (var i = 0; i < data.Count; i++)
             {
@@ -879,7 +892,7 @@ namespace SqlOrganize
             if (!Db.Entity(entityName).relations.IsNullOrEmpty())
                 EntityCacheRecursive(Db.Entity(entityName).relations!, row);
 
-            Db.Cache.Set(entityName + row[Db.config.id].ToString(), row);
+            Db.Cache!.Set(entityName + row[Db.config.id].ToString(), row);
             return row;
         }
 

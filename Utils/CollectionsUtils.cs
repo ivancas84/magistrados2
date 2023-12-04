@@ -21,7 +21,7 @@ namespace Utils
         /// <param name="target"></param>
         /// <param name="source"></param>
         /// <remarks>https://stackoverflow.com/questions/8702603/merging-two-objects-in-c-sharp</remarks>
-        public static void CopyValues<T>(this T target, T source, bool targetNotNull = true, bool sourceNotNull = false)
+        public static void CopyValues<T>(this T target, T source, bool targetNull = true, bool sourceNotNull = false)
         {
             Type t = typeof(T);
 
@@ -29,13 +29,17 @@ namespace Utils
 
             foreach (var prop in properties)
             {
-                if (sourceNotNull && !prop.GetValue(source, null).IsNullOrEmpty())
+                var propT = target.GetType().GetProperty(prop.Name);
+                var valorTarget = propT!.GetValue(target, null);
+                var valorSource = prop.GetValue(source, null);
+
+                if (sourceNotNull && valorSource == null)
                     continue;
 
-                var value = prop.GetValue(source, null);
+                if (targetNull && valorTarget != null)
+                    continue;
 
-                if (targetNotNull && !value.IsNullOrEmpty())
-                    prop.SetValue(target, value, null);
+                prop.SetValue(target, valorSource, null);
             }
         }
 
@@ -46,7 +50,13 @@ namespace Utils
         /// <typeparam name="W"></typeparam>
         /// <param name="target"></param>
         /// <param name="source"></param>
-        public static void CopyValues<T, W>(this T target, W source, bool targetNotNull = true, bool sourceNotNull = false, bool compareNotNull = false)
+        /// <param name="targetNull">La copia se realiza solamente si el campo del target es null</param>
+        /// <param name="sourceNotNull">La copia se realiza solamente si el campo del surce es not null</param>
+        /// <param name="compareNotNull">Se realiza comparacion de valores no nulos, si son distintos, dispara excepcion</param>
+
+
+
+        public static void CopyValues<T, W>(this T target, W source, bool targetNull = true, bool sourceNotNull = false, bool compareNotNull = false)
         {
             Type t = typeof(W);
 
@@ -55,16 +65,20 @@ namespace Utils
             foreach (var prop in properties)
             {
                 var propT = target.GetType().GetProperty(prop.Name);
+                var valorTarget = propT!.GetValue(target, null);
+                var valorSource = prop.GetValue(source, null);
+
                 if (
                     propT.IsNullOrEmpty() || (
-                        targetNotNull
-                        && !propT!.GetValue(target, null).IsNullOrEmpty()
+                        targetNull
+                        && (valorTarget != null)
                     )
                 )
                     continue;
 
-                if (compareNotNull && !prop.GetValue(source, null).IsNullOrEmpty() && !propT!.GetValue(target, null).IsNullOrEmpty())
-                    if (!prop!.GetValue(source, null)!.ToString()!.Equals(propT!.GetValue(target, null)!.ToString()))
+
+                if (compareNotNull && valorSource != null && valorTarget != null)
+                    if (!valorSource.ToString()!.Equals(valorTarget.ToString()))
                         throw new Exception("Valores diferentes");
 
                 var value = prop.GetValue(source, null);
@@ -189,17 +203,15 @@ namespace Utils
             return results;
         }
 
-        public static T Obj<T>(this IDictionary<string, object?> source) where T : class, new()
+        public static void SetData(this object someObject, IDictionary<string, object?> source)
         {
-            var someObject = new T();
             var someObjectType = someObject.GetType();
 
             foreach (var item in source)
             {
                 string fieldName = item.Key.Replace("-", "__");
-
-                if(someObjectType.GetProperty(fieldName) != null)
-                    if (item.Value != System.DBNull.Value)
+                if (someObjectType.GetProperty(fieldName) != null)
+                    if (!item.Value.IsNullOrEmptyOrDbNull())
                         someObjectType
                             .GetProperty(fieldName)!
                             .SetValue(someObject, item.Value, null);
@@ -208,18 +220,35 @@ namespace Utils
                             .GetProperty(fieldName)!
                             .SetValue(someObject, null, null);
             }
+        }
 
+        public static T Obj<T>(this IDictionary<string, object?> source) where T : class, new()
+        {
+            var someObject = new T();
+            someObject.SetData(source);
             return someObject;
         }
 
+        /// <summary>
+        /// Convertir objeto a diccionario
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="bindingAttr"></param>
+        /// <returns></returns>
         public static IDictionary<string, object?> Dict(this object source, BindingFlags bindingAttr = BindingFlags.Public | BindingFlags.Instance)
         {
-            return source.GetType().GetProperties(bindingAttr).ToDictionary
-            (
-                propInfo => propInfo.Name.Replace("__", "-"),
-                propInfo => propInfo.GetValue(source, null)
-            );
-
+            var properties = source.GetType().GetProperties();
+            Dictionary<string, object?> response = new();
+            foreach (var propInfo in properties)
+            {
+                try
+                {
+                    response[propInfo.Name.Replace("__", "-")] = propInfo.GetValue(source, null);
+                }catch(TargetParameterCountException ex) {
+                    continue;
+                }
+            }
+            return response;
         }
 
         public static IEnumerable<Dictionary<string, object?>> ColOfDict(this IEnumerable<object> source, BindingFlags bindingAttr = BindingFlags.Public | BindingFlags.Instance)
@@ -237,7 +266,7 @@ namespace Utils
         {
             key2 = key2 ?? key1;
 
-            var s = source2.DictOfDictByKey(key2);
+            var s = source2.DictOfDictByKey<object>(key2);
 
             foreach (var item in source)
             {
@@ -250,7 +279,7 @@ namespace Utils
         {
             key2 = key2 ?? key1;
 
-            var s = source2.DictOfDictByKey(key2);
+            var s = source2.DictOfDictByKey<object>(key2);
 
             foreach (var item in source)
             {
@@ -262,10 +291,10 @@ namespace Utils
             }
         }
 
-        public static IDictionary<string, List<Dictionary<string, object>>> DictOfListByKey(this IEnumerable<Dictionary<string, object>> source, string key)
+        public static IDictionary<string, List<Dictionary<string, object?>>> DictOfListByKey(this IEnumerable<Dictionary<string, object?>> source, string key)
         {
-            Dictionary<string, List<Dictionary<string, object>>> response = new();
-            foreach(Dictionary<string, object> row in source)
+            Dictionary<string, List<Dictionary<string, object?>>> response = new();
+            foreach(Dictionary<string, object?> row in source)
             {
                 if (!response.ContainsKey(key))
                     response[key] = new();
@@ -274,14 +303,68 @@ namespace Utils
             return response;
         }
 
-        public static IDictionary<object, Dictionary<string, object>> DictOfDictByKey(this IEnumerable<Dictionary<string, object?>> source, string key)
+        public static IDictionary<string, List<Dictionary<string, object?>>> DictOfListByKeys(this IEnumerable<Dictionary<string, object?>> source, params string[] keys)
         {
-            Dictionary<object, Dictionary<string, object>> response = new();
-            foreach (Dictionary<string, object> row in source)
-                response[row[key]] = row;
+            Dictionary<string, List<Dictionary<string, object?>>> response = new();
+            foreach (Dictionary<string, object?> row in source)
+            {
+                List<string> val = new();
+                foreach (var k in keys)
+                    val.Add(row[k].ToString()!);
+
+                string key = String.Join("~", val.ToArray());
+
+                if (!response.ContainsKey(key))
+                    response[key] = new();
+                response[key].Add(row);
+            }
+            return response;
+        }
+
+
+
+
+
+        public static IDictionary<T, Dictionary<string, object?>> DictOfDictByKey<T>(this IEnumerable<Dictionary<string, object?>> source, string key)
+        {
+            Dictionary<T, Dictionary<string, object?>> response = new();
+            foreach (Dictionary<string, object?> row in source)
+                response[(T)row[key]!] = row;
 
             return response;
         }
+
+        public static IDictionary<string, Dictionary<string, object>> DictOfDictByKeys(this IEnumerable<Dictionary<string, object?>> source, params string[] keys)
+        {
+            Dictionary<object, Dictionary<string, object>> response = new();
+            foreach (Dictionary<string, object> row in source) {
+                List<string> val = new();
+                foreach (var k in keys)
+                    val.Add(row[k].ToString()!);
+
+                string key = String.Join("~", val.ToArray());
+                response[key] = row;
+            }
+
+            return (IDictionary<string, Dictionary<string, object>>)response;
+        }
+
+        public static IDictionary<string, object> DictOfDictByKeysValue(this IEnumerable<Dictionary<string, object?>> source, string keyValue, params string[] keys)
+        {
+            Dictionary<string, object> response = new();
+            foreach (Dictionary<string, object> row in source)
+            {
+                List<string> val = new();
+                foreach (var k in keys)
+                    val.Add(row[k].ToString()!);
+
+                string key = String.Join("~", val.ToArray());
+                response[key] = row[keyValue];
+            }
+
+            return response;
+        }
+
 
         public static IDictionary<string, T> Dict<T>(this object obj)
         {
@@ -372,6 +455,13 @@ namespace Utils
             Type type = @this.GetType();
             PropertyInfo property = type.GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
             property.SetValue(@this, value, null);
+        }
+
+        public static object? GetPropertyValue<T>(this T @this, string propertyName)
+        {
+            Type type = @this.GetType();
+            PropertyInfo property = type.GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+            return property.GetValue(@this);
         }
     }
 

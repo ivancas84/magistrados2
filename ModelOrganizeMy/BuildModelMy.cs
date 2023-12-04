@@ -14,6 +14,18 @@ namespace ModelOrganizeMy
         {
         }
 
+        protected override List<string> GetTableNames()
+        {
+            using MySqlConnection connection = new MySqlConnection(Config.connectionString);
+            connection.Open();
+            using MySqlCommand command = new();
+            command.CommandText = @"SHOW TABLES FROM " + Config.dbName;
+            command.Connection = connection;
+            command.ExecuteNonQuery();
+            using MySqlDataReader reader = command.ExecuteReader();
+            return SqlUtils.ColumnValues<string>(reader, 0);
+        }
+
         protected override List<Column> GetColumns(string tableName)
         {
             using MySqlConnection connection = new MySqlConnection(Config.connectionString);
@@ -113,17 +125,7 @@ order by con.CONSTRAINT_NAME, COL.COLUMN_NAME;
             return response;
         }
 
-        protected override List<string> GetTableNames()
-        {
-            using MySqlConnection connection = new MySqlConnection(Config.connectionString);
-            connection.Open();
-            using MySqlCommand command = new();
-            command.CommandText = @"SHOW TABLES FROM " + Config.dbName;
-            command.Connection = connection;
-            command.ExecuteNonQuery();
-            using MySqlDataReader reader = command.ExecuteReader();
-            return SqlUtils.ColumnValues<string>(reader, 0);
-        }
+
 
      
     }
