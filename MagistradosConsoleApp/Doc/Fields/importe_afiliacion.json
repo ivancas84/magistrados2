@@ -13,7 +13,8 @@
     "entityName": "importe_afiliacion",
     "refEntityName": null,
     "refFieldName": null,
-    "dataType": "string",
+    "dataType": "varchar",
+    "type": "string",
     "notNull": true,
     "defaultValue": "guid",
     "maxLength": 45
@@ -29,7 +30,8 @@
     "entityName": "importe_afiliacion",
     "refEntityName": null,
     "refFieldName": null,
-    "dataType": "DateTime",
+    "dataType": "timestamp",
+    "type": "DateTime",
     "notNull": true,
     "defaultValue": "current_timestamp()",
     "maxLength": null
@@ -44,11 +46,12 @@
       "removeMultipleSpaces": true
     },
     "name": "afiliacion",
-    "alias": "afi",
+    "alias": null,
     "entityName": "importe_afiliacion",
-    "refEntityName": "afiliacion",
-    "refFieldName": "id",
-    "dataType": "string",
+    "refEntityName": null,
+    "refFieldName": null,
+    "dataType": "varchar",
+    "type": "string",
     "notNull": true,
     "defaultValue": null,
     "maxLength": 45
@@ -65,6 +68,7 @@
     "refEntityName": null,
     "refFieldName": null,
     "dataType": "decimal",
+    "type": "decimal",
     "notNull": true,
     "defaultValue": null,
     "maxLength": 12
@@ -80,7 +84,8 @@
     "entityName": "importe_afiliacion",
     "refEntityName": null,
     "refFieldName": null,
-    "dataType": "DateTime",
+    "dataType": "date",
+    "type": "DateTime",
     "notNull": true,
     "defaultValue": null,
     "maxLength": null

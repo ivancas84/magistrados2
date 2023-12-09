@@ -1,11 +1,25 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace MagistradosApp.Views;
 
 public partial class MainPage : Page, INotifyPropertyChanged
 {
+    private ObservableCollection<Data_persona> personaOC = new(); //datos consultados de la base de datos
+    private DispatcherTimer personaTypingTimer; //timer para buscar
+
+    public Window1()
+    {
+        InitializeComponent();
+
+        personaComboBox.ItemsSource = personaOC;
+        personaComboBox.DisplayMemberPath = "Label";
+        personaComboBox.SelectedValuePath = "id";
+    }
+
     public MainPage()
     {
         InitializeComponent();

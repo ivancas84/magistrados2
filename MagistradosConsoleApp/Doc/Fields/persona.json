@@ -13,7 +13,8 @@
     "entityName": "persona",
     "refEntityName": null,
     "refFieldName": null,
-    "dataType": "string",
+    "dataType": "varchar",
+    "type": "string",
     "notNull": true,
     "defaultValue": "guid",
     "maxLength": 45
@@ -32,7 +33,8 @@
     "entityName": "persona",
     "refEntityName": null,
     "refFieldName": null,
-    "dataType": "string",
+    "dataType": "varchar",
+    "type": "string",
     "notNull": false,
     "defaultValue": null,
     "maxLength": 255
@@ -51,7 +53,8 @@
     "entityName": "persona",
     "refEntityName": null,
     "refFieldName": null,
-    "dataType": "string",
+    "dataType": "varchar",
+    "type": "string",
     "notNull": false,
     "defaultValue": null,
     "maxLength": 255
@@ -70,7 +73,8 @@
     "entityName": "persona",
     "refEntityName": null,
     "refFieldName": null,
-    "dataType": "string",
+    "dataType": "varchar",
+    "type": "string",
     "notNull": true,
     "defaultValue": null,
     "maxLength": 45
@@ -89,7 +93,8 @@
     "entityName": "persona",
     "refEntityName": null,
     "refFieldName": null,
-    "dataType": "string",
+    "dataType": "varchar",
+    "type": "string",
     "notNull": false,
     "defaultValue": null,
     "maxLength": 45
@@ -108,7 +113,8 @@
     "entityName": "persona",
     "refEntityName": null,
     "refFieldName": null,
-    "dataType": "string",
+    "dataType": "varchar",
+    "type": "string",
     "notNull": false,
     "defaultValue": null,
     "maxLength": 255
@@ -127,7 +133,8 @@
     "entityName": "persona",
     "refEntityName": null,
     "refFieldName": null,
-    "dataType": "string",
+    "dataType": "varchar",
+    "type": "string",
     "notNull": false,
     "defaultValue": null,
     "maxLength": 255
@@ -142,7 +149,8 @@
     "entityName": "persona",
     "refEntityName": null,
     "refFieldName": null,
-    "dataType": "DateTime",
+    "dataType": "date",
+    "type": "DateTime",
     "notNull": false,
     "defaultValue": null,
     "maxLength": null
@@ -161,7 +169,8 @@
     "entityName": "persona",
     "refEntityName": null,
     "refFieldName": null,
-    "dataType": "string",
+    "dataType": "varchar",
+    "type": "string",
     "notNull": false,
     "defaultValue": null,
     "maxLength": 255
@@ -180,7 +189,8 @@
     "entityName": "persona",
     "refEntityName": null,
     "refFieldName": null,
-    "dataType": "string",
+    "dataType": "varchar",
+    "type": "string",
     "notNull": false,
     "defaultValue": null,
     "maxLength": 255
@@ -196,7 +206,8 @@
     "entityName": "persona",
     "refEntityName": null,
     "refFieldName": null,
-    "dataType": "DateTime",
+    "dataType": "timestamp",
+    "type": "DateTime",
     "notNull": true,
     "defaultValue": "current_timestamp()",
     "maxLength": null
@@ -211,7 +222,8 @@
     "entityName": "persona",
     "refEntityName": null,
     "refFieldName": null,
-    "dataType": "DateTime",
+    "dataType": "timestamp",
+    "type": "DateTime",
     "notNull": false,
     "defaultValue": null,
     "maxLength": null
@@ -226,11 +238,12 @@
       "nullIfEmpty": true
     },
     "name": "cargo",
-    "alias": "car",
+    "alias": null,
     "entityName": "persona",
-    "refEntityName": "cargo",
-    "refFieldName": "id",
-    "dataType": "string",
+    "refEntityName": null,
+    "refFieldName": null,
+    "dataType": "varchar",
+    "type": "string",
     "notNull": false,
     "defaultValue": null,
     "maxLength": 45
@@ -245,11 +258,12 @@
       "nullIfEmpty": true
     },
     "name": "tipo_documento",
-    "alias": "tip",
+    "alias": null,
     "entityName": "persona",
-    "refEntityName": "tipo_documento",
-    "refFieldName": "id",
-    "dataType": "string",
+    "refEntityName": null,
+    "refFieldName": null,
+    "dataType": "varchar",
+    "type": "string",
     "notNull": false,
     "defaultValue": null,
     "maxLength": 45

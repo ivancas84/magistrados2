@@ -28,6 +28,7 @@
                     <RowDefinition Height = "Auto" />
                     <RowDefinition Height = "Auto" />
                     <RowDefinition Height = "Auto" />
+                    <RowDefinition Height = "Auto" />
                 </Grid.RowDefinitions>
 
                 <Grid.ColumnDefinitions>
@@ -35,12 +36,31 @@
                 </Grid.ColumnDefinitions>
 
                 <GroupBox 
-                Name="searchGroupBox"
-                Margin="10">
+                    Name="searchGroupBox"
+                    Margin="10">
                     <GroupBox.Header>
                         <Label Foreground="White">Formulario de Búsqueda</Label>
                     </GroupBox.Header>
-                    <!-- Grid con formulario de búsqueda -->
+
+
+                    <StackPanel Orientation="Horizontal">
+
+                        <Label
+                            Margin= "2">Buscar:</Label>
+
+                        <ComboBox 
+                            MinWidth="200"
+							Name="personaComboBox"
+							IsTextSearchEnabled="False"
+							IsEditable="True"
+							StaysOpenOnEdit="True"
+							TextBoxBase.TextChanged="PersonaComboBox_TextChanged"
+							GotFocus="PersonaComboBox_GotFocus"
+							TextBoxBase.SelectionChanged="PersonaComboBox_SelectionChanged"/>
+                        <Button
+									Content = "_Buscar..."
+									Click="BuscarButton_Click" />
+                    </StackPanel>
                 </GroupBox>
 
                 <GroupBox 
