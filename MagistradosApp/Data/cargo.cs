@@ -66,11 +66,6 @@ namespace MagistradosApp.Data
                 case "descripcion":
                     if (_descripcion == null)
                         return "Debe completar valor.";
-                    if (!_descripcion.IsNullOrEmptyOrDbNull()) {
-                        var row = ContainerApp.db.Query("cargo").Where("$descripcion = @0").Parameters(_descripcion).DictCache();
-                        if (!row.IsNullOrEmpty() && !__Id.ToString().Equals(row!["_Id"]!.ToString()))
-                            return "Valor existente.";
-                    }
                     return "";
 
             }

@@ -40,6 +40,12 @@ namespace MagistradosApp.Data
             get { return _id; }
             set { _id = value; NotifyPropertyChanged(); }
         }
+        protected string? _codigo = null;
+        public string? codigo
+        {
+            get { return _codigo; }
+            set { _codigo = value; NotifyPropertyChanged(); }
+        }
         protected string? _nombre = null;
         public string? nombre
         {
@@ -60,6 +66,11 @@ namespace MagistradosApp.Data
 
                 case "id":
                     if (_id == null)
+                        return "Debe completar valor.";
+                    return "";
+
+                case "codigo":
+                    if (_codigo == null)
                         return "Debe completar valor.";
                     return "";
 

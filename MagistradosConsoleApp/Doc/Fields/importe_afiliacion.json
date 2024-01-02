@@ -46,10 +46,10 @@
       "removeMultipleSpaces": true
     },
     "name": "afiliacion",
-    "alias": null,
+    "alias": "afi",
     "entityName": "importe_afiliacion",
-    "refEntityName": null,
-    "refFieldName": null,
+    "refEntityName": "afiliacion",
+    "refFieldName": "id",
     "dataType": "varchar",
     "type": "string",
     "notNull": true,

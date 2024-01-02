@@ -46,10 +46,10 @@
       "removeMultipleSpaces": true
     },
     "name": "tramite_excepcional",
-    "alias": null,
+    "alias": "tra",
     "entityName": "importe_tramite_excepcional",
-    "refEntityName": null,
-    "refFieldName": null,
+    "refEntityName": "tramite_excepcional",
+    "refFieldName": "id",
     "dataType": "varchar",
     "type": "string",
     "notNull": true,

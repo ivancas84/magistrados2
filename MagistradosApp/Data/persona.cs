@@ -145,6 +145,11 @@ namespace MagistradosApp.Data
                 case "legajo":
                     if (_legajo == null)
                         return "Debe completar valor.";
+                    if (!_legajo.IsNullOrEmptyOrDbNull()) {
+                        var row = ContainerApp.db.Query("persona").Where("$legajo = @0").Parameters(_legajo).DictCache();
+                        if (!row.IsNullOrEmpty() && !__Id.ToString().Equals(row!["_Id"]!.ToString()))
+                            return "Valor existente.";
+                    }
                     return "";
 
                 case "numero_documento":

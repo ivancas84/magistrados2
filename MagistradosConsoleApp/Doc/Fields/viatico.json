@@ -80,10 +80,10 @@
       "removeMultipleSpaces": true
     },
     "name": "departamento_judicial",
-    "alias": null,
+    "alias": "dep",
     "entityName": "viatico",
-    "refEntityName": null,
-    "refFieldName": null,
+    "refEntityName": "departamento_judicial",
+    "refFieldName": "id",
     "dataType": "varchar",
     "type": "string",
     "notNull": true,
