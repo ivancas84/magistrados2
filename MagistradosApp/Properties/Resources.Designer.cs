@@ -79,7 +79,7 @@ namespace MagistradosApp.Properties {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a Main.
+        ///   Busca una cadena traducida similar a Buscar Afiliado.
         /// </summary>
         public static string MainPageTitle {
             get {
@@ -214,7 +214,7 @@ namespace MagistradosApp.Properties {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a Main.
+        ///   Busca una cadena traducida similar a Buscar.
         /// </summary>
         public static string ShellMenuItemViewsMainPageHeader {
             get {

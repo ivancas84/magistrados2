@@ -9,7 +9,6 @@
     <Grid>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="_Registros">
-                <MenuItem Header="Administrar afiliado" Click="AdministrarAfiliado_Click"/>
                 <MenuItem Header="Lista de Registros 40" Click="ListaRegistros40_Click"/>
 
             </MenuItem>

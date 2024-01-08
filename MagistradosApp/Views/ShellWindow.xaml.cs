@@ -75,6 +75,9 @@ public partial class ShellWindow : MetroWindow, IShellWindow, INotifyPropertyCha
     private void OnMenuFileSettings(object sender, RoutedEventArgs e)
         => _rightPaneService.OpenInRightPane(typeof(SettingsPage));
 
+    private void OnMenuViewsListaAfiliaciones(object sender, RoutedEventArgs e)
+        => _navigationService.NavigateTo(typeof(ListaAfiliacionesPage), null, true);
+
     public event PropertyChangedEventHandler PropertyChanged;
 
     private void Set<T>(ref T storage, T value, [CallerMemberName]string propertyName = null)

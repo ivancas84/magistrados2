@@ -109,6 +109,8 @@ public partial class App : Application
 
         services.AddTransient<IShellDialogWindow, ShellDialogWindow>();
 
+        services.AddTransient<ListaAfiliacionesPage>();
+
         // Configuration
         services.Configure<AppConfig>(context.Configuration.GetSection(nameof(AppConfig)));
     }

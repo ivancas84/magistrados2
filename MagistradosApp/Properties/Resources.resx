@@ -157,10 +157,10 @@
     <value>Default</value>
   </data>
   <data name="ShellMenuItemViewsMainPageHeader" xml:space="preserve">
-    <value>Main</value>
+    <value>Buscar</value>
   </data>
   <data name="MainPageTitle" xml:space="preserve">
-    <value>Main</value>
+    <value>Buscar Afiliado</value>
   </data>
   <data name="ShellGoBackButton" xml:space="preserve">
     <value>Go back</value>
