@@ -27,7 +27,7 @@ public partial class ListaAfiliacionesPage : Page, INotifyPropertyChanged
     {
         InitializeComponent();
         DataContext = this;
-        searchGroupBox.DataContext = new ListaAfiliaciones.Data_afiliacion(SqlOrganize.DataInitMode.Null);
+        searchGroupBox.DataContext = new ListaAfiliaciones.Data_afiliacion();
 
         motivoComboBox.SelectedValuePath = "Key";
         motivoComboBox.DisplayMemberPath = "Value";
