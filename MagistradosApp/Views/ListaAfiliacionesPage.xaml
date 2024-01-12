@@ -17,14 +17,346 @@
             Style="{StaticResource PageTitleStyle}"
             Margin="{StaticResource MediumLeftMargin}"
             Text="{x:Static properties:Resources.ListaAfiliacionesPageTitle}" />
-        <Grid
-            Grid.Row="1"
-            Margin="{StaticResource MediumLeftRightMargin}"
-            Background="{DynamicResource MahApps.Brushes.Gray10}">
-            <!--
-            The Mahapps Gray10 color represents where you should place your content.
-            Place your content here.
-            -->
-        </Grid>
+		<ScrollViewer
+	HorizontalScrollBarVisibility="Visible"
+	Grid.Row="1"
+	Margin="{StaticResource MediumLeftRightMargin}"
+	Background="{DynamicResource MahApps.Brushes.Gray10}">
+
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition Height = "Auto" />
+					<RowDefinition Height = "Auto" />
+					<RowDefinition Height = "Auto" />
+				</Grid.RowDefinitions>
+
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width = "*" />
+				</Grid.ColumnDefinitions>
+
+				<GroupBox
+					Name="searchGroupBox"
+					Margin="10">
+					<GroupBox.Header>
+						<Label Foreground="White">Formulario de Búsqueda</Label>
+					</GroupBox.Header>
+
+
+					<Grid>
+
+						<Grid.RowDefinitions>
+							<RowDefinition Height = "Auto" />
+							<RowDefinition Height = "Auto" />
+							<RowDefinition Height = "Auto" />
+							<RowDefinition Height = "Auto" />
+							<RowDefinition Height = "Auto" />
+							<RowDefinition Height = "Auto" />
+						</Grid.RowDefinitions>
+
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width = "Auto" />
+							<ColumnDefinition Width = "*" />
+							<ColumnDefinition Width = "Auto" />
+							<ColumnDefinition Width = "*" />
+							<ColumnDefinition Width = "Auto" />
+							<ColumnDefinition Width = "*" />
+						</Grid.ColumnDefinitions>
+
+
+						<Label
+							Grid.Row="0"
+							Grid.Column="0"
+							Margin = "2">
+							_Motivo:
+						</Label>
+
+						<ComboBox
+							Grid.Row="0"
+							Grid.Column="1"
+							Margin = "2"
+							Name="motivoComboBox"
+							SelectedValue="{Binding motivo}">
+						</ComboBox>
+						
+						<Label
+							Grid.Row="1"
+							Grid.Column="0"
+							Margin = "2">
+							_Estado:
+						</Label>
+						
+						<ComboBox
+							Grid.Row="1"
+							Grid.Column="1"
+							Margin = "2"
+							Name="estadoComboBox"
+							SelectedValue="{Binding estado}">
+						</ComboBox>
+
+						<Label
+							Grid.Row="2"
+							Grid.Column="0"
+							Margin = "2">
+							_Código:
+						</Label>
+
+						<ComboBox
+							Grid.Row="2"
+							Grid.Column="1"
+							Margin = "2"
+							Name="codigoComboBox"
+							SelectedValue="{Binding codigo}">
+						</ComboBox>
+
+						<Label
+							Grid.Row="3"
+							Grid.Column="0"
+							Margin = "2">
+							_Está Modificado?:
+						</Label>
+
+						<ComboBox
+							Grid.Row="3"
+							Grid.Column="1"
+							Margin = "2"
+							Name="estaModificadoComboBox"
+							SelectedValue="{Binding esta_modificado}">
+						</ComboBox>
+
+                        <Label
+							Grid.Row="0"
+							Grid.Column="2"
+							Margin = "2">
+                            _Organo:
+                        </Label>
+                        
+                        <ComboBox 
+                            Grid.Row="0"
+							Grid.Column="3"
+                            Margin = "2"
+							Name = "organoComboBox" 
+							SelectedValue="{Binding organo}"/>
+                        
+                        
+                        <Label
+							Grid.Row="1"
+							Grid.Column="2"
+							Margin = "2">
+                            _Departamento:
+                        </Label>
+                        
+                        <ComboBox 
+                            Grid.Row="1"
+							Grid.Column="3"
+							Margin = "2"
+							Name="departamentoComboBox"
+							SelectedValue="{Binding departamento_judicial}"/>
+
+
+                        <Label
+							Grid.Row="2"
+							Grid.Column="2"
+							Margin = "2">
+                            _Departamento Informado:
+                        </Label>
+
+                        <ComboBox 
+                            Grid.Row="2"
+							Grid.Column="3"
+							Margin = "2"
+							Name="departamentoInformadoComboBox"
+							SelectedValue="{Binding departamento_judicial_informado}"/>
+
+                        <Label
+							Grid.Row="0"
+							Grid.Column="4"
+							Margin = "2">
+                            _Creado:
+                        </Label>
+
+                        <DockPanel 
+                            Grid.Row="0"
+							Grid.Column="5"
+							Margin = "2">
+                            <TextBlock Text="Mes" 
+								DockPanel.Dock="Left" VerticalAlignment="Center"/>
+                            <ComboBox 
+                                Name="creadoMesComboBox"
+								Text="{Binding creado_mes}">
+                                <ComboBoxItem Content = "01" />
+                                <ComboBoxItem Content = "02" />
+                                <ComboBoxItem Content = "03" />
+                                <ComboBoxItem Content = "04" />
+                                <ComboBoxItem Content = "05" />
+                                <ComboBoxItem Content = "06" />
+                                <ComboBoxItem Content = "07" />
+                                <ComboBoxItem Content = "08" />
+                                <ComboBoxItem Content = "09" />
+                                <ComboBoxItem Content = "10" />
+                                <ComboBoxItem Content = "11" />
+                                <ComboBoxItem Content = "12" />
+                            </ComboBox>
+                            <TextBlock Text="Año" 
+        DockPanel.Dock="Left" VerticalAlignment="Center"/>
+                            <ComboBox 
+                                MinWidth="30"
+								Name = "creadoAnioComboBox" 
+								SelectedValue="{Binding creado_anio}" />
+                        </DockPanel>
+
+                        <Label
+							Grid.Row="1"
+							Grid.Column="4"
+							Margin = "2">
+                            _Enviado:
+                        </Label>
+
+                        <DockPanel 
+                            Grid.Row="1"
+							Grid.Column="5"
+							Margin = "2">
+                            <TextBlock Text="Mes" 
+								DockPanel.Dock="Left" VerticalAlignment="Center"/>
+                            <ComboBox 
+                                Name="enviadoMesComboBox"
+								Text="{Binding enviado_mes}">
+                                <ComboBoxItem Content = "01" />
+                                <ComboBoxItem Content = "02" />
+                                <ComboBoxItem Content = "03" />
+                                <ComboBoxItem Content = "04" />
+                                <ComboBoxItem Content = "05" />
+                                <ComboBoxItem Content = "06" />
+                                <ComboBoxItem Content = "07" />
+                                <ComboBoxItem Content = "08" />
+                                <ComboBoxItem Content = "09" />
+                                <ComboBoxItem Content = "10" />
+                                <ComboBoxItem Content = "11" />
+                                <ComboBoxItem Content = "12" />
+                            </ComboBox>
+                            <TextBlock Text="Año" 
+        DockPanel.Dock="Left" VerticalAlignment="Center"/>
+                            <ComboBox 
+                                MinWidth="30"
+								Name = "enviadoAnioComboBox" 
+								SelectedValue="{Binding enviado_anio}" />
+                        </DockPanel>
+
+                        <Label
+							Grid.Row="2"
+							Grid.Column="4"
+							Margin = "2">
+                            _Evaluado:
+                        </Label>
+
+                        <DockPanel 
+                            Grid.Row="2"
+							Grid.Column="5"
+							Margin = "2">
+                            <TextBlock Text="Mes" 
+								DockPanel.Dock="Left" VerticalAlignment="Center"/>
+                            <ComboBox 
+                                Name="evaluadoMesComboBox"
+								Text="{Binding evaluado_mes}">
+                                <ComboBoxItem Content = "01" />
+                                <ComboBoxItem Content = "02" />
+                                <ComboBoxItem Content = "03" />
+                                <ComboBoxItem Content = "04" />
+                                <ComboBoxItem Content = "05" />
+                                <ComboBoxItem Content = "06" />
+                                <ComboBoxItem Content = "07" />
+                                <ComboBoxItem Content = "08" />
+                                <ComboBoxItem Content = "09" />
+                                <ComboBoxItem Content = "10" />
+                                <ComboBoxItem Content = "11" />
+                                <ComboBoxItem Content = "12" />
+                            </ComboBox>
+                            <TextBlock Text="Año" 
+        DockPanel.Dock="Left" VerticalAlignment="Center"/>
+                            <ComboBox 
+                                MinWidth="30"
+								Name = "evaluadoAnioComboBox" 
+								SelectedValue="{Binding evaluado_anio}" />
+                        </DockPanel>
+
+                        <Label
+							Grid.Row="3"
+							Grid.Column="4"
+							Margin = "2">
+                            _Modificado:
+                        </Label>
+
+                        <DockPanel 
+                            Grid.Row="3"
+							Grid.Column="5"
+							Margin = "2">
+                            <TextBlock Text="Mes" 
+								DockPanel.Dock="Left" VerticalAlignment="Center"/>
+                            <ComboBox 
+                                Name="modificadoMesComboBox"
+								Text="{Binding modificado_mes}">
+                                <ComboBoxItem Content = "01" />
+                                <ComboBoxItem Content = "02" />
+                                <ComboBoxItem Content = "03" />
+                                <ComboBoxItem Content = "04" />
+                                <ComboBoxItem Content = "05" />
+                                <ComboBoxItem Content = "06" />
+                                <ComboBoxItem Content = "07" />
+                                <ComboBoxItem Content = "08" />
+                                <ComboBoxItem Content = "09" />
+                                <ComboBoxItem Content = "10" />
+                                <ComboBoxItem Content = "11" />
+                                <ComboBoxItem Content = "12" />
+                            </ComboBox>
+                            <TextBlock Text="Año" 
+        DockPanel.Dock="Left" VerticalAlignment="Center"/>
+                            <ComboBox 
+                                MinWidth="30"
+								Name = "modificadoAnioComboBox" 
+								SelectedValue="{Binding modificado_anio}" />
+                        </DockPanel>
+
+                        <Label
+							Grid.Row="3"
+							Grid.Column="2"
+							Margin = "2">
+                            _Cargo:
+                        </Label>
+
+                        <ComboBox
+							Grid.Row="3"
+							Grid.Column="3"
+							Margin = "2"
+							Name="personaCargoComboBox"
+							SelectedValue="{Binding persona__cargo}">
+                        </ComboBox>
+                        
+                        <StackPanel Grid.Row = "4" Grid.ColumnSpan = "6">
+							<Button
+								Content = "_Buscar..."
+								Click="BuscarButton_Click"
+								Margin = "20"/>
+
+						</StackPanel>
+
+					</Grid>
+					
+						
+						
+				</GroupBox>
+
+
+				<GroupBox
+					Name="afiliacionesGroupBox"
+					Grid.Row="2"
+					Margin="10">
+					<GroupBox.Header>
+						<Label Foreground="White">Afiliaciones</Label>
+					</GroupBox.Header>
+					<!-- DataGrid de asignaciones -->
+				</GroupBox>
+			</Grid>
+
+
+		</ScrollViewer>
     </Grid>
 </Page>
