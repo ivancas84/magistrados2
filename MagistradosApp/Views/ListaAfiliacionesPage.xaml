@@ -18,7 +18,8 @@
             Margin="{StaticResource MediumLeftMargin}"
             Text="{x:Static properties:Resources.ListaAfiliacionesPageTitle}" />
 		<ScrollViewer
-	HorizontalScrollBarVisibility="Visible"
+	HorizontalScrollBarVisibility="Disabled"
+
 	Grid.Row="1"
 	Margin="{StaticResource MediumLeftRightMargin}"
 	Background="{DynamicResource MahApps.Brushes.Gray10}">
@@ -352,8 +353,8 @@
 					<GroupBox.Header>
 						<Label Foreground="White">Afiliaciones</Label>
 					</GroupBox.Header>
-					<!-- DataGrid de asignaciones -->
-				</GroupBox>
+                    <DataGrid Name="afiliacionDataGrid"/>
+                </GroupBox>
 			</Grid>
 
 

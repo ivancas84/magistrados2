@@ -112,18 +112,14 @@ namespace SqlOrganize
         {
             var count = parameters.Count;
             foreach(var (key, value) in param)
-            {
-                if (!Db.FieldNamesRel(entityName).Contains(key))
-                    continue;
-                if(!value.IsNullOrEmpty())
+                if (Db.FieldNamesRel(entityName).Contains(key) && !value.IsNullOrEmpty())
                 {
                     if (!where.IsNullOrEmpty())
                         Where(" AND ");
-                    Where("$"+key+" = @" + count.ToString());
+                    Where("$" + key + " = @" + count.ToString());
                     Parameters(value!);
                     count++;
                 }
-            }
             return this;
         }
 

@@ -1,8 +1,10 @@
 ﻿using CommunityToolkit.WinUI.Notifications;
 using MagistradosApp.DAO;
 using MagistradosApp.Data;
+using SqlOrganize;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,6 +23,7 @@ public partial class ListaAfiliacionesPage : Page, INotifyPropertyChanged
     private ObservableCollection<Int32?> modificadoAnioOC = new();
     private ObservableCollection<Data_cargo> personaCargoOC = new();
 
+    private ObservableCollection<Data_afiliacion_r> afiliacionOC = new();
 
 
     public ListaAfiliacionesPage()
@@ -106,6 +109,7 @@ public partial class ListaAfiliacionesPage : Page, INotifyPropertyChanged
             Column<Int32?>(0);
         creadoAnioOC.Clear();
         creadoAnioOC.AddRange(anios);
+        creadoAnioOC.Add(null);
 
         enviadoAnioComboBox.ItemsSource = enviadoAnioOC;
         anios = ContainerApp.db.Query("afiliacion").
@@ -115,6 +119,7 @@ public partial class ListaAfiliacionesPage : Page, INotifyPropertyChanged
             Column<Int32?>(0);
         enviadoAnioOC.Clear();
         enviadoAnioOC.AddRange(anios);
+        enviadoAnioOC.Add(null);
 
 
         evaluadoAnioComboBox.ItemsSource = evaluadoAnioOC;
@@ -125,7 +130,7 @@ public partial class ListaAfiliacionesPage : Page, INotifyPropertyChanged
             Column<Int32?>(0);
         evaluadoAnioOC.Clear();
         evaluadoAnioOC.AddRange(anios);
-
+        evaluadoAnioOC.Add(null);
 
         modificadoAnioComboBox.ItemsSource = modificadoAnioOC;
         anios = ContainerApp.db.Query("afiliacion").
@@ -135,9 +140,12 @@ public partial class ListaAfiliacionesPage : Page, INotifyPropertyChanged
             Column<Int32?>(0);
         modificadoAnioOC.Clear();
         modificadoAnioOC.AddRange(anios);
+        modificadoAnioOC.Add(null);
+
+        afiliacionDataGrid.ItemsSource = afiliacionOC;
     }
 
-public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler PropertyChanged;
 
     private void Set<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
     {
@@ -155,27 +163,93 @@ public event PropertyChangedEventHandler PropertyChanged;
     {
         try
         {
-            /*causaOC.Clear();
+            afiliacionOC.Clear();
+            var request = (ListaAfiliaciones.Data_afiliacion)searchGroupBox.DataContext;
+            EntityQuery query = ContainerApp.db.Query("afiliacion");
 
-            var request = (Requests.Causas_BuscarDatosRequest)searchGroupBox.DataContext;
-            CausaDatos[] data = causaDAO.BuscarWS(request);
+            Type type = request.GetType();
+            IEnumerable<string> propertyNames = type.GetProperties().ColOfProp<string, PropertyInfo>("Name");
+            IDictionary<string, object?> d = request.Dict();
+            var count = query.parameters.Count;
+
+            foreach (var (key, value) in d)
+            {
+                if ((propertyNames.Contains(key) || ContainerApp.db.FieldNamesRel("afiliacion").Contains(key)) && !value.IsNullOrEmpty())
+                {
+                    if (!query.where.IsNullOrEmpty())
+                        query.Where(" AND ");
+
+                    switch (key)
+                    {
+                        case "esta_modificado":
+                            if((bool)value)
+                                query.Where("$modificado IS NOT NULL");
+                            else
+                                query.Where("$modificado IS NULL");
+
+                            continue; //evitar la carga de parametros!
+
+                        case "creado_mes":
+                            query.Where("MONTH($creado) = @" + count.ToString());
+                            break;
+
+                        case "creado_anio":
+                            query.Where("YEAR($creado) = @" + count.ToString());
+                            break;
+
+                        case "enviado_mes":
+                            query.Where("MONTH($enviado) = @" + count.ToString());
+                            break;
+
+                        case "enviado_anio":
+                            query.Where("YEAR($enviado) = @" + count.ToString());
+                            break;
+
+                        case "evaluado_mes":
+                            query.Where("MONTH($evaluado) = @" + count.ToString());
+                            break;
+
+                        case "evaluado_anio":
+                            query.Where("YEAR($evaluado) = @" + count.ToString());
+                            break;
+
+                        case "modificado_mes":
+                            query.Where("MONTH($modificado) = @" + count.ToString());
+                            break;
+
+                        case "modificado_anio":
+                            query.Where("YEAR($modificado) = @" + count.ToString());
+                            break;
+                        default:
+                            query.Where("$" + key + " = @" + count.ToString());
+                            break;
+
+                    }
+
+                    query.Parameters(value!);
+                    count++;
+                }
+            }
+
+            IEnumerable<Dictionary<string, object?>> data = query.ColOfDictCache();
+
             if (data.IsNullOrEmptyOrDbNull())
                 new ToastContentBuilder()
-                    .AddText("Búsqueda de Causas del WS")
+                    .AddText("Búsqueda de Afiliaciones")
                     .AddText("La consulta no arrojó resultados")
                     .Show();
             else
                 new ToastContentBuilder()
-                    .AddText("Búsqueda de Causas del WS")
+                    .AddText("Búsqueda de Afiliaciones")
                     .AddText("La consulta devolvió " + data.Count() + " registros.")
                     .Show();
 
-            causaOC.AddRange(data);*/
+            afiliacionOC.AddRange(data);
         }
         catch (Exception ex)
         {
             new ToastContentBuilder()
-                .AddText("Búsqueda de Causas del WS")
+                .AddText("Búsqueda de Afiliaciones")
                 .AddText(ex.Message)
                 .Show();
         }

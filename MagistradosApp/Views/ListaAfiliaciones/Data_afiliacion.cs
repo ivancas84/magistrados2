@@ -27,6 +27,14 @@ namespace MagistradosApp.Views.ListaAfiliaciones
             set { _esta_modificado = value; NotifyPropertyChanged(); }
         }
 
+        protected Int32? _creado_mes = null;
+
+        public Int32? creado_mes
+        {
+            get { return _creado_mes; }
+            set { _creado_mes = value; NotifyPropertyChanged(); }
+        }
+
         protected Int32? _creado_anio = null;
 
         public Int32? creado_anio
