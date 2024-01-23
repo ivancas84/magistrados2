@@ -130,7 +130,7 @@ public partial class ShellWindow : MetroWindow, IShellWindow, INotifyPropertyCha
         => _rightPaneService.OpenInRightPane(typeof(SettingsPage));
 
     private void OnMenuViewsListaAfiliaciones(object sender, RoutedEventArgs e)
-        => SetPageContent(new ListaAfiliacionesPage());
+        => SetPageContent(new ListaAfiliacionesPage(this));
 
 
     private void OnMenuViewsListaAfiliaciones2(object sender, RoutedEventArgs e)

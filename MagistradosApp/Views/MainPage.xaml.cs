@@ -31,7 +31,7 @@ public partial class MainPage : Page, INotifyPropertyChanged
     //private ObservableCollection<Data_afiliacion_r> afiliacionOC = new();
     #endregion
 
-    public MainPage()
+    public MainPage(Data_afiliacion? afiliacion = null)
     {
         InitializeComponent();
         DataContext = this;
@@ -41,7 +41,11 @@ public partial class MainPage : Page, INotifyPropertyChanged
         personaComboBox.SelectedValuePath = "id";
 
         afiliacionDataGrid.ItemsSource = afiliacionOC;
-        formGroupBox.DataContext = new Data_persona(SqlOrganize.DataInitMode.DefaultMain);
+
+        if (afiliacion.IsNullOrEmpty() || afiliacion.persona.IsNullOrEmptyOrDbNull())
+            formGroupBox.DataContext = new Data_persona(SqlOrganize.DataInitMode.DefaultMain);
+        else
+            SetData(ContainerApp.dao.Get("persona", afiliacion.persona).Obj<Data_persona>());
     }
 
     #region personaComboBox v2023.11
@@ -144,15 +148,21 @@ public partial class MainPage : Page, INotifyPropertyChanged
             cb.IsDropDownOpen = true;
         else
         {
-            formGroupBox.DataContext = cb.SelectedItem;
-            afiliacionOC.Clear();
-            var data = ContainerApp.dao.SearchKeyValue("afiliacion", "persona", cb.SelectedValue);
-            afiliacionOC.AddRange(data);
+            SetData((Data_persona)cb.SelectedItem);
         }
     }
     #endregion
 
     public event PropertyChangedEventHandler PropertyChanged;
+
+
+    private void SetData(Data_persona persona)
+    {
+        formGroupBox.DataContext = persona;
+        afiliacionOC.Clear();
+        var data = ContainerApp.dao.SearchKeyValue("afiliacion", "persona", persona.id);
+        afiliacionOC.AddRange(data);
+    }
 
     private void Set<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
     {

@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.WinUI.Notifications;
+using ControlzEx.Standard;
 using MagistradosApp.DAO;
 using MagistradosApp.Data;
 using SqlOrganize;
@@ -8,6 +9,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using Utils;
 
 namespace MagistradosApp.Views;
@@ -24,10 +26,13 @@ public partial class ListaAfiliacionesPage : Page, INotifyPropertyChanged
     private ObservableCollection<Data_cargo> personaCargoOC = new();
 
     private ObservableCollection<Data_afiliacion_r> afiliacionOC = new();
+    private ShellWindow sw;
 
-    public ListaAfiliacionesPage()
+    public ListaAfiliacionesPage(ShellWindow sw)
     {
         InitializeComponent();
+        this.sw = sw;
+
         DataContext = this;
         searchGroupBox.DataContext = new ListaAfiliaciones.Data_afiliacion();
 
@@ -255,6 +260,9 @@ public partial class ListaAfiliacionesPage : Page, INotifyPropertyChanged
 
     void OnApellidosClick(object sender, RoutedEventArgs e)
     {
+
+        var data = ((Hyperlink)e.OriginalSource).DataContext as Data_afiliacion_r;
+        sw.SetPageHistory(new MainPage(data));
     }
 
     private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
