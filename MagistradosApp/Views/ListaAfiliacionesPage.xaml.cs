@@ -75,10 +75,10 @@ public partial class ListaAfiliacionesPage : Page, INotifyPropertyChanged
         organoNull.descripcion = "(Todos)";
         organoOC.Add(organoNull);
 
+        #region departamentoComboBox y departamentoInformadoComboBox
         departamentoComboBox.ItemsSource = departamentoOC;
         departamentoComboBox.DisplayMemberPath = "nombre";
         departamentoComboBox.SelectedValuePath = "id";
-
 
         departamentoInformadoComboBox.ItemsSource = departamentoOC;
         departamentoInformadoComboBox.DisplayMemberPath = "nombre";
@@ -90,7 +90,9 @@ public partial class ListaAfiliacionesPage : Page, INotifyPropertyChanged
         Data_departamento_judicial departamentoNull = new Data_departamento_judicial(SqlOrganize.DataInitMode.Null);
         departamentoNull.nombre = "(Todos)";
         departamentoOC.Add(departamentoNull);
+        #endregion
 
+        #region personaCargoComboBox
         personaCargoComboBox.ItemsSource = personaCargoOC;
         personaCargoComboBox.DisplayMemberPath = "descripcion";
         personaCargoComboBox.SelectedValuePath = "id";
@@ -101,7 +103,7 @@ public partial class ListaAfiliacionesPage : Page, INotifyPropertyChanged
         Data_cargo cargoNull = new (SqlOrganize.DataInitMode.Null);
         cargoNull.descripcion = "(Todos)";
         personaCargoOC.Add(cargoNull);
-
+        #endregion
 
 
         creadoAnioComboBox.ItemsSource = creadoAnioOC;

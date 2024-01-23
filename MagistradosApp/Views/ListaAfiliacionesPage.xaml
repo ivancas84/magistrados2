@@ -18,11 +18,10 @@
             Margin="{StaticResource MediumLeftMargin}"
             Text="{x:Static properties:Resources.ListaAfiliacionesPageTitle}" />
 		<ScrollViewer
-	HorizontalScrollBarVisibility="Disabled"
-
-	Grid.Row="1"
-	Margin="{StaticResource MediumLeftRightMargin}"
-	Background="{DynamicResource MahApps.Brushes.Gray10}">
+            HorizontalScrollBarVisibility="Visible"
+	        Grid.Row="1"
+	        Margin="{StaticResource MediumLeftRightMargin}"
+	        Background="{DynamicResource MahApps.Brushes.Gray10}">
 
 			<Grid>
 				<Grid.RowDefinitions>

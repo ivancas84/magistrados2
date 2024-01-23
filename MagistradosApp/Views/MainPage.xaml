@@ -124,9 +124,10 @@
                             Grid.Column = "4" 
                             Margin = "2">Fecha Nacimiento:</Label>
 
-                        <TextBox 
-                            Grid.Column = "5" 
-                            Text="{Binding fecha_nacimiento, TargetNullValue=''}"
+                        <DatePicker 
+                            Grid.Row="0"
+                            Grid.Column="5"
+                            SelectedDate="{Binding fecha_nacimiento, ValidatesOnDataErrors=True, TargetNullValue=''}"
                             Margin = "2" />
 
 
@@ -145,11 +146,13 @@
                             Grid.Column = "2" 
                             Margin = "2">Tipo documento:</Label>
 
-                        <TextBox 
-                            Grid.Row = "1" 
-                            Grid.Column = "3" 
-                            Text="{Binding tipo_documento, TargetNullValue=''}"
-                            Margin = "2" />
+                        <ComboBox
+							Grid.Row="1"
+							Grid.Column="3"
+							Margin = "2"
+							Name="tipoDocumentoComboBox"
+							SelectedValue="{Binding tipo_documento}">
+                        </ComboBox>
 
                         <Label 
                             Grid.Row = "1" 
@@ -215,15 +218,13 @@
                             Grid.Column = "2" 
                             Margin = "2" >Cargo:</Label>
 
-                        <TextBox 
-                            Grid.Row = "3" 
-                            Grid.Column = "3" 
-                            Text="{Binding cargo, TargetNullValue=''}"
-                            Margin = "2" />
-
-                        
-                        
-                        
+                        <ComboBox
+							Grid.Row="3"
+							Grid.Column="3"
+							Margin = "2"
+							Name="cargoComboBox"
+							SelectedValue="{Binding cargo}">
+                        </ComboBox>
 
 
                         <StackPanel Grid.Row = "4" Grid.ColumnSpan = "2">

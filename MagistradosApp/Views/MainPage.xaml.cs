@@ -20,6 +20,10 @@ public partial class MainPage : Page, INotifyPropertyChanged
     private DispatcherTimer personaTypingTimer; //timer para buscar
     #endregion
 
+    private ObservableCollection<Data_cargo> cargoOC = new();
+    private ObservableCollection<Data_tipo_documento> tipoDocumentoOC = new();
+
+
     #region afiliacionDataGrid
     private DAO.Afiliacion afiliacionDAO = new();
     private ObservableCollection<Data_afiliacion_r> afiliacionOC = new();
@@ -39,6 +43,32 @@ public partial class MainPage : Page, INotifyPropertyChanged
         personaComboBox.ItemsSource = personaOC;
         personaComboBox.DisplayMemberPath = "Label";
         personaComboBox.SelectedValuePath = "id";
+
+        #region cargoComboBox
+        cargoComboBox.ItemsSource = cargoOC;
+        cargoComboBox.DisplayMemberPath = "descripcion";
+        cargoComboBox.SelectedValuePath = "id";
+
+        IEnumerable<Dictionary<string, object?>> data = ContainerApp.db.Query("cargo").Order("$descripcion ASC").ColOfDictCache();
+        cargoOC.Clear();
+        cargoOC.AddRange(data);
+        Data_cargo cargoNull = new(SqlOrganize.DataInitMode.Null);
+        cargoNull.descripcion = "(No especificado)";
+        cargoOC.Add(cargoNull);
+        #endregion
+
+        #region tipoDocumentoComboBox
+        tipoDocumentoComboBox.ItemsSource = tipoDocumentoOC;
+        tipoDocumentoComboBox.DisplayMemberPath = "descripcion";
+        tipoDocumentoComboBox.SelectedValuePath = "id";
+
+        IEnumerable<Dictionary<string, object?>> data2 = ContainerApp.db.Query("tipo_documento").Order("$descripcion ASC").ColOfDictCache();
+        tipoDocumentoOC.Clear();
+        tipoDocumentoOC.AddRange(data2);
+        Data_tipo_documento tipoDocumentoNull = new(SqlOrganize.DataInitMode.Null);
+        tipoDocumentoNull.descripcion = "(No especificado)";
+        tipoDocumentoOC.Add(tipoDocumentoNull);
+        #endregion
 
         afiliacionDataGrid.ItemsSource = afiliacionOC;
 
