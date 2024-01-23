@@ -25,7 +25,6 @@ public partial class ListaAfiliacionesPage : Page, INotifyPropertyChanged
 
     private ObservableCollection<Data_afiliacion_r> afiliacionOC = new();
 
-
     public ListaAfiliacionesPage()
     {
         InitializeComponent();
@@ -60,7 +59,6 @@ public partial class ListaAfiliacionesPage : Page, INotifyPropertyChanged
         estaModificadoComboBox.Items.Add(new KeyValuePair<bool?, string>(null, "(Todos)")); //quitar esta linea si no permite valor null
         estaModificadoComboBox.Items.Add(new KeyValuePair<bool, string>(true, "Sí"));
         estaModificadoComboBox.Items.Add(new KeyValuePair<bool, string>(false, "No"));
-
 
         organoComboBox.ItemsSource = organoOC;
         organoComboBox.DisplayMemberPath = "descripcion";
@@ -253,6 +251,10 @@ public partial class ListaAfiliacionesPage : Page, INotifyPropertyChanged
                 .AddText(ex.Message)
                 .Show();
         }
+    }
+
+    void OnApellidosClick(object sender, RoutedEventArgs e)
+    {
     }
 
     private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

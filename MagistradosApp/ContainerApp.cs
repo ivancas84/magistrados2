@@ -11,6 +11,9 @@ namespace MagistradosApp
 {
     static class ContainerApp
     {
+
+        public static int historyLength = 10;
+
         public static Db db;
 
         public static SqlOrganize.DAO dao;

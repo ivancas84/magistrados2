@@ -358,7 +358,17 @@
                         CanUserAddRows="False"
                         AutoGenerateColumns="False">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Apellidos" Binding="{Binding persona__apellidos}"></DataGridTextColumn>
+                            <DataGridHyperlinkColumn 
+                                 ContentBinding="{Binding Path=persona__apellidos}"
+                                 Header="Apellidos"
+                                 IsReadOnly="True"
+                                 Width="*"> 
+                                <DataGridHyperlinkColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <EventSetter Event="Hyperlink.Click" Handler="OnApellidosClick" />
+                                    </Style>
+                                </DataGridHyperlinkColumn.ElementStyle>
+                            </DataGridHyperlinkColumn>
                             <DataGridTextColumn Header="Nombres" Binding="{Binding persona__nombres}"></DataGridTextColumn>
                             <DataGridTextColumn Header="Legajo" Binding="{Binding persona__legajo}"></DataGridTextColumn>
                             <DataGridTextColumn Header="Órgano" Binding="{Binding organo__descripcion}"></DataGridTextColumn>

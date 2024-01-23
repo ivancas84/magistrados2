@@ -17,6 +17,60 @@ public partial class ShellWindow : MetroWindow, IShellWindow, INotifyPropertyCha
     private readonly IRightPaneService _rightPaneService;
     private bool _canGoBack;
 
+    #region atributos https://github.com/Pericial/GAP/issues/114#issuecomment-1905655520
+    Dictionary<string, Page> pages = new();
+    List<Page> history = new(); //historial de navegacion
+    #endregion
+
+    #region metodos https://github.com/Pericial/GAP/issues/114#issuecomment-1905655520
+    /// <summary>
+    /// Guardar la instancia de la pagina y asignar a historico
+    /// </summary>
+    public void SetPageContent(Page pageInstance)
+    {
+        var t = pageInstance.GetType();
+        if (!pages.ContainsKey(t.Name))
+            pages[t.Name] = pageInstance;
+        SetPageHistory(pages[t.Name]);
+    }
+
+    /// <summary>
+    /// Asignar pagina al historico sin guardar la instancia
+    /// </summary>
+    public void SetPageHistory(Page pageInstance)
+    {
+        shellFrame.Content = pageInstance;
+        history.Add(pageInstance);
+        if (history.Count > ContainerApp.historyLength)
+            history.RemoveAt(0);
+    }
+
+    /// <summary>
+    /// Asignar pagina sin guardar historico ni instancia
+    /// </summary>
+    public void SetPage(Page pageInstance)
+    {
+        shellFrame.Content = pageInstance;
+    }
+
+    /// <summary>
+    /// Botón volver
+    /// </summary>
+    private void btnVolver_Click(object sender, RoutedEventArgs e)
+    {
+
+        if (history.Count < 1)
+            return;
+
+        history.RemoveAt(history.Count - 1);
+
+        if (history.Count == 0)
+            shellFrame.Content = new MainPage();
+        else
+            shellFrame.Content = history.Last();
+    }
+    #endregion
+
     public bool CanGoBack
     {
         get { return _canGoBack; }
@@ -76,6 +130,10 @@ public partial class ShellWindow : MetroWindow, IShellWindow, INotifyPropertyCha
         => _rightPaneService.OpenInRightPane(typeof(SettingsPage));
 
     private void OnMenuViewsListaAfiliaciones(object sender, RoutedEventArgs e)
+        => SetPageContent(new ListaAfiliacionesPage());
+
+
+    private void OnMenuViewsListaAfiliaciones2(object sender, RoutedEventArgs e)
         => _navigationService.NavigateTo(typeof(ListaAfiliacionesPage), null, true);
 
     public event PropertyChangedEventHandler PropertyChanged;

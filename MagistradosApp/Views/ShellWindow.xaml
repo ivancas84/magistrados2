@@ -16,10 +16,8 @@
     <controls:MetroWindow.LeftWindowCommands>
         <controls:WindowCommands>
             <Button
-                AutomationProperties.Name="{x:Static properties:Resources.ShellGoBackButton}"
                 ToolTip="{x:Static properties:Resources.ShellGoBackButton}"
-                IsEnabled="{Binding CanGoBack}"
-                Click="OnGoBack">
+                Click="btnVolver_Click">
                 <TextBlock
                     Text="&#xE72B;"
                     FontSize="14"
