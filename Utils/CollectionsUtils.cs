@@ -1,14 +1,7 @@
-﻿using FastMember;
-using Newtonsoft.Json;
-using System;
+﻿using Newtonsoft.Json;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data.Common;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Utils
 {
@@ -504,6 +497,16 @@ namespace Utils
             Type type = @this.GetType();
             PropertyInfo property = type.GetProperty(propertyName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
             return property.GetValue(@this);
+        }
+
+        /// <summary>
+        /// Clonar objeto 
+        /// </summary>
+        /// <remarks>https://www.wwt.com/article/how-to-clone-objects-in-dotnet-core</remarks>
+        public static T? Clone<T>(this T self)
+        {
+            var serialized = JsonConvert.SerializeObject(self);
+            return JsonConvert.DeserializeObject<T>(serialized);
         }
     }
 
