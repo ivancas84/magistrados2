@@ -36,7 +36,7 @@
     "dataType": "varchar",
     "type": "string",
     "notNull": true,
-    "defaultValue": null,
+    "defaultValue": "Alta",
     "maxLength": 45
   },
   "estado": {
@@ -56,7 +56,7 @@
     "dataType": "varchar",
     "type": "string",
     "notNull": true,
-    "defaultValue": null,
+    "defaultValue": "Creado",
     "maxLength": 45
   },
   "creado": {

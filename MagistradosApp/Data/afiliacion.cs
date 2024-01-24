@@ -28,6 +28,8 @@ namespace MagistradosApp.Data
                 case DataInitMode.Default:
                 case DataInitMode.DefaultMain:
                     _id = (string?)ContainerApp.db.Values("afiliacion").Default("id").Get("id");
+                    _motivo = (string?)ContainerApp.db.Values("afiliacion").Default("motivo").Get("motivo");
+                    _estado = (string?)ContainerApp.db.Values("afiliacion").Default("estado").Get("estado");
                     _creado = (DateTime?)ContainerApp.db.Values("afiliacion").Default("creado").Get("creado");
                 break;
             }

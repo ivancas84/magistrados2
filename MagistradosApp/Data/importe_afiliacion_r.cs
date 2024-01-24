@@ -24,6 +24,8 @@ namespace MagistradosApp.Data
             {
                 case DataInitMode.Default:
                     afiliacion__id = (string?)ContainerApp.db.Values("afiliacion").Default("id").Get("id");
+                    afiliacion__motivo = (string?)ContainerApp.db.Values("afiliacion").Default("motivo").Get("motivo");
+                    afiliacion__estado = (string?)ContainerApp.db.Values("afiliacion").Default("estado").Get("estado");
                     afiliacion__creado = (DateTime?)ContainerApp.db.Values("afiliacion").Default("creado").Get("creado");
                     persona__id = (string?)ContainerApp.db.Values("persona").Default("id").Get("id");
                     persona__creado = (DateTime?)ContainerApp.db.Values("persona").Default("creado").Get("creado");

@@ -301,7 +301,7 @@ public partial class MainPage : Page, INotifyPropertyChanged
 
     private void AgregarAfiliacion_Click(object sender, RoutedEventArgs e)
     {
-        var a = new Data_afiliacion_r();
+        var a = new Data_afiliacion_r(SqlOrganize.DataInitMode.DefaultMain);
         var persona = (Data_persona)formGroupBox.DataContext;
         a.persona = persona.id;
         afiliacionOC.Add(a);
