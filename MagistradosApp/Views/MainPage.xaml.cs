@@ -4,6 +4,7 @@ using MagistradosApp.DAO;
 using MagistradosApp.Data;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Printing;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,6 +24,7 @@ public partial class MainPage : Page, INotifyPropertyChanged
     private ObservableCollection<Data_cargo> cargoOC = new();
     private ObservableCollection<Data_tipo_documento> tipoDocumentoOC = new();
 
+    private Data_persona persona; //datos iniciales de persona
 
     #region afiliacionDataGrid
     private DAO.Afiliacion afiliacionDAO = new();
@@ -75,7 +77,7 @@ public partial class MainPage : Page, INotifyPropertyChanged
         if (afiliacion.IsNullOrEmpty() || afiliacion.persona.IsNullOrEmptyOrDbNull())
             InitData();
         else
-            SetData(ContainerApp.dao.Get("persona", afiliacion.persona).Obj<Data_persona>());
+            SetMainData(ContainerApp.dao.Get("persona", afiliacion.persona).Obj<Data_persona>());
     }
 
     #region personaComboBox v2023.11
@@ -178,7 +180,7 @@ public partial class MainPage : Page, INotifyPropertyChanged
             cb.IsDropDownOpen = true;
         else
         {
-            SetData((Data_persona)cb.SelectedItem);
+            SetMainData((Data_persona)cb.SelectedItem);
         }
     }
     #endregion
@@ -188,9 +190,16 @@ public partial class MainPage : Page, INotifyPropertyChanged
 
     private void InitData()
     {
-        formGroupBox.DataContext = new Data_persona(SqlOrganize.DataInitMode.DefaultMain);
+        persona = new Data_persona(SqlOrganize.DataInitMode.DefaultMain);
+        formGroupBox.DataContext = persona.Clone();
         afiliacionOC.Clear();
         tramiteExcepcionalOC.Clear();
+    }
+
+    private void SetMainData(Data_persona param)
+    {
+        persona = param;
+        SetData(persona.Clone());
     }
 
     private void SetData(Data_persona persona)
@@ -219,7 +228,8 @@ public partial class MainPage : Page, INotifyPropertyChanged
     {
         try
         {
-            var persona = (Data_persona)formGroupBox.DataContext;
+            persona = (Data_persona)formGroupBox.DataContext;
+            personaOC.Clear();
             ContainerApp.db.Persist("persona").PersistObj(persona).Exec().RemoveCache();
             new ToastContentBuilder()
                 .AddText("Administración de Persona")
@@ -304,12 +314,12 @@ public partial class MainPage : Page, INotifyPropertyChanged
 
     private void ResetearPersonaButton_Click(object sender, RoutedEventArgs e)
     {
-
+        SetData(persona.Clone());
     }
 
     private void NuevaPersonaButton_Click(object sender, RoutedEventArgs e)
     {
-
+        InitData();
     }
 }
 
