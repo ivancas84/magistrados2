@@ -32,7 +32,7 @@ public partial class MainPage : Page, INotifyPropertyChanged
 
     #region tramiteExcepcionalDataGrid
     //private DAO.Afiliacion afiliacionDAO = new();
-    //private ObservableCollection<Data_afiliacion_r> afiliacionOC = new();
+    private ObservableCollection<Data_tramite_excepcional_r> tramiteExcepcionalOC = new();
     #endregion
 
     public MainPage(Data_afiliacion? afiliacion = null)
@@ -73,7 +73,7 @@ public partial class MainPage : Page, INotifyPropertyChanged
         afiliacionDataGrid.ItemsSource = afiliacionOC;
 
         if (afiliacion.IsNullOrEmpty() || afiliacion.persona.IsNullOrEmptyOrDbNull())
-            formGroupBox.DataContext = new Data_persona(SqlOrganize.DataInitMode.DefaultMain);
+            InitData();
         else
             SetData(ContainerApp.dao.Get("persona", afiliacion.persona).Obj<Data_persona>());
     }
@@ -186,6 +186,13 @@ public partial class MainPage : Page, INotifyPropertyChanged
     public event PropertyChangedEventHandler PropertyChanged;
 
 
+    private void InitData()
+    {
+        formGroupBox.DataContext = new Data_persona(SqlOrganize.DataInitMode.DefaultMain);
+        afiliacionOC.Clear();
+        tramiteExcepcionalOC.Clear();
+    }
+
     private void SetData(Data_persona persona)
     {
         formGroupBox.DataContext = persona;
@@ -291,6 +298,16 @@ public partial class MainPage : Page, INotifyPropertyChanged
     }
 
     private void EliminarTramiteExcepcional_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void ResetearPersonaButton_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void NuevaPersonaButton_Click(object sender, RoutedEventArgs e)
     {
 
     }

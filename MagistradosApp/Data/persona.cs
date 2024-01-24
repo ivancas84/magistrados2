@@ -29,6 +29,7 @@ namespace MagistradosApp.Data
                 case DataInitMode.DefaultMain:
                     _id = (string?)ContainerApp.db.Values("persona").Default("id").Get("id");
                     _creado = (DateTime?)ContainerApp.db.Values("persona").Default("creado").Get("creado");
+                    _tipo_documento = (string?)ContainerApp.db.Values("persona").Default("tipo_documento").Get("tipo_documento");
                 break;
             }
         }

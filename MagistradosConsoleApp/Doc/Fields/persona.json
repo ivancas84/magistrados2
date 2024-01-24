@@ -265,7 +265,7 @@
     "dataType": "varchar",
     "type": "string",
     "notNull": false,
-    "defaultValue": null,
+    "defaultValue": "1",
     "maxLength": 45
   }
 }

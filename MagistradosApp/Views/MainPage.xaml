@@ -59,6 +59,7 @@
                             Margin= "2">Buscar:</Label>
 
                         <ComboBox 
+                            Margin= "2"
                             MinWidth="200"
 							Name="personaComboBox"
 							IsTextSearchEnabled="False"
@@ -67,6 +68,18 @@
 							TextBoxBase.TextChanged="PersonaComboBox_TextChanged"
 							GotFocus="PersonaComboBox_GotFocus"
 							TextBoxBase.SelectionChanged="PersonaComboBox_SelectionChanged"/>
+
+                        <Button 
+                            Margin= "2"
+                            Content = "_Resetear..." 
+                            Click="ResetearPersonaButton_Click"
+                            />
+                        
+                        <Button 
+                            Margin= "2"
+                            Content = "_Nuevo..." 
+                            Click="NuevaPersonaButton_Click"
+                            />
                     </StackPanel>
                 </GroupBox>
 
@@ -225,7 +238,6 @@
 							Name="cargoComboBox"
 							SelectedValue="{Binding cargo}">
                         </ComboBox>
-
 
                         <StackPanel Grid.Row = "4" Grid.ColumnSpan = "2">
                             <Button 

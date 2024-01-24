@@ -25,6 +25,7 @@ namespace MagistradosApp.Data
                 case DataInitMode.Default:
                     persona__id = (string?)ContainerApp.db.Values("persona").Default("id").Get("id");
                     persona__creado = (DateTime?)ContainerApp.db.Values("persona").Default("creado").Get("creado");
+                    persona__tipo_documento = (string?)ContainerApp.db.Values("persona").Default("tipo_documento").Get("tipo_documento");
                     cargo__id = (string?)ContainerApp.db.Values("cargo").Default("id").Get("id");
                     tipo_documento__id = (string?)ContainerApp.db.Values("tipo_documento").Default("id").Get("id");
                     departamento_judicial__id = (string?)ContainerApp.db.Values("departamento_judicial").Default("id").Get("id");
