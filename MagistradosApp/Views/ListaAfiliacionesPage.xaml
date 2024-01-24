@@ -330,11 +330,20 @@
 							SelectedValue="{Binding persona__cargo}">
                         </ComboBox>
                         
-                        <StackPanel Grid.Row = "4" Grid.ColumnSpan = "6">
+                        <StackPanel 
+                            Grid.Row = "4" 
+                            Grid.ColumnSpan = "6"
+                            Orientation="Horizontal" >
 							<Button
 								Content = "_Buscar..."
 								Click="BuscarButton_Click"
-								Margin = "20"/>
+								Margin = "20"
+                                Width="200"/>
+                            <Button
+								Content = "_Resetear..."
+								Click="ResetearButton_Click"
+								Margin = "20"
+                                Width="200"/>
 
 						</StackPanel>
 

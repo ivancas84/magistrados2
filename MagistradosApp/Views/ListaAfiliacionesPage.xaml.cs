@@ -34,7 +34,6 @@ public partial class ListaAfiliacionesPage : Page, INotifyPropertyChanged
         this.sw = sw;
 
         DataContext = this;
-        searchGroupBox.DataContext = new ListaAfiliaciones.Data_afiliacion();
 
         motivoComboBox.SelectedValuePath = "Key";
         motivoComboBox.DisplayMemberPath = "Value";
@@ -68,14 +67,7 @@ public partial class ListaAfiliacionesPage : Page, INotifyPropertyChanged
         organoComboBox.ItemsSource = organoOC;
         organoComboBox.DisplayMemberPath = "descripcion";
         organoComboBox.SelectedValuePath = "id";
-        var data = ContainerApp.db.Query("organo").ColOfDictCache();
-        organoOC.Clear();
-        organoOC.AddRange(data);
-        Data_organo organoNull = new (SqlOrganize.DataInitMode.Null);
-        organoNull.descripcion = "(Todos)";
-        organoOC.Add(organoNull);
 
-        #region departamentoComboBox y departamentoInformadoComboBox
         departamentoComboBox.ItemsSource = departamentoOC;
         departamentoComboBox.DisplayMemberPath = "nombre";
         departamentoComboBox.SelectedValuePath = "id";
@@ -84,29 +76,58 @@ public partial class ListaAfiliacionesPage : Page, INotifyPropertyChanged
         departamentoInformadoComboBox.DisplayMemberPath = "nombre";
         departamentoInformadoComboBox.SelectedValuePath = "id";
 
+        personaCargoComboBox.ItemsSource = personaCargoOC;
+        personaCargoComboBox.DisplayMemberPath = "descripcion";
+        personaCargoComboBox.SelectedValuePath = "id";
+
+        creadoAnioComboBox.ItemsSource = creadoAnioOC;
+
+        enviadoAnioComboBox.ItemsSource = enviadoAnioOC;
+
+        evaluadoAnioComboBox.ItemsSource = evaluadoAnioOC;
+
+        modificadoAnioComboBox.ItemsSource = modificadoAnioOC;
+
+        afiliacionDataGrid.ItemsSource = afiliacionOC;
+
+        InitData();
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    private void InitData()
+    {
+        searchGroupBox.DataContext = new ListaAfiliaciones.Data_afiliacion();
+
+        var data = ContainerApp.db.Query("organo").ColOfDictCache();
+        organoOC.Clear();
+        organoOC.AddRange(data);
+        Data_organo organoNull = new(SqlOrganize.DataInitMode.Null);
+        organoNull.descripcion = "(Todos)";
+        organoOC.Add(organoNull);
+        organoComboBox.SelectedIndex = organoOC.Count() - 1;
+
+        #region departamentoComboBox y departamentoInformadoComboBox
         var data2 = ContainerApp.db.Query("departamento_judicial").Order("$nombre ASC").ColOfDictCache();
         departamentoOC.Clear();
         departamentoOC.AddRange(data2);
         Data_departamento_judicial departamentoNull = new Data_departamento_judicial(SqlOrganize.DataInitMode.Null);
         departamentoNull.nombre = "(Todos)";
         departamentoOC.Add(departamentoNull);
+        departamentoComboBox.SelectedIndex = departamentoOC.Count() - 1;
+        departamentoInformadoComboBox.SelectedIndex = departamentoOC.Count() - 1;
         #endregion
 
         #region personaCargoComboBox
-        personaCargoComboBox.ItemsSource = personaCargoOC;
-        personaCargoComboBox.DisplayMemberPath = "descripcion";
-        personaCargoComboBox.SelectedValuePath = "id";
-
         data2 = ContainerApp.db.Query("cargo").Order("$descripcion ASC").ColOfDictCache();
         personaCargoOC.Clear();
         personaCargoOC.AddRange(data2);
-        Data_cargo cargoNull = new (SqlOrganize.DataInitMode.Null);
+        Data_cargo cargoNull = new(SqlOrganize.DataInitMode.Null);
         cargoNull.descripcion = "(Todos)";
         personaCargoOC.Add(cargoNull);
+        personaCargoComboBox.SelectedIndex = personaCargoOC.Count() - 1; ;
         #endregion
 
-
-        creadoAnioComboBox.ItemsSource = creadoAnioOC;
         var anios = ContainerApp.db.Query("afiliacion").
             Select("YEAR($creado) AS anio").
             Where("$creado IS NOT NULL").
@@ -116,7 +137,6 @@ public partial class ListaAfiliacionesPage : Page, INotifyPropertyChanged
         creadoAnioOC.AddRange(anios);
         creadoAnioOC.Add(null);
 
-        enviadoAnioComboBox.ItemsSource = enviadoAnioOC;
         anios = ContainerApp.db.Query("afiliacion").
             Select("YEAR($enviado) AS anio").
             Where("$enviado IS NOT NULL").
@@ -126,8 +146,6 @@ public partial class ListaAfiliacionesPage : Page, INotifyPropertyChanged
         enviadoAnioOC.AddRange(anios);
         enviadoAnioOC.Add(null);
 
-
-        evaluadoAnioComboBox.ItemsSource = evaluadoAnioOC;
         anios = ContainerApp.db.Query("afiliacion").
             Select("YEAR($evaluado) AS anio").
             Where("$evaluado IS NOT NULL").
@@ -137,7 +155,6 @@ public partial class ListaAfiliacionesPage : Page, INotifyPropertyChanged
         evaluadoAnioOC.AddRange(anios);
         evaluadoAnioOC.Add(null);
 
-        modificadoAnioComboBox.ItemsSource = modificadoAnioOC;
         anios = ContainerApp.db.Query("afiliacion").
             Select("YEAR($modificado) AS anio").
             Where("$modificado IS NOT NULL").
@@ -147,10 +164,8 @@ public partial class ListaAfiliacionesPage : Page, INotifyPropertyChanged
         modificadoAnioOC.AddRange(anios);
         modificadoAnioOC.Add(null);
 
-        afiliacionDataGrid.ItemsSource = afiliacionOC;
-    }
 
-    public event PropertyChangedEventHandler PropertyChanged;
+    }
 
     private void Set<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
     {
@@ -269,5 +284,8 @@ public partial class ListaAfiliacionesPage : Page, INotifyPropertyChanged
 
     private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-  
+    private void ResetearButton_Click(object sender, RoutedEventArgs e)
+    {
+        InitData();
+    }
 }
