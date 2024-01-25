@@ -166,7 +166,8 @@
   },
   "codigo": {
     "checks": {
-      "type": "int"
+      "type": "int",
+      "required": true
     },
     "resets": {},
     "name": "codigo",
@@ -176,18 +177,18 @@
     "refFieldName": null,
     "dataType": "int",
     "type": "int",
-    "notNull": false,
+    "notNull": true,
     "defaultValue": null,
     "maxLength": 11
   },
   "departamento_judicial": {
     "checks": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "resets": {
       "trim": " ",
-      "removeMultipleSpaces": true,
-      "nullIfEmpty": true
+      "removeMultipleSpaces": true
     },
     "name": "departamento_judicial",
     "alias": "dep",
@@ -196,18 +197,18 @@
     "refFieldName": "id",
     "dataType": "varchar",
     "type": "string",
-    "notNull": false,
+    "notNull": true,
     "defaultValue": null,
     "maxLength": 45
   },
   "organo": {
     "checks": {
-      "type": "string"
+      "type": "string",
+      "required": true
     },
     "resets": {
       "trim": " ",
-      "removeMultipleSpaces": true,
-      "nullIfEmpty": true
+      "removeMultipleSpaces": true
     },
     "name": "organo",
     "alias": "org",
@@ -216,7 +217,7 @@
     "refFieldName": "id",
     "dataType": "varchar",
     "type": "string",
-    "notNull": false,
+    "notNull": true,
     "defaultValue": null,
     "maxLength": 45
   },

@@ -165,12 +165,18 @@ namespace MagistradosApp.Data
                     return "";
 
                 case "codigo":
+                    if (_codigo == null)
+                        return "Debe completar valor.";
                     return "";
 
                 case "departamento_judicial":
+                    if (_departamento_judicial == null)
+                        return "Debe completar valor.";
                     return "";
 
                 case "organo":
+                    if (_organo == null)
+                        return "Debe completar valor.";
                     return "";
 
                 case "departamento_judicial_informado":

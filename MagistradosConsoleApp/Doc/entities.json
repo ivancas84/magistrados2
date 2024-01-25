@@ -35,7 +35,10 @@
       "motivo",
       "estado",
       "creado",
-      "persona"
+      "persona",
+      "codigo",
+      "departamento_judicial",
+      "organo"
     ],
     "uniqueMultiple": [],
     "id": [

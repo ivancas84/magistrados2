@@ -19,7 +19,7 @@ namespace SqlOrganize
 
         public string? entityName { get; }
 
-        public List<object> parameters { get; set; } = new List<object> { };
+        public List<object?> parameters { get; set; } = new List<object?> { };
 
         public int count = 0;
 
@@ -111,14 +111,14 @@ DELETE " + e.alias + " FROM " + e.name + " " + e.alias + @"
             return this;
         }
 
-        abstract protected EntityPersist _Update(IDictionary<string, object> row, string? _entityName = null);
+        abstract protected EntityPersist _Update(IDictionary<string, object?> row, string? _entityName = null);
 
         public EntityPersist Update(EntityValues values)
         {
             return Update(values.values, values.entityName);
         }
 
-        public EntityPersist Update(IDictionary<string, object> row, string? _entityName = null)
+        public EntityPersist Update(IDictionary<string, object?> row, string? _entityName = null)
         {
             _entityName = _entityName ?? entityName;
 
@@ -128,8 +128,8 @@ DELETE " + e.alias + " FROM " + e.name + " " + e.alias + @"
 WHERE " + id + " = @" + count + @";
 ";
             count++;
-            parameters.Add(row[Db.config.id]);
-            detail.Add((_entityName!, (string)row[Db.config.id]));
+            parameters.Add(row[Db.config.id]!);
+            detail.Add((_entityName!, row[Db.config.id]!));
             return this;
         }
 
@@ -191,7 +191,7 @@ WHERE " + id + " = @" + count + @";
         /// <param name="id">Identificacion de la fila a actualizar</param>
         /// <param name="_entityName">Nombre de la entidad, si no se especifica se toma el atributo</param>
         /// <returns>Mismo objeto</returns>
-        public EntityPersist UpdateValue(string key, object? value, IEnumerable<object> ids, string? _entityName = null)
+        public EntityPersist UpdateValueIds(string key, object? value, IEnumerable<object> ids, string? _entityName = null)
         {
             Dictionary<string, object?> row = new Dictionary<string, object?>()
             {
@@ -236,7 +236,7 @@ WHERE " + id + " = @" + count + @";
             }
 
             List<object> ids = new() { source[idKey]! };
-            return UpdateValue(key, value, ids, _entityName);
+            return UpdateValueIds(key, value, ids, _entityName);
         }
 
         public EntityPersist InsertObj(object obj, string? entityName = null)
@@ -248,7 +248,7 @@ WHERE " + id + " = @" + count + @";
         public EntityPersist Insert(EntityValues v)
         {
             if (!v.values.ContainsKey(Db.config.id) || v.values[Db.config.id].IsNullOrEmptyOrDbNull())
-                v.SetDefault(Db.config.id).Reset(Db.config.id);
+                v.SetDefault(Db.config.id);
             return Insert(v.values!, v.entityName);
         }
 
@@ -343,12 +343,12 @@ VALUES (";
 
             if (rows.Count() == 1)
             {
-                //Se controla la existencia de id diferente?
+                //Se controla la existencia de id diferente? No! Se reasigna el id, dejo el codigo comentado
                 //if (v.values.ContainsKey(Db.config.id) && v.Get(Db.config.id).ToString() != rows.ElementAt(0)[Db.config.id].ToString())
                 //    throw new Exception("Los id son diferentes");
 
-                v.Set(Db.config.id, rows.ElementAt(0)[Db.config.id]).Reset().Check();
-                if (v.logging.HasErrors())
+                v.Set(Db.config.id, rows.ElementAt(0)[Db.config.id]);
+                if (!v.Check())
                     throw new Exception("Los campos a actualizar poseen errores: " + v.logging.ToString());
 
                 return Update(v.values!, v.entityName);

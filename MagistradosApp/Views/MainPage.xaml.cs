@@ -2,12 +2,16 @@
 using Google.Protobuf.WellKnownTypes;
 using MagistradosApp.DAO;
 using MagistradosApp.Data;
+using MySqlX.XDevAPI.Relational;
+using Newtonsoft.Json.Linq;
+using SqlOrganize;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Printing;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Threading;
 using Utils;
 
@@ -206,7 +210,14 @@ public partial class MainPage : Page, INotifyPropertyChanged
     {
         formGroupBox.DataContext = persona;
         afiliacionOC.Clear();
-        var data = ContainerApp.dao.SearchKeyValue("afiliacion", "persona", persona.id);
+
+        IEnumerable<Dictionary<string, object?>> data = ContainerApp.db.Query("afiliacion").
+            Where("$persona = @0").
+            Parameters(persona.id).
+            Size(0).
+            Order("$creado DESC").
+            ColOfDictCache();
+
         afiliacionOC.AddRange(data);
     }
 
@@ -251,17 +262,48 @@ public partial class MainPage : Page, INotifyPropertyChanged
     /// <remarks>https://github.com/Pericial/GAP/issues/68#issuecomment-1878745457</remarks>
     private void GuardarAfiliacion_Click(object sender, RoutedEventArgs e)
     {
-        var button = (e.OriginalSource as Button);
-        var afiliacion = (Data_afiliacion_r)button.DataContext;
-        var p = ContainerApp.db.Persist("afiliacion");
         try
         {
-            p.PersistObj(afiliacion).Exec().RemoveCache();
+            var button = (e.OriginalSource as Button);
+            var afiliacionObj = (Data_afiliacion_r)button.DataContext;
+            var p = ContainerApp.db.Persist("afiliacion");
+
+            EntityValues afiliacion = ContainerApp.db.Values("afiliacion").SetObj(afiliacionObj).Reset();
+            if (!afiliacion.Check())
+                throw new Exception("Los campos poseen errores: " + afiliacion.logging.ToString());
+
+            IDictionary<string, object?>? row = ContainerApp.dao.RowByUnique(afiliacion);
+
+            //Si no existe row, deben marcarse como modificado el resto de las afiliaciones que posean el mismo codigo y crear la nueva
+            if (row.IsNullOrEmpty())
+            {
+                IEnumerable<string> afiliacionesNoModificadas = ContainerApp.db.Query("afiliacion").
+                    Where("$modificado IS NULL AND $persona = @0 AND $codigo = @1").
+                    Parameters(afiliacionObj.persona, afiliacionObj.codigo).
+                    ColOfDictCache().
+                    ColOfVal<string>("id");
+
+
+                p.UpdateValueIds("modificado", afiliacionObj.creado, afiliacionesNoModificadas);
+                p.Insert(afiliacion);
+            }
+
+            //Si existe row, se reasigna el id para actualizar
+            else
+            {
+                afiliacion.Set("id", row["id"]);
+                afiliacion.Update(p);
+            }
+
+            p.Transaction().RemoveCache();
+            SetData(persona);
             new ToastContentBuilder()
                 .AddText("Administración de Afiliado")
                 .AddText("Registro 40 guardado")
                 .Show();
+        
         }
+        
         catch (Exception ex)
         {
             new ToastContentBuilder()
