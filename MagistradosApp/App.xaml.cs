@@ -111,6 +111,8 @@ public partial class App : Application
 
         services.AddTransient<ListaAfiliacionesPage>();
 
+        services.AddTransient<CrearArchivoSueldosPage>();
+
         // Configuration
         services.Configure<AppConfig>(context.Configuration.GetSection(nameof(AppConfig)));
     }

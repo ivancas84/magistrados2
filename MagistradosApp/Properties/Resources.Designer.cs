@@ -239,5 +239,27 @@ namespace MagistradosApp.Properties {
                 return ResourceManager.GetString("ShellMenuViewsHeader", resourceCulture);
             }
         }
+
+        /// <summary>
+        ///   Looks up a localized string similar to CrearArchivoSueldos.
+        /// </summary>
+        public static string CrearArchivoSueldosPageTitle
+        {
+            get
+            {
+                return ResourceManager.GetString("CrearArchivoSueldosPageTitle", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to MenuItemViewsCrearArchivoSueldosPageHeader.
+        /// </summary>
+        public static string ShellMenuItemViewsCrearArchivoSueldosPageHeader
+        {
+            get
+            {
+                return ResourceManager.GetString("ShellMenuItemViewsCrearArchivoSueldosPageHeader", resourceCulture);
+            }
+        }
     }
 }

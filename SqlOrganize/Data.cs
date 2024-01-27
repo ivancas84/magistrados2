@@ -16,11 +16,6 @@ namespace SqlOrganize
     public abstract class Data : INotifyPropertyChanged, IDataErrorInfo
     {
         /// <summary>
-        /// Campo existente en la base de datos?
-        /// </summary>
-        public bool Exists = true;
-
-        /// <summary>
         /// Debe ejecutarse la validacion en la base de datos
         /// </summary>
         public bool Validate = false;
