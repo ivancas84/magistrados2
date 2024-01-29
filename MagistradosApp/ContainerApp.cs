@@ -18,11 +18,12 @@ namespace MagistradosApp
 
         public static SqlOrganize.DAO dao;
 
-        public static Config config = new Config
+        public static Config config = new()
         {
             id = "id",
             fkId = true,
             connectionString = ConfigurationManager.AppSettings.Get("connectionString"),
+            archivoSueldosPath = ConfigurationManager.AppSettings.Get("archivoSueldosPath"),
         };
 
 

@@ -53,68 +53,34 @@
 							<ColumnDefinition Width = "*" />
 							<ColumnDefinition Width = "Auto" />
 							<ColumnDefinition Width = "*" />
-							<ColumnDefinition Width = "Auto" />
-							<ColumnDefinition Width = "*" />
-							<ColumnDefinition Width = "Auto" />
-							<ColumnDefinition Width = "*" />
 						</Grid.ColumnDefinitions>
 
 						<Label
 							Grid.Row="0"
 							Grid.Column="0"
 							Margin = "2">
-							_Mes:
-						</Label>
-
-						<ComboBox
-							Grid.Row="0"
-							Grid.Column="1"
-							Name="periodoMesComboBox"
-							SelectedValue="{Binding periodo_mes}"
-							Margin = "2">
-						</ComboBox>
-						
-						<Label
-							Grid.Row="0"
-							Grid.Column="2"
-							Margin = "2">
-							_Año:
-						</Label>
-						<ComboBox
-							Grid.Row="0"
-							Grid.Column="3"
-							Name = "periodoAnioComboBox"
-							SelectedValue="{Binding periodo_anio, ValidatesOnDataErrors=True}"
-							Margin = "2"/>
-
-						<Label
-							Grid.Row="0"
-							Grid.Column="4"
-							Margin = "2">
 							_Organo:
 						</Label>
 						<ComboBox
 							Grid.Row="0"
-							Grid.Column="5"
+							Grid.Column="1"
 							Name = "organoComboBox"
 							SelectedValue="{Binding organo, ValidatesOnDataErrors=True}"
 							Margin = "2"/>
 
 						<Label
 							Grid.Row="0"
-							Grid.Column="6"
+							Grid.Column="2"
 							Margin = "2">
 							_Tipo:
 						</Label>
 						<ComboBox
 							Grid.Row="0"
-							Grid.Column="7"
+							Grid.Column="3"
 							Name = "tipoComboBox"
 							SelectedValue="{Binding tipo, ValidatesOnDataErrors=True}"
 							Margin = "2">
 
-							<ComboBoxItem Content = "Registro 40" />
-							<ComboBoxItem Content = "Registro 80" />
 						</ComboBox>
 
 						
