@@ -70,6 +70,15 @@ namespace MagistradosApp.Properties {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Crear Archivo de Sueldos.
+        /// </summary>
+        public static string CrearArchivoSueldosPageTitle {
+            get {
+                return ResourceManager.GetString("CrearArchivoSueldosPageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Lista de Afiliaciones.
         /// </summary>
         public static string ListaAfiliacionesPageTitle {
@@ -205,6 +214,15 @@ namespace MagistradosApp.Properties {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Crear Archivo de Sueldos.
+        /// </summary>
+        public static string ShellMenuItemViewsCrearArchivoSueldosPageHeader {
+            get {
+                return ResourceManager.GetString("ShellMenuItemViewsCrearArchivoSueldosPageHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Lista de Afiliaciones.
         /// </summary>
         public static string ShellMenuItemViewsListaAfiliacionesPageHeader {
@@ -237,28 +255,6 @@ namespace MagistradosApp.Properties {
         public static string ShellMenuViewsHeader {
             get {
                 return ResourceManager.GetString("ShellMenuViewsHeader", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to CrearArchivoSueldos.
-        /// </summary>
-        public static string CrearArchivoSueldosPageTitle
-        {
-            get
-            {
-                return ResourceManager.GetString("CrearArchivoSueldosPageTitle", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to MenuItemViewsCrearArchivoSueldosPageHeader.
-        /// </summary>
-        public static string ShellMenuItemViewsCrearArchivoSueldosPageHeader
-        {
-            get
-            {
-                return ResourceManager.GetString("ShellMenuItemViewsCrearArchivoSueldosPageHeader", resourceCulture);
             }
         }
     }

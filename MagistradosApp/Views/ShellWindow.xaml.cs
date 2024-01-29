@@ -17,12 +17,12 @@ public partial class ShellWindow : MetroWindow, IShellWindow, INotifyPropertyCha
     private readonly IRightPaneService _rightPaneService;
     private bool _canGoBack;
 
-    #region atributos https://github.com/Pericial/GAP/issues/114#issuecomment-1905655520
+    #region atributos historico e instancia https://github.com/Pericial/GAP/issues/114#issuecomment-1905655520
     Dictionary<string, Page> pages = new();
     List<Page> history = new(); //historial de navegacion
     #endregion
 
-    #region metodos https://github.com/Pericial/GAP/issues/114#issuecomment-1905655520
+    #region metodos historico e instancia https://github.com/Pericial/GAP/issues/114#issuecomment-1905655520
     /// <summary>
     /// Guardar la instancia de la pagina y asignar a historico
     /// </summary>
@@ -124,7 +124,7 @@ public partial class ShellWindow : MetroWindow, IShellWindow, INotifyPropertyCha
         => Application.Current.Shutdown();
 
     private void OnMenuViewsMain(object sender, RoutedEventArgs e)
-        => _navigationService.NavigateTo(typeof(MainPage), null, true);
+        => SetPageContent(new MainPage());
 
     private void OnMenuFileSettings(object sender, RoutedEventArgs e)
         => _rightPaneService.OpenInRightPane(typeof(SettingsPage));
@@ -132,12 +132,8 @@ public partial class ShellWindow : MetroWindow, IShellWindow, INotifyPropertyCha
     private void OnMenuViewsListaAfiliaciones(object sender, RoutedEventArgs e)
         => SetPageContent(new ListaAfiliacionesPage(this));
 
-
-    private void OnMenuViewsListaAfiliaciones2(object sender, RoutedEventArgs e)
-        => _navigationService.NavigateTo(typeof(ListaAfiliacionesPage), null, true);
-
     private void OnMenuViewsCrearArchivoSueldos(object sender, RoutedEventArgs e)
-        => _navigationService.NavigateTo(typeof(CrearArchivoSueldosPage), null, true);
+        => SetPageHistory(new CrearArchivoSueldosPage());
 
     public event PropertyChangedEventHandler PropertyChanged;
 
