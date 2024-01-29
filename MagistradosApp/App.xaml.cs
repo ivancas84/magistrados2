@@ -113,6 +113,8 @@ public partial class App : Application
 
         services.AddTransient<CrearArchivoSueldosPage>();
 
+        services.AddTransient<ProcesarArchivoSueldosPage>();
+
         // Configuration
         services.Configure<AppConfig>(context.Configuration.GetSection(nameof(AppConfig)));
     }

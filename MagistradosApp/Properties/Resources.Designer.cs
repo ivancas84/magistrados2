@@ -97,7 +97,7 @@ namespace MagistradosApp.Properties {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a Settings page placeholder text.  Your app description goes here..
+        ///   Busca una cadena traducida similar a Magistrados Versión 2.
         /// </summary>
         public static string SettingsPageAboutText {
             get {
@@ -106,7 +106,7 @@ namespace MagistradosApp.Properties {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a About this application.
+        ///   Busca una cadena traducida similar a Acerca de esta App.
         /// </summary>
         public static string SettingsPageAboutTitle {
             get {
@@ -115,7 +115,7 @@ namespace MagistradosApp.Properties {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a Choose Theme.
+        ///   Busca una cadena traducida similar a Elegir Tema.
         /// </summary>
         public static string SettingsPageChooseThemeText {
             get {
@@ -142,7 +142,7 @@ namespace MagistradosApp.Properties {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a Dark.
+        ///   Busca una cadena traducida similar a Oscuro.
         /// </summary>
         public static string SettingsPageRadioButtonDarkTheme {
             get {
@@ -151,7 +151,7 @@ namespace MagistradosApp.Properties {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a Light.
+        ///   Busca una cadena traducida similar a Luminoso.
         /// </summary>
         public static string SettingsPageRadioButtonLightTheme {
             get {
@@ -160,7 +160,7 @@ namespace MagistradosApp.Properties {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a Default.
+        ///   Busca una cadena traducida similar a Defecto.
         /// </summary>
         public static string SettingsPageRadioButtonWindowsDefaultTheme {
             get {
@@ -169,7 +169,7 @@ namespace MagistradosApp.Properties {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a Settings.
+        ///   Busca una cadena traducida similar a Configuración.
         /// </summary>
         public static string SettingsPageTitle {
             get {
@@ -178,7 +178,7 @@ namespace MagistradosApp.Properties {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a Go back.
+        ///   Busca una cadena traducida similar a Volver.
         /// </summary>
         public static string ShellGoBackButton {
             get {
@@ -187,7 +187,7 @@ namespace MagistradosApp.Properties {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a _File.
+        ///   Busca una cadena traducida similar a _Archivo.
         /// </summary>
         public static string ShellMenuFileHeader {
             get {
@@ -196,7 +196,7 @@ namespace MagistradosApp.Properties {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a _Exit.
+        ///   Busca una cadena traducida similar a _Salida.
         /// </summary>
         public static string ShellMenuItemFileExitHeader {
             get {
@@ -205,7 +205,7 @@ namespace MagistradosApp.Properties {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a _Settings.
+        ///   Busca una cadena traducida similar a _Configuración.
         /// </summary>
         public static string ShellMenuItemFileSettingsPageHeader {
             get {
@@ -241,7 +241,7 @@ namespace MagistradosApp.Properties {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a Settings.
+        ///   Busca una cadena traducida similar a Configuración.
         /// </summary>
         public static string ShellMenuItemViewsSettingsPageHeader {
             get {
@@ -250,11 +250,33 @@ namespace MagistradosApp.Properties {
         }
         
         /// <summary>
-        ///   Busca una cadena traducida similar a _Views.
+        ///   Busca una cadena traducida similar a _Principal.
         /// </summary>
         public static string ShellMenuViewsHeader {
             get {
                 return ResourceManager.GetString("ShellMenuViewsHeader", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to ProcesarArchivoSueldos.
+        /// </summary>
+        public static string ProcesarArchivoSueldosPageTitle
+        {
+            get
+            {
+                return ResourceManager.GetString("ProcesarArchivoSueldosPageTitle", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to MenuItemViewsProcesarArchivoSueldosPageHeader.
+        /// </summary>
+        public static string ShellMenuItemViewsProcesarArchivoSueldosPageHeader
+        {
+            get
+            {
+                return ResourceManager.GetString("ShellMenuItemViewsProcesarArchivoSueldosPageHeader", resourceCulture);
             }
         }
     }

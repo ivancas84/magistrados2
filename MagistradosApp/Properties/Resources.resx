@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
+    <data name="ShellMenuItemViewsProcesarArchivoSueldosPageHeader" xml:space="preserve">
+		    <value>ProcesarArchivoSueldos</value>
+    </data>
+    <data name="ProcesarArchivoSueldosPageTitle" xml:space="preserve">
+		    <value>ProcesarArchivoSueldos</value>
+    </data>
+
   <!-- 
     Microsoft ResX Schema 
     
@@ -130,22 +137,22 @@
     <value>Lista de Afiliaciones</value>
   </data>
   <data name="ShellMenuItemFileSettingsPageHeader" xml:space="preserve">
-    <value>_Settings</value>
+    <value>_Configuración</value>
   </data>
   <data name="ShellMenuItemViewsSettingsPageHeader" xml:space="preserve">
-    <value>Settings</value>
+    <value>Configuración</value>
   </data>
   <data name="SettingsPageTitle" xml:space="preserve">
-    <value>Settings</value>
+    <value>Configuración</value>
   </data>
   <data name="SettingsPageAboutText" xml:space="preserve">
-    <value>Settings page placeholder text.  Your app description goes here.</value>
+    <value>Magistrados Versión 2</value>
   </data>
   <data name="SettingsPageAboutTitle" xml:space="preserve">
-    <value>About this application</value>
+    <value>Acerca de esta App</value>
   </data>
   <data name="SettingsPageChooseThemeText" xml:space="preserve">
-    <value>Choose Theme</value>
+    <value>Elegir Tema</value>
   </data>
   <data name="SettingsPagePersonalizationTitle" xml:space="preserve">
     <value>Personalization</value>
@@ -154,13 +161,13 @@
     <value>Privacy Statement</value>
   </data>
   <data name="SettingsPageRadioButtonDarkTheme" xml:space="preserve">
-    <value>Dark</value>
+    <value>Oscuro</value>
   </data>
   <data name="SettingsPageRadioButtonLightTheme" xml:space="preserve">
-    <value>Light</value>
+    <value>Luminoso</value>
   </data>
   <data name="SettingsPageRadioButtonWindowsDefaultTheme" xml:space="preserve">
-    <value>Default</value>
+    <value>Defecto</value>
   </data>
   <data name="ShellMenuItemViewsMainPageHeader" xml:space="preserve">
     <value>Buscar</value>
@@ -169,16 +176,16 @@
     <value>Buscar Afiliado</value>
   </data>
   <data name="ShellGoBackButton" xml:space="preserve">
-    <value>Go back</value>
+    <value>Volver</value>
   </data>
   <data name="ShellMenuFileHeader" xml:space="preserve">
-    <value>_File</value>
+    <value>_Archivo</value>
   </data>
   <data name="ShellMenuViewsHeader" xml:space="preserve">
-    <value>_Views</value>
+    <value>_Principal</value>
   </data>
   <data name="ShellMenuItemFileExitHeader" xml:space="preserve">
-    <value>_Exit</value>
+    <value>_Salida</value>
   </data>
   <data name="AppDisplayName" xml:space="preserve">
     <value>MagistradosApp</value>
