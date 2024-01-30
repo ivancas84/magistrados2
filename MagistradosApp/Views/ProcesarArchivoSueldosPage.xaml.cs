@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.WinUI.Notifications;
+using MagistradosApp.Data;
 using MagistradosApp.Views.ProcesarArchivoSueldos;
 using Org.BouncyCastle.Asn1.Ocsp;
 using System.Collections.ObjectModel;
@@ -14,6 +15,7 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
 {
 
     private ObservableCollection<int> periodoAnioOC = new();
+    private ObservableCollection<Data_organo> organoOC = new();
 
 
     public ProcesarArchivoSueldosPage()
@@ -54,12 +56,39 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
         periodoMesComboBox.Items.Add(new KeyValuePair<int, string>(11, "11"));
         periodoMesComboBox.Items.Add(new KeyValuePair<int, string>(12, "12"));
         #endregion
+
+        #region organo
+        organoComboBox.SelectedValuePath = "id";
+        organoComboBox.DisplayMemberPath = "descripcion";
+        organoComboBox.ItemsSource = organoOC;
+        IEnumerable<Dictionary<string, object?>> data2 = ContainerApp.db.Query("organo").Order("$descripcion ASC").
+            ColOfDictCache();
+        organoOC.Clear();
+        organoOC.AddRange(data2);
+        #endregion
+    }
+
+    private void BuscarArchivoButton_Click(object sender, RoutedEventArgs e)
+    {
+        // Create OpenFileDialog
+        Microsoft.Win32.OpenFileDialog openFileDlg = new Microsoft.Win32.OpenFileDialog();
+
+        // Launch OpenFileDialog by calling ShowDialog method
+        Nullable<bool> result = openFileDlg.ShowDialog();
+        // Get the selected file name and display in a TextBox.
+        // Load content of file in a TextBlock
+        if (result == true)
+        {
+            archivoTextBox.Text = openFileDlg.FileName;
+            //TextBlock1.Text = 
+        }
     }
 
     private void ProcesarButton_Click(object sender, RoutedEventArgs e)
     {
         try
         {
+            string fileContent = System.IO.File.ReadAllText(archivoTextBox.Text);
             /*causaOC.Clear();
 
             var request = (Requests.Causas_BuscarDatosRequest)searchGroupBox.DataContext;

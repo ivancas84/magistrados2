@@ -57,6 +57,8 @@
 							<ColumnDefinition Width = "*" />
 							<ColumnDefinition Width = "Auto" />
 							<ColumnDefinition Width = "*" />
+							<ColumnDefinition Width = "Auto" />
+							<ColumnDefinition Width = "*" />
 						</Grid.ColumnDefinitions>
 
 						<Label
@@ -86,6 +88,34 @@
 							Margin = "2"/>
 
 
+						<Label
+							Grid.Row="0"
+							Grid.Column="4"
+							Margin = "2">
+							_Organo:
+						</Label>
+						<ComboBox
+							Grid.Row="0"
+							Grid.Column="5"
+							Name = "organoComboBox"
+							SelectedValue="{Binding organo, ValidatesOnDataErrors=True}"
+							Margin = "2"/>
+
+						<Label
+							Grid.Row="0"
+							Grid.Column="6"
+							Margin = "2">_Archivo:</Label>
+
+						<StackPanel 
+							Grid.Row = "0" 
+							Grid.Column= "7"
+							Orientation="Horizontal">
+							<TextBox 
+								Name="archivoTextBox" 
+								Width="200"/>
+							<Button x:Name="archivoBrowseButton" Content="Buscar..." Click="BuscarArchivoButton_Click" />
+						</StackPanel>
+						
 						<StackPanel Grid.Row = "3" Grid.ColumnSpan = "2">
 							<Button
 								Content = "_Procesar..."
