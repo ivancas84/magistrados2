@@ -261,7 +261,6 @@ WHERE " + id + " = @" + count + @";
         /// <returns>Mismo objeto</returns>
         public EntityPersist UpdateValueRel(string _entityName, string key, object? value, IDictionary<string, object?> source)
         {
-            _entityName = _entityName ?? entityName;
             string idKey = Db.config.id;
             if (key.Contains("__"))
             {
@@ -281,10 +280,10 @@ WHERE " + id + " = @" + count + @";
             return InsertObj(entityName!, obj);
         }
 
-        public EntityPersist InsertObj(string entityName, object obj)
+        public EntityPersist InsertObj(string _entityName, object obj)
         {
             IDictionary<string, object?> dict = obj.Dict();
-            return Insert(entityName, dict);
+            return Insert(_entityName, dict);
         }
 
         public EntityPersist Insert(EntityValues v)

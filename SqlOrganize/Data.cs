@@ -16,7 +16,7 @@ namespace SqlOrganize
     public abstract class Data : INotifyPropertyChanged, IDataErrorInfo
     {
         /// <summary>
-        /// Debe ejecutarse la validacion en la base de datos
+        /// Flag para indicar que debe ejecutarse la validacion
         /// </summary>
         public bool Validate = false;
 
