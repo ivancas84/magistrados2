@@ -64,7 +64,7 @@ namespace SqlOrganize
         /// <param name="ids"></param>
         /// <param name="_entityName"></param>
         /// <returns></returns>
-        protected void WhereIds(IEnumerable<object> ids, string entityName)
+        protected void WhereIds(string entityName, params object[] ids)
         {
             string idMap = Db.Mapping(entityName!).Map(Db.config.id);
 
@@ -95,34 +95,46 @@ namespace SqlOrganize
             }
         }
 
-
-        public EntityPersist DeleteIds(IEnumerable<object> ids, string? _entityName = null)
+        public EntityPersist DeleteIds(params object[] ids)
         {
-            _entityName = _entityName ?? entityName;
+            return DeleteIds(entityName!, ids);
+        }
 
-            Entity e = Db.Entity(_entityName!);
+        public EntityPersist DeleteIds(string _entityName, params object[] ids)
+        {
+            Entity e = Db.Entity(_entityName);
   
             sql += @"
 DELETE " + e.alias + " FROM " + e.name + " " + e.alias + @"
 ";
 
-            WhereIds(ids, _entityName!);
+            WhereIds(_entityName, ids);
 
             return this;
         }
 
-        abstract protected EntityPersist _Update(IDictionary<string, object?> row, string? _entityName = null);
+        protected EntityPersist _Update(IDictionary<string, object?> row)
+        {
+            return _Update(entityName!, row);
+        }
+
+        abstract protected EntityPersist _Update(string _entityName, IDictionary<string, object?> row);
 
         public EntityPersist Update(EntityValues values)
         {
-            return Update(values.values, values.entityName);
+            return Update(values.entityName, values.values);
         }
 
-        public EntityPersist Update(IDictionary<string, object?> row, string? _entityName = null)
+        public EntityPersist Update(IDictionary<string, object?> row)
+        {
+            return Update(entityName!, row);
+        }
+
+        public EntityPersist Update(string _entityName, IDictionary<string, object?> row)
         {
             _entityName = _entityName ?? entityName;
 
-            _Update(row, _entityName);
+            _Update(_entityName, row);
             string id = Db.Mapping(_entityName!).Map(Db.config.id);
             sql += @"
 WHERE " + id + " = @" + count + @";
@@ -133,11 +145,15 @@ WHERE " + id + " = @" + count + @";
             return this;
         }
 
-        public EntityPersist UpdateIds(Dictionary<string, object?> row, IEnumerable<object> ids, string? _entityName = null)
-        {
-            _entityName = _entityName ?? entityName;
 
-            _Update(row, _entityName);
+        public EntityPersist UpdateIds(Dictionary<string, object?> row, params object[] ids)
+        {
+            return UpdateIds(entityName!, row, ids);
+        }
+
+        public EntityPersist UpdateIds(string _entityName, Dictionary<string, object?> row, params object[] ids)
+        {
+            _Update(_entityName, row);
 
             string idMap = Db.Mapping(_entityName!).Map(Db.config.id);
 
@@ -169,6 +185,12 @@ WHERE " + id + " = @" + count + @";
             return this;
         }
 
+        public EntityPersist UpdateAll(Dictionary<string, object?> row)
+        {
+            return UpdateAll(entityName!, row);
+        }
+
+
         /// <summary>
         /// Actualizar valores de todas las entradas de una tabla
         /// </summary>
@@ -176,11 +198,11 @@ WHERE " + id + " = @" + count + @";
         /// <param name="_entityName"></param>
         /// <remarks>USAR CON PRECAUCIÓN!!!</remarks>
         /// <returns></returns>
-        public EntityPersist UpdateAll(Dictionary<string, object> row, string? _entityName = null)
+        public EntityPersist UpdateAll(string _entityName, Dictionary<string, object?> row)
         {
             _entityName = _entityName ?? entityName;
             var ids = Db.Query(_entityName).Fields(Db.config.id).Size(0).Column<object>();
-            return (ids.Count() > 0) ? UpdateIds(row, ids, _entityName) : this;
+            return (ids.Count() > 0) ? UpdateIds(_entityName, row, ids) : this;
         }
 
         /// <summary>
@@ -191,7 +213,12 @@ WHERE " + id + " = @" + count + @";
         /// <param name="id">Identificacion de la fila a actualizar</param>
         /// <param name="_entityName">Nombre de la entidad, si no se especifica se toma el atributo</param>
         /// <returns>Mismo objeto</returns>
-        public EntityPersist UpdateValueIds(string key, object? value, IEnumerable<object> ids, string? _entityName = null)
+        public EntityPersist UpdateValueIds(string key, object? value, params object[] ids)
+        {
+            return UpdateValueIds(entityName!, key, value, ids);
+        }
+
+        public EntityPersist UpdateValueIds(string _entityName, string key, object? value, params object[] ids)
         {
             Dictionary<string, object?> row = new Dictionary<string, object?>()
             {
@@ -200,6 +227,11 @@ WHERE " + id + " = @" + count + @";
             return UpdateIds(row, ids, _entityName);
         }
 
+        public EntityPersist UpdateValueAll(string key, object value)
+        {
+            return UpdateValueAll(entityName!, key, value);
+        }
+
         /// <summary>
         /// Actualizar un unico campo
         /// </summary>
@@ -208,10 +240,15 @@ WHERE " + id + " = @" + count + @";
         /// <param name="id">Identificacion de la fila a actualizar</param>
         /// <param name="_entityName">Nombre de la entidad, si no se especifica se toma el atributo</param>
         /// <returns>Mismo objeto</returns>
-        public EntityPersist UpdateValueAll(string key, object value, string? _entityName = null)
+        public EntityPersist UpdateValueAll(string _entityName, string key, object value)
         {
             Dictionary<string, object> row = new Dictionary<string, object>() { { key, value } };
-            return UpdateAll(row, _entityName);
+            return UpdateAll(_entityName, row);
+        }
+
+        public EntityPersist UpdateValueRel(string key, object? value, IDictionary<string, object?> source)
+        {
+            return UpdateValueRel(entityName!, key, value, source);
         }
 
         /// <summary>
@@ -222,7 +259,7 @@ WHERE " + id + " = @" + count + @";
         /// <param name="source">Fuente con todos los valores sin actualizar</param>
         /// <param name="_entityName">Opcional nombre de la entidad, si no existe toma el atributo</param>
         /// <returns>Mismo objeto</returns>
-        public EntityPersist UpdateValueRel(string key, object? value, IDictionary<string, object?> source, string? _entityName = null)
+        public EntityPersist UpdateValueRel(string _entityName, string key, object? value, IDictionary<string, object?> source)
         {
             _entityName = _entityName ?? entityName;
             string idKey = Db.config.id;
@@ -239,18 +276,30 @@ WHERE " + id + " = @" + count + @";
             return UpdateValueIds(key, value, ids, _entityName);
         }
 
-        public EntityPersist InsertObj(object obj, string? entityName = null)
+        public EntityPersist InsertObj(object obj)
+        {
+            return InsertObj(entityName!, obj);
+        }
+
+        public EntityPersist InsertObj(string entityName, object obj)
         {
             IDictionary<string, object?> dict = obj.Dict();
-            return Insert(dict, entityName);
+            return Insert(entityName, dict);
         }
 
         public EntityPersist Insert(EntityValues v)
         {
             if (!v.values.ContainsKey(Db.config.id) || v.values[Db.config.id].IsNullOrEmptyOrDbNull())
                 v.SetDefault(Db.config.id);
-            return Insert(v.values!, v.entityName);
+            return Insert(v.entityName, v.values!);
         }
+
+
+        public EntityPersist Insert(IDictionary<string, object?> row)
+        {
+            return Insert(entityName!, row);
+        }
+
 
         /// <summary>
         /// Insertar
@@ -259,10 +308,8 @@ WHERE " + id + " = @" + count + @";
         /// <param name="_entityName"></param>
         /// <returns></returns>
         /// <remarks>Debe estar definido el id</remarks>
-        public EntityPersist Insert(IDictionary<string, object?> row, string? _entityName = null)
+        public EntityPersist Insert(string _entityName, IDictionary<string, object?> row)
         {
-            _entityName = _entityName ?? entityName;
-
             List<string> fieldNames = Db.FieldNamesAdmin(_entityName!);
             Dictionary<string, object> row_ = new();
             foreach (string key in row.Keys)
@@ -317,14 +364,17 @@ VALUES (";
         /// <exception cref="Exception">Si encuentra mas de un conjunto de valores a partir de los campos unicos</exception>
         /// <exception cref="Exception">Si encuentra errores de configuracion en los campos a actualizar</exception>
         /// <exception cref="Exception">Si encuentra errores de configuracion en los campos a insertar</exception>
-        public EntityPersist Persist(IDictionary<string, object?> row, string? _entityName = null)
+        public EntityPersist Persist(string _entityName, IDictionary<string, object?> row)
         {
-            _entityName = _entityName ?? entityName;
-
             EntityValues v = Db.Values(_entityName!).Set(row);
             return Persist(v);
         }
-    
+        public EntityPersist Persist(IDictionary<string, object?> row)
+        {
+            return Persist(entityName!, row);
+        }
+
+
         /// <summary>
         /// Persistencia de una instancia de EntityValues
         /// </summary>
@@ -351,7 +401,7 @@ VALUES (";
                 if (!v.Check())
                     throw new Exception("Los campos a actualizar poseen errores: " + v.logging.ToString());
 
-                return Update(v.values!, v.entityName);
+                return Update(v.entityName, v.values!);
             }
 
             if (!v.values.ContainsKey(Db.config.id) || v.values[Db.config.id].IsNullOrEmptyOrDbNull())
@@ -362,7 +412,7 @@ VALUES (";
             if (v.logging.HasErrors())
                 throw new Exception("Los campos a insertar poseen errores: " + v.logging.ToString());
 
-            return Insert(v.values, v.entityName);
+            return Insert(v.entityName, v.values);
         }
 
         public EntityPersist Exec()
@@ -384,6 +434,27 @@ VALUES (";
             q.sql = sql;
             q.parameters = parameters;
             q.Transaction();
+            return this;
+        }
+
+        /// <summary>
+        /// Ejecucion individual de sentencias
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>Metodo especial de ejecucion, ejecuta una a una todas las sentencias definidas</remarks>
+        public EntityPersist ExecIndividual()
+        {
+            string[] sqls = sql.Split(";");
+            foreach(string s in sqls)
+            {
+                var q = Db.Query();
+            q.connection = connection;
+            q.transaction = transaction;
+            q.sql = sql;
+            q.parameters = parameters;
+            
+            }
+
             return this;
         }
 

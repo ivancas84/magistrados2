@@ -2,7 +2,7 @@
 
 namespace MagistradosApp.Views.ProcesarArchivoSueldos
 {
-    public class Data_ProcesarArchivoSueldos : SqlOrganize.Data
+    public class Data_Formulario : SqlOrganize.Data
     {
 
         protected int _periodo_mes = DateTime.Now.Month;
@@ -22,13 +22,6 @@ namespace MagistradosApp.Views.ProcesarArchivoSueldos
         }
 
         protected string _tipo = "afiliacion";
-
-        public string tipo
-        {
-            get { return _tipo; }
-            set { _tipo = value; NotifyPropertyChanged(); }
-        }
-
 
         protected string _organo = "1";
 

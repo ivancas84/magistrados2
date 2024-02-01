@@ -82,7 +82,7 @@ public partial class CrearArchivoSueldosPage : Page, INotifyPropertyChanged
 
             #region definir variables y paths
             DateTime now = DateTime.Now;
-            string organoDescripcion = (string)registrosCreados.ElementAt(0)["organo-descripcion"];
+            string organoDescripcion = (string)registrosCreados.ElementAt(0)["organo-descripcion"]!;
             string tipoShort = "40";
             string tipo = "Registro 40";
 
@@ -124,7 +124,7 @@ public partial class CrearArchivoSueldosPage : Page, INotifyPropertyChanged
 
                         string codigoDepartamento = (string)ContainerApp.db.Query("codigo_departamento").
                             Where("$departamento_judicial = @0 AND $organo = @1").
-                            Parameters(reg["departamento_judicial"], reg["organo"]).DictCache()["codigo"];
+                            Parameters(reg["departamento_judicial"]!, reg["organo"]!).DictCache()!["codigo"]!;
 
                         string codigo = "";
                         string detalle = "";
@@ -195,28 +195,28 @@ public partial class CrearArchivoSueldosPage : Page, INotifyPropertyChanged
                                 if (tramiteExcepcionalObj.organo.Equals("1"))
                                 {
                                     codigo += motivo; //1 23 motivo
-                                    codigo += ((DateTime)tramiteExcepcionalObj.desde).Year.ToString().Substring(3, 1); //1 24 año desde
+                                    codigo += ((DateTime)tramiteExcepcionalObj.desde!).Year.ToString().Substring(3, 1); //1 24 año desde
                                     codigo += ((DateTime)tramiteExcepcionalObj.desde).Month.ToString().PadLeft(2, '0'); //2 25..26 mes desde
                                     codigo += "0"; //1 27 completar con 0
-                                    codigo += ((DateTime)tramiteExcepcionalObj.hasta).Year.ToString().Substring(3, 1); //1 28 año hasta
+                                    codigo += ((DateTime)tramiteExcepcionalObj.hasta!).Year.ToString().Substring(3, 1); //1 28 año hasta
                                     codigo += ((DateTime)tramiteExcepcionalObj.hasta).Month.ToString().PadLeft(2, '0'); //2 29..30 mes hasta
                                     codigo += "00"; //2 32..33 completar con 0
-                                    codigo += ((decimal)tramiteExcepcionalObj.monto).ToString("0000000000:0.00"); //10 34..43 monto a descontar
+                                    codigo += ((decimal)tramiteExcepcionalObj.monto!).ToString("0000000000:0.00"); //10 34..43 monto a descontar
                                     codigo += "            "; //12 44..55 blancos
-                                    codigo += tramiteExcepcionalObj.sucursal__descripcion.PadRight(15); //16 56..71 descripcion
+                                    codigo += tramiteExcepcionalObj.sucursal__descripcion!.PadRight(15); //16 56..71 descripcion
                                 } else
                                 {
-                                    codigo += ((DateTime)tramiteExcepcionalObj.desde).Year.ToString().Substring(2, 2); //2 23..24 año desde
+                                    codigo += ((DateTime)tramiteExcepcionalObj.desde!).Year.ToString().Substring(2, 2); //2 23..24 año desde
                                     codigo += ((DateTime)tramiteExcepcionalObj.desde).Month.ToString().PadLeft(2, '0'); //2 25..26 mes desde
                                     codigo += motivo; //1 27 motivo (no estoy seguro si aca va el motivo)
-                                    codigo += ((DateTime)tramiteExcepcionalObj.hasta).Year.ToString().Substring(2, 2); //2 28..29 año hasta
+                                    codigo += ((DateTime)tramiteExcepcionalObj.hasta!).Year.ToString().Substring(2, 2); //2 28..29 año hasta
                                     codigo += ((DateTime)tramiteExcepcionalObj.hasta).Month.ToString().PadLeft(2, '0'); //2 30..31 mes hasta
                                     codigo += "00"; //2 32..33 completar con 0
-                                    codigo += ((decimal)tramiteExcepcionalObj.monto).ToString("0000000000:0.00"); //10 34..43 monto a descontar
+                                    codigo += ((decimal)tramiteExcepcionalObj.monto!).ToString("0000000000:0.00"); //10 34..43 monto a descontar
                                     codigo += "        "; //8 44..51 ceros 3. La descripcion dice 0 pero en los ejemplos esta en blanco
                                     codigo += " "; //1 52 automatico 
                                     codigo += "   "; //3 53..55 ceros 4. La descripcion dice 0 pero en los ejemplos esta en blanco
-                                    codigo += tramiteExcepcionalObj.sucursal__descripcion.PadRight(16); //16 56..71 descripcion
+                                    codigo += tramiteExcepcionalObj.sucursal__descripcion!.PadRight(16); //16 56..71 descripcion
                                     codigo += "000"; //3 72..74 (puede ser ceros o blancos)
 
                                 }

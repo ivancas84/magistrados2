@@ -301,12 +301,12 @@ namespace Utils
         {
             key2 = key2 ?? key1;
 
-            var s = source2.DictOfDictByKey<object>(key2);
+            var s = source2.DictOfDictByKeys(key2);
 
             foreach (var item in source)
             {
-                if (s.ContainsKey(item[key1]))
-                    item.Merge(s[item[key1]], prefix);
+                if (s.ContainsKey(item[key1].ToString()))
+                    item.Merge(s[item[key1].ToString()], prefix);
             }
         }
 
@@ -314,13 +314,13 @@ namespace Utils
         {
             key2 = key2 ?? key1;
 
-            var s = source2.DictOfDictByKey<object>(key2);
+            var s = source2.DictOfDictByKeys(key2);
 
             foreach (var item in source)
             {
-                if (s.ContainsKey(item[key1]))
+                if (s.ContainsKey(item[key1]!.ToString()!))
                 {
-                    item.Merge(s[item[key1]]);
+                    item.Merge(s[item[key1]!.ToString()!]);
                     break;
                 }
             }
@@ -360,28 +360,38 @@ namespace Utils
 
 
 
-        public static IDictionary<T, Dictionary<string, object?>> DictOfDictByKey<T>(this IEnumerable<Dictionary<string, object?>> source, string key)
-        {
-            Dictionary<T, Dictionary<string, object?>> response = new();
-            foreach (Dictionary<string, object?> row in source)
-                response[(T)row[key]!] = row;
+        
 
-            return response;
+        public static IDictionary<string, T> DictOfObjByPropertyNames<T>(this IEnumerable<T> source, params string[] propertyNames)
+        {
+            Dictionary<object, T> response = new();
+            foreach (T obj in source)
+            {
+                List<string> val = new();
+                foreach (string propName in propertyNames)
+                {
+                    val.Add(obj.GetPropertyValue(propName)!.ToString()!);
+                }
+                string key = String.Join("~", val.ToArray());
+                response[key] = obj;
+            }
+
+            return (IDictionary<string, T>)response;
         }
 
-        public static IDictionary<string, Dictionary<string, object>> DictOfDictByKeys(this IEnumerable<Dictionary<string, object?>> source, params string[] keys)
+        public static IDictionary<string, Dictionary<string, object?>> DictOfDictByKeys(this IEnumerable<Dictionary<string, object?>> source, params string[] keys)
         {
-            Dictionary<object, Dictionary<string, object>> response = new();
-            foreach (Dictionary<string, object> row in source) {
+            Dictionary<object, Dictionary<string, object?>> response = new();
+            foreach (Dictionary<string, object?> row in source) {
                 List<string> val = new();
                 foreach (var k in keys)
-                    val.Add(row[k].ToString()!);
+                    val.Add(row[k]!.ToString()!);
 
                 string key = String.Join("~", val.ToArray());
                 response[key] = row;
             }
 
-            return (IDictionary<string, Dictionary<string, object>>)response;
+            return (IDictionary<string, Dictionary<string, object?>>)response;
         }
 
         public static IDictionary<string, object> DictOfDictByKeysValue(this IEnumerable<Dictionary<string, object?>> source, string keyValue, params string[] keys)
