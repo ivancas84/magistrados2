@@ -136,7 +136,9 @@
     "fk": [],
     "orderDefault": {},
     "noAdmin": [],
-    "unique": [],
+    "unique": [
+      "descripcion"
+    ],
     "notNull": [
       "id",
       "descripcion"
@@ -248,7 +250,6 @@
     ],
     "fields": [
       "id",
-      "codigo",
       "nombre"
     ],
     "fk": [],
@@ -256,8 +257,7 @@
     "noAdmin": [],
     "unique": [],
     "notNull": [
-      "id",
-      "codigo"
+      "id"
     ],
     "uniqueMultiple": [],
     "id": [

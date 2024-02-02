@@ -36,12 +36,6 @@ namespace MagistradosApp.Data
             get { return _departamento_judicial__id; }
             set { _departamento_judicial__id = value; _departamento_judicial = value; NotifyPropertyChanged(); }
         }
-        protected string? _departamento_judicial__codigo = null;
-        public string? departamento_judicial__codigo
-        {
-            get { return _departamento_judicial__codigo; }
-            set { _departamento_judicial__codigo = value; NotifyPropertyChanged(); }
-        }
         protected string? _departamento_judicial__nombre = null;
         public string? departamento_judicial__nombre
         {
