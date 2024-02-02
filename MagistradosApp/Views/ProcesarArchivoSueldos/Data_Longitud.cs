@@ -11,7 +11,7 @@ namespace MagistradosApp.Views.ProcesarArchivoSueldos
             if (organo.Equals("2"))
             {
                 longitudFilaMaxima = 92; //aplicando trim posicion inicial = 0
-                longitudFilaMinima = 82; //aplicando trim posicion inicial = 0
+                longitudFilaMinima = 81; //aplicando trim posicion inicial = 0
 
                 inicioCodigoDepartamento = 0;
                 longitudCodigoDepartamento = 2;
@@ -26,9 +26,9 @@ namespace MagistradosApp.Views.ProcesarArchivoSueldos
                 longitudLegajo = 6;
 
                 inicioNombre = 44;
-                longitudNombre = 30;
+                longitudNombre = 29;
 
-                inicioMonto = 74;
+                inicioMonto = 73;
                 longitudMonto = 8;
 
                 inicioNumero = 82; //actualmente el numero no es utilizado

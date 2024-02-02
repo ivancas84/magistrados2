@@ -9,6 +9,8 @@ namespace MagistradosApp
     public class Config : SqlOrganize.Config
     {
         public virtual string archivoSueldosPath { get; set; }
+        public virtual string id { get; set; } = "id";
+
 
     }
 }

@@ -221,12 +221,12 @@ public partial class CrearArchivoSueldosPage : Page, INotifyPropertyChanged
 
                                 }
 
-                                detalle = tramiteExcepcionalObj.persona__legajo;
+                                detalle = tramiteExcepcionalObj.persona__legajo!;
                                 detalle += (tramiteExcepcionalObj.persona__apellidos + ", " + tramiteExcepcionalObj.persona__nombres).PadRight(28, ' ').Substring(0, 28) + " ";
                                 detalle += codigoDepartamento.PadRight(4, ' ').Substring(0, 4) + " ";
-                                detalle += tramiteExcepcionalObj.departamento_judicial__nombre.PadRight(15, ' ').Substring(0, 15) + " ";
+                                detalle += tramiteExcepcionalObj.departamento_judicial__nombre!.PadRight(15, ' ').Substring(0, 15) + " ";
                                 detalle += tramiteExcepcionalObj.motivo.PadRight(13, ' ').Substring(0, 13) + " ";
-                                detalle += tramiteExcepcionalObj.codigo.ToString().PadRight(4, ' ').Substring(0, 4) + " ";
+                                detalle += tramiteExcepcionalObj.codigo!.ToString()!.PadRight(4, ' ').Substring(0, 4) + " ";
                                 detalle += ((decimal)tramiteExcepcionalObj.monto).ToString("0000000000:0.00");
                             }
                         }

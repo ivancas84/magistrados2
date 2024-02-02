@@ -8,6 +8,7 @@ using System.Net;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Globalization;
 using Utils;
 
 namespace MagistradosApp.Views;
@@ -33,7 +34,7 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
         { "tramite_excepcional", new() }, //tramites obtenidos del archivo
     };
 
-    private Dictionary<string, Dictionary<string, List<Dictionary<string, object?>>>> respuesta = new() { //debido a la similitud de procesamiento entre afiliaciones y tramites excepcionales, se almacenan los datos en una misma variable
+    private Dictionary<string, Dictionary<string, List<Data_RegistroDb>>> respuesta = new() { //debido a la similitud de procesamiento entre afiliaciones y tramites excepcionales, se almacenan los datos en una misma variable
         { "afiliacion", new() 
             {
                 { "altas_existentes", new() },
@@ -136,14 +137,19 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
             AnalizarPeriodoProcesado("tramite_excepcional");
             #endregion
 
+            var something = ContainerApp.db.Query("codigo_departamento").
+                Where("$organo = @0").
+                Parameters(dataForm.organo).
+                ColOfDictCache().ColOfObj<Data_codigo_departamento>();
+;
+
             #region Obtener codigos de departamentos judiciales del organo para definir registros de archivo
             codigosDepartamento = ContainerApp.db.Query("codigo_departamento").
-                Where("$organo = 0").
+                Where("$organo = @0").
                 Parameters(dataForm.organo).
                 ColOfDictCache().
                 ColOfObj<Data_codigo_departamento>().
                 DictOfObjByPropertyNames("codigo");
-               
             #endregion
 
             #region Definir registros de archivo
@@ -156,7 +162,8 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                 #region Registros archivo > analizar longitudes de la linea
                 lines[i] = WebUtility.HtmlDecode(lines[i]).Trim(); //decodificar para procesar caracteres especiales del archivo (eñes, acentos y otrs=
 
-                if (lines[i].Length < longitud.longitudFilaMinima) continue; //ignorar si es inferior a minimo
+                if (lines[i].Length < longitud.longitudFilaMinima) 
+                    continue; //ignorar si es inferior a minimo
 
                 if (lines[i].Length > longitud.longitudFilaMaxima) //guardar error si es superior a máximo
                 {
@@ -171,8 +178,8 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                 registro.codigo_afiliacion = lines[i].Substring(longitud.inicioCodigoAfiliacion, longitud.longitudCodigoAfiliacion).Trim();
                 registro.descripcion_afiliacion = lines[i].Substring(longitud.inicioDescripcionAfiliacion, longitud.longitudDescripcionAfiliacion).Trim();
                 registro.legajo = lines[i].Substring(longitud.inicioLegajo, longitud.longitudLegajo).Trim();
-                registro.monto = decimal.Parse(lines[i].Substring(longitud.inicioMonto, longitud.longitudMonto));
-                registro.numero = lines[i].Substring(longitud.inicioNumero, longitud.longitudNumero).Trim();
+                registro.monto = decimal.Parse(lines[i].Substring(longitud.inicioMonto, longitud.longitudMonto), CultureInfo.InvariantCulture);
+                //registro.numero = lines[i].Substring(longitud.inicioNumero, longitud.longitudNumero).Trim();
                 #endregion
 
                 #region Registros archivo > definir nombres y apellidos de registro
@@ -182,13 +189,15 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                 if (nombre.Length > 1 && !nombre[1].Trim().IsNullOrEmpty())
                     registro.nombres = nombre[1];
 
-                for (int j = 0; j < registro.apellidos.Length; j++)
-                    if (!Char.IsLetter(registro.apellidos, j) && !registro.apellidos[j].Equals(" "))
-                        registro.apellidos.Remove(j, 1).Insert(j, "Ñ");
+                if(!registro.apellidos.IsNullOrEmpty())
+                    for (int j = 0; j < registro.apellidos.Length; j++)
+                        if (!Char.IsLetter(registro.apellidos, j) && !registro.apellidos[j].Equals(' '))
+                            registro.apellidos = registro.apellidos.Remove(j, 1).Insert(j, "Ñ");
 
-                for (int j = 0; j < registro.nombres.Length; j++)
-                    if (!Char.IsLetter(registro.nombres, j) && !registro.nombres[j].Equals(" "))
-                        registro.nombres.Remove(j, 1).Insert(j, "Ñ");
+                if (!registro.nombres.IsNullOrEmpty())
+                    for (int j = 0; j < registro.nombres.Length; j++)
+                        if (!Char.IsLetter(registro.nombres, j) && !registro.nombres[j].Equals(' '))
+                            registro.nombres = registro.nombres.Remove(j, 1).Insert(j, "Ñ");
                 #endregion
 
                 #region Registros archivo > Verificar codigo de departamento de registro
@@ -339,8 +348,7 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                 Parameters(int.Parse(periodo.ToString("yyyyMM")));
         }
 
-        IDictionary<string, Dictionary<string, object?>> registrosExistentes = q.ColOfDictCache().
-            DictOfDictByKeys("persona-legajo", "codigo");
+        IDictionary<string, Data_RegistroDb> registrosExistentes = q.ColOfDictCache().ColOfObj<Data_RegistroDb>().DictOfObjByPropertyNames("persona-legajo", "codigo");
         #endregion
 
         #region Recorrer registros para definir
@@ -354,25 +362,30 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                 string departamentoJudicialArchivo = codigosDepartamento[registroArchivo.codigo_departamento].departamento_judicial!;
                 
                 #region Actualizar departamento judicial si es distinto (se actualiza el valor actual, deberia definirse uno nuevo!!!)
-                if (!departamentoJudicialArchivo.Equals(registroExistenteData["departamento_judicial_informado"]))
+                if (!departamentoJudicialArchivo.Equals(registroExistenteData.departamento_judicial_informado))
                     persist.UpdateValueIds(
                         tipo, 
                         "departamento_judicial_informado",
                         departamentoJudicialArchivo, 
-                        registroExistenteData["id"]!
+                        registroExistenteData.id!
                     );
 
                 errors.Add("Se actualizo el departamento judicial informado del registro " + identifierRegistro);
                 #endregion
 
                 #region Verificar si coincide monto informado con el de archivo para registro 80
-                if(tipo == "tramite_excepcional" && (decimal)registroExistenteData["monto"]! != registroArchivo.monto)
-                    registroExistenteData["observaciones"] += "El monto del archivo no coincide con el monto informado";
+                if (tipo == "tramite_excepcional" && registroExistenteData.monto! != registroArchivo.monto)
+                {
+                    if (registroExistenteData.observaciones.IsNullOrEmptyOrDbNull())
+                        registroExistenteData.observaciones = "";
+
+                    registroExistenteData.observaciones += "El monto del archivo no coincide con el monto informado";
+                }
                 #endregion
 
                 #region insertar importe del registro
                 EntityValues importe = ContainerApp.db.Values("importe_" + tipo).
-                    Set(tipo, registroExistenteData["id"]).
+                    Set(tipo, registroExistenteData.id).
                     Set("valor", registroArchivo.monto).
                     Set("periodo", periodo).
                     Default();
