@@ -10,6 +10,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Globalization;
 using Utils;
+using MySql.Data.MySqlClient;
+using System.Data.Common;
 
 namespace MagistradosApp.Views;
 
@@ -22,38 +24,15 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
     #endregion
 
     #region Atributos de procesamiento
-    private Dictionary<string, Dictionary<string, Data_Registro>> archivo = new() { //debido a la similitud de procesamiento entre afiliaciones y tramites excepcionales, se almacenan los datos en una misma variable
-        { "afiliacion", new() }, //afiliaciones obtenidas del archivo
-        { "tramite_excepcional", new() }, //tramites obtenidos del archivo
-    };
-
+    private Dictionary<string, Dictionary<string, Data_Registro>> archivo; //debido a la similitud de procesamiento entre afiliaciones y tramites excepcionales, se almacenan los datos en una misma variable
     private DateTime periodo;
-
-    private Dictionary<string, List<string>> legajosProcesados = new() { //debido a la similitud de procesamiento entre afiliaciones y tramites excepcionales, se almacenan los datos en una misma variable
-        { "afiliacion", new() }, //afiliaciones obtenidas del archivo
-        { "tramite_excepcional", new() }, //tramites obtenidos del archivo
-    };
-
-    private Dictionary<string, Dictionary<string, List<Data_RegistroDb>>> respuesta = new() { //debido a la similitud de procesamiento entre afiliaciones y tramites excepcionales, se almacenan los datos en una misma variable
-        { "afiliacion", new() 
-            {
-                { "altas_existentes", new() },
-                { "bajas_automaticas", new() }
-            }
-        },
-        { "tramite_excepcional", new()
-            {
-                { "altas_existentes", new() },
-                { "bajas_automaticas", new() }
-            }
-        },
-    };
-
+    private Dictionary<string, List<string>> legajosProcesados; //debido a la similitud de procesamiento entre afiliaciones y tramites excepcionales, se almacenan los datos en una misma variable
+    private Dictionary<string, Dictionary<string, List<Data_RegistroDb>>> respuesta; //debido a la similitud de procesamiento entre afiliaciones y tramites excepcionales, se almacenan los datos en una misma variable
     IDictionary<string, Data_codigo_departamento> codigosDepartamento; //Lista de departamentos clasificados por codigo
+    List<string> errors; //errores en el procesamiento 
+    EntityPersist persist;
+    Data_Longitud longitud;
 
-    List<string> errors = new(); //errores en el procesamiento 
-
-    EntityPersist persist = ContainerApp.db.Persist();
     #endregion
 
     public ProcesarArchivoSueldosPage()
@@ -126,30 +105,11 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
     {
         try
         {
-            #region Definir datos iniciales
-            Data_Longitud longitud = new(dataForm.organo);
-
-            periodo = new DateTime(dataForm.periodo_anio, dataForm.periodo_mes, DateTime.Now.Day);
-            #endregion
+            InicializarAtributosProcesamiento();
 
             #region Analizar si ya se encuentra el periodo procesado (se verifican si existen importes de afiliaciones o de tramites exepcionales)
             AnalizarPeriodoProcesado("afiliacion");
             AnalizarPeriodoProcesado("tramite_excepcional");
-            #endregion
-
-            var something = ContainerApp.db.Query("codigo_departamento").
-                Where("$organo = @0").
-                Parameters(dataForm.organo).
-                ColOfDictCache().ColOfObj<Data_codigo_departamento>();
-;
-
-            #region Obtener codigos de departamentos judiciales del organo para definir registros de archivo
-            codigosDepartamento = ContainerApp.db.Query("codigo_departamento").
-                Where("$organo = @0").
-                Parameters(dataForm.organo).
-                ColOfDictCache().
-                ColOfObj<Data_codigo_departamento>().
-                DictOfObjByPropertyNames("codigo");
             #endregion
 
             #region Definir registros de archivo
@@ -266,6 +226,9 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                     .Show();
 
             causaOC.AddRange(data);*/
+
+
+           
         }
         catch (Exception ex)
         {
@@ -274,6 +237,76 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                 .AddText("ERROR: " + ex.Message)
             .Show();
         }
+
+        //MySqlConnection connection = new MySqlConnection(ContainerApp.config.connectionString);
+        //connection.Open();
+        //using DbTransaction tran = connection.BeginTransaction();
+        try
+        {
+            string[] sqls = persist.sql.Split(";");
+            
+            
+            foreach (string s in sqls)
+            {
+                if(s.Trim().IsNullOrEmpty()) 
+                    continue;
+                var qu = ContainerApp.db.Query();
+                qu.sql = s;
+                qu.parameters = persist.parameters;
+                qu.Exec();
+            }
+            //tran.Commit();
+        }
+        catch (Exception)
+        {
+            //tran.Rollback();
+            throw;
+        }
+    }
+    private void InicializarAtributosProcesamiento()
+    {
+        longitud = new(dataForm.organo);
+
+        archivo = new() { //debido a la similitud de procesamiento entre afiliaciones y tramites excepcionales, se almacenan los datos en una misma variable
+            { "afiliacion", new() }, //afiliaciones obtenidas del archivo
+            { "tramite_excepcional", new() } //tramites obtenidos del archivo
+        };
+
+    
+        legajosProcesados = new() { //debido a la similitud de procesamiento entre afiliaciones y tramites excepcionales, se almacenan los datos en una misma variable
+            { "afiliacion", new() }, //afiliaciones obtenidas del archivo
+            { "tramite_excepcional", new() }, //tramites obtenidos del archivo
+        };
+
+        respuesta = new() { //debido a la similitud de procesamiento entre afiliaciones y tramites excepcionales, se almacenan los datos en una misma variable
+            { "afiliacion", new()
+                {
+                    { "altas_existentes", new() },
+                    { "bajas_automaticas", new() }
+                }
+            },
+            { "tramite_excepcional", new()
+                {
+                    { "altas_existentes", new() },
+                    { "bajas_automaticas", new() }
+                }
+            },
+        };
+            
+        errors = new(); //errores en el procesamiento 
+
+        persist = ContainerApp.db.Persist();
+
+        periodo = new DateTime(dataForm.periodo_anio, dataForm.periodo_mes, DateTime.Now.Day);
+
+        #region Obtener codigos de departamentos judiciales del organo para definir registros de archivo
+        codigosDepartamento = ContainerApp.db.Query("codigo_departamento").
+            Where("$organo = @0").
+            Parameters(dataForm.organo).
+            ColOfDictCache().
+            ColOfObj<Data_codigo_departamento>().
+            DictOfObjByPropertyNames("codigo");
+        #endregion
     }
 
     private void AnalizarPeriodoProcesado(string tipo)
@@ -348,7 +381,7 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                 Parameters(int.Parse(periodo.ToString("yyyyMM")));
         }
 
-        IDictionary<string, Data_RegistroDb> registrosExistentes = q.ColOfDictCache().ColOfObj<Data_RegistroDb>().DictOfObjByPropertyNames("persona-legajo", "codigo");
+        IDictionary<string, Data_RegistroDb> registrosExistentes = q.ColOfDictCache().ColOfObj<Data_RegistroDb>().DictOfObjByPropertyNames("persona__legajo", "codigo");
         #endregion
 
         #region Recorrer registros para definir
@@ -362,7 +395,7 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                 string departamentoJudicialArchivo = codigosDepartamento[registroArchivo.codigo_departamento].departamento_judicial!;
                 
                 #region Actualizar departamento judicial si es distinto (se actualiza el valor actual, deberia definirse uno nuevo!!!)
-                if (!departamentoJudicialArchivo.Equals(registroExistenteData.departamento_judicial_informado))
+                if (!departamentoJudicialArchivo.Equals(registroExistenteData.departamento_judicial_informado)) { 
                     persist.UpdateValueIds(
                         tipo, 
                         "departamento_judicial_informado",
@@ -370,17 +403,13 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                         registroExistenteData.id!
                     );
 
-                errors.Add("Se actualizo el departamento judicial informado del registro " + identifierRegistro);
+                    errors.Add("Se actualizo el departamento judicial informado del registro " + identifierRegistro);
+                }
                 #endregion
 
                 #region Verificar si coincide monto informado con el de archivo para registro 80
                 if (tipo == "tramite_excepcional" && registroExistenteData.monto! != registroArchivo.monto)
-                {
-                    if (registroExistenteData.observaciones.IsNullOrEmptyOrDbNull())
-                        registroExistenteData.observaciones = "";
-
-                    registroExistenteData.observaciones += "El monto del archivo no coincide con el monto informado";
-                }
+                    errors.Add("El monto del archivo no coincide con el monto informado: " + identifierRegistro);
                 #endregion
 
                 #region insertar importe del registro
@@ -397,6 +426,8 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
             {
                 //en construccion
             }
+
+           
         }
         #endregion
     }

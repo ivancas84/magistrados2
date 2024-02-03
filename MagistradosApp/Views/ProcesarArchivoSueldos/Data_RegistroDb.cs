@@ -2,7 +2,7 @@
 
 namespace MagistradosApp.Views.ProcesarArchivoSueldos
 {
-    public class Data_RegistroDb : Data_tramite_excepcional
+    public class Data_RegistroDb : Data_tramite_excepcional_r
     { 
     }
 }
