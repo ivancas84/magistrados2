@@ -418,15 +418,12 @@ VALUES (";
             return this;
         }
 
-
         /// <summary>
         /// Ejecuta, abriendo una transaccion, realiza commit al finalizar o rollback si falla
         /// Si no existe conexion la crea
         /// </summary>
         /// <returns></returns>
         abstract public EntityPersist Transaction();
-
-
         /// <summary>
         /// Ejecuta, abriendo una transaccion, realiza commit al finalizar o rollback si falla
         /// Debe existir una conexion abierta
