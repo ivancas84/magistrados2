@@ -210,25 +210,33 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
             ProcesarRegistrosExistentes("tramite_excepcional");
             #endregion
 
-            /*causaOC.Clear();
+            #region Ejecutar SQL
+            MySqlConnection connection = new MySqlConnection(ContainerApp.config.connectionString);
+            connection.Open();
+            using DbTransaction tran = connection.BeginTransaction();
+            try
+            {
+                string[] sqls = persist.sql.Split(";");
+                foreach (string s in sqls)
+                {
+                    if (s.Trim().IsNullOrEmpty())
+                        continue;
+                    var qu = ContainerApp.db.Query();
+                    qu.connection = connection;
+                    qu.sql = s;
+                    qu.parameters = persist.parameters;
+                    qu.Exec();
+                }
+                tran.Commit();
+            }
+            catch (Exception)
+            {
+                tran.Rollback();
+                throw;
+            }
+            #endregion
 
-            var request = (Requests.Causas_BuscarDatosRequest)searchGroupBox.DataContext;
-            CausaDatos[] data = causaDAO.BuscarWS(request);
-            if (data.IsNullOrEmptyOrDbNull())
-                new ToastContentBuilder()
-                    .AddText("Búsqueda de Causas del WS")
-                    .AddText("La consulta no arrojó resultados")
-                    .Show();
-            else
-                new ToastContentBuilder()
-                    .AddText("Búsqueda de Causas del WS")
-                    .AddText("La consulta devolvió " + data.Count() + " registros.")
-                    .Show();
 
-            causaOC.AddRange(data);*/
-
-
-           
         }
         catch (Exception ex)
         {
@@ -238,30 +246,7 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
             .Show();
         }
 
-        //MySqlConnection connection = new MySqlConnection(ContainerApp.config.connectionString);
-        //connection.Open();
-        //using DbTransaction tran = connection.BeginTransaction();
-        try
-        {
-            string[] sqls = persist.sql.Split(";");
-            
-            
-            foreach (string s in sqls)
-            {
-                if(s.Trim().IsNullOrEmpty()) 
-                    continue;
-                var qu = ContainerApp.db.Query();
-                qu.sql = s;
-                qu.parameters = persist.parameters;
-                qu.Exec();
-            }
-            //tran.Commit();
-        }
-        catch (Exception)
-        {
-            //tran.Rollback();
-            throw;
-        }
+        
     }
     private void InicializarAtributosProcesamiento()
     {
@@ -424,10 +409,12 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
             }
             else //el registro existente NO se encuentra en el archivo
             {
-                //en construccion
+                respuesta[tipo]["bajas_automaticas"].Add(registroExistenteData);
+
+
             }
 
-           
+
         }
         #endregion
     }
