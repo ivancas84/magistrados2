@@ -14,6 +14,9 @@ using MySql.Data.MySqlClient;
 using System.Data.Common;
 using Microsoft.Win32;
 using MagistradosApp.DAO;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Drawing;
+using Microsoft.Xaml.Behaviors.Media;
 
 namespace MagistradosApp.Views;
 
@@ -215,6 +218,9 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
 
             ProcesarRegistrosAltasEnviadas("afiliacion");
             ProcesarRegistrosAltasEnviadas("tramite_excepcional");
+
+            ProcesarRegistrosBajasEnviadas("afiliacion");
+            ProcesarRegistrosBajasEnviadas("tramite_excepcional");
             #endregion
 
             #region Ejecutar SQL
@@ -354,27 +360,7 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
     /// </summary>
     private void ProcesarRegistrosExistentes(string tipo)
     {
-        #region Consultar registros existentes
-        EntityQuery q = ContainerApp.db.Query(tipo).
-            Where(@"$modificado IS NULL 
-                AND $estado = 'Aprobado' 
-                AND $motivo = 'Alta' 
-                AND $organo = @0"
-            ).
-            Size(0).
-            Parameters(dataForm.organo);
-           
-
-        if(tipo == "tramite_excepcional")
-        {
-            q.Where(@" AND (EXTRACT(YEAR_MONTH FROM $desde) <= @1
-                AND EXTRACT(YEAR_MONTH FROM $hasta) >= @1) 
-                OR ($desde IS NULL AND $hasta IS NULL) ").
-                Parameters(int.Parse(periodo.ToString("yyyyMM")));
-        }
-
-        IDictionary<string, Data_RegistroDb> registrosExistentes = q.ColOfDictCache().ColOfObj<Data_RegistroDb>().DictOfObjByPropertyNames("persona__legajo", "codigo");
-        #endregion
+        IDictionary<string, Data_RegistroDb> registrosExistentes = ConsultarRegistrosDb(tipo, "Aprobado", "Alta", "Modificacion");
 
         #region Recorrer registros existentes para analizar si es alta_existente o baja_automatica
         foreach (var (identifierRegistro, registroExistenteData) in registrosExistentes)
@@ -384,27 +370,13 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                 #region Inicializar variables para procesar altas existentes
                 respuesta[tipo]["altas_existentes"].Add(registroExistenteData);
                 var registroArchivo = archivo[tipo][identifierRegistro];
-
-                string departamentoJudicialArchivo = codigosDepartamento[registroArchivo.codigo_departamento].departamento_judicial!;
                 #endregion
 
-                #region Actualizar departamento judicial si es distinto (se actualiza el valor actual, deberia definirse uno nuevo!!!)
-                if (!departamentoJudicialArchivo.Equals(registroExistenteData.departamento_judicial_informado)) { 
-                    persist.UpdateValueIds(
-                        tipo, 
-                        "departamento_judicial_informado",
-                        departamentoJudicialArchivo, 
-                        registroExistenteData.id!
-                    );
+                VerificarNombreSiEsDistinto(tipo, identifierRegistro, registroExistenteData);
+                
+                ActualizarDepartamentoJudicialInformadoSiEsDistinto(tipo, identifierRegistro, registroExistenteData);
 
-                    errors.Add("Se actualizo el departamento judicial informado del registro " + identifierRegistro);
-                }
-                #endregion
-
-                #region Verificar si coincide monto informado con el de archivo para registro 80
-                if (tipo == "tramite_excepcional" && registroExistenteData.monto! != registroArchivo.monto)
-                    errors.Add("El monto del archivo no coincide con el monto informado: " + identifierRegistro);
-                #endregion
+                VerificarCoincidenciaMontoTramiteExcepcional(tipo, identifierRegistro, (decimal)registroExistenteData.monto!, registroArchivo.monto);
 
                 #region insertar importe del registro
                 EntityValues importe = ContainerApp.db.Values("importe_" + tipo).
@@ -426,13 +398,7 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                 respuesta[tipo]["bajas_automaticas"].Add(registroExistenteData);
                 #endregion
 
-                #region Marcar como modificados los registros existentes
-                IEnumerable<string> idRegistrosAModificar = ContainerApp.db.Query(tipo).
-                    Where("$persona = @0 AND $modificado IS NULL AND $codigo = @1").
-                    Parameters(registroExistenteData.persona, registroExistenteData.codigo).Column<string>("id");
-
-                persist.UpdateValueIds("modificado", evaluado, idRegistrosAModificar);
-                #endregion
+                ModificarRegistrosExistentes(tipo, registroExistenteData.persona!, (int)registroExistenteData.codigo!);
 
                 #region Insertar registro de baja automatica
                 EntityValues registroAInsertar = ContainerApp.db.Values(tipo).
@@ -448,9 +414,6 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                     Set("monto", registroExistenteData.monto).
                     Default().Reset();
 
-                if (!registroAInsertar.Check())
-                    throw new Exception("Error al Insertar registro " + registroAInsertar.logging.ToString());
-
                 persist.Insert(registroAInsertar);
                 #endregion
             }
@@ -458,33 +421,10 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
         #endregion
     }
 
-
-
     private void ProcesarRegistrosAltasEnviadas(string tipo)
     {
-        #region Consultar registros altas enviadas
-        EntityQuery q = ContainerApp.db.Query(tipo).
-            Where(@"$modificado IS NULL 
-                AND $estado = 'Enviado' 
-                AND $motivo IN ('Alta','Modificación')
-                AND $organo = @0"
-            ).
-            Size(0).
-            Parameters(dataForm.organo);
+        IDictionary<string, Data_RegistroDb> registrosAltasEnviadas = ConsultarRegistrosDb(tipo, "Enviado", "Alta", "Modificacion");
 
-
-        if (tipo == "tramite_excepcional")
-        {
-            q.Where(@" AND (EXTRACT(YEAR_MONTH FROM $desde) <= @1
-                AND EXTRACT(YEAR_MONTH FROM $hasta) >= @1) 
-                OR ($desde IS NULL AND $hasta IS NULL) ").
-                Parameters(int.Parse(periodo.ToString("yyyyMM")));
-        }
-
-        IDictionary<string, Data_RegistroDb> registrosAltasEnviadas = q.ColOfDictCache().ColOfObj<Data_RegistroDb>().DictOfObjByPropertyNames("persona__legajo", "codigo");
-        #endregion
-
-        #region Recorrer registros altas enviadas para analizar si es altas_aprobadas o altas_rechazadas
         foreach (var (identifierRegistro, registroAltaEnviadaData) in registrosAltasEnviadas)
         {
             if (archivo[tipo].ContainsKey(identifierRegistro)) //el registro alta enviada se encuentra en el archivo
@@ -492,32 +432,26 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                 #region Inicializar variables para procesar altas existentes
                 respuesta[tipo]["altas_aprobadas"].Add(registroAltaEnviadaData);
                 var registroArchivo = archivo[tipo][identifierRegistro];
+                #endregion region
 
-                string departamentoJudicialArchivo = codigosDepartamento[registroArchivo.codigo_departamento].departamento_judicial!;
-                #endregion
+                ActualizarDepartamentoJudicialInformadoSiEsDistinto(tipo, identifierRegistro, registroAltaEnviadaData);
 
-                #region Actualizar departamento judicial si es distinto (se actualiza el valor actual, deberia definirse uno nuevo!!!)
-                if (!departamentoJudicialArchivo.Equals(registroAltaEnviadaData.departamento_judicial_informado))
-                {
-                    persist.UpdateValueIds(
-                        tipo,
-                        "departamento_judicial_informado",
-                        departamentoJudicialArchivo,
-                        registroAltaEnviadaData.id!
-                    );
+                VerificarNombreSiEsDistinto(tipo, identifierRegistro, registroAltaEnviadaData);
 
-                    errors.Add("Se actualizo el departamento judicial informado del registro " + identifierRegistro);
-                }
-                #endregion
+                VerificarCoincidenciaMontoTramiteExcepcional(tipo, identifierRegistro, (decimal)registroAltaEnviadaData.monto!, registroArchivo.monto);
 
-                #region Verificar si coincide monto informado con el de archivo para registro 80
-                if (tipo == "tramite_excepcional" && registroExistenteData.monto! != registroArchivo.monto)
-                    errors.Add("El monto del archivo no coincide con el monto informado: " + identifierRegistro);
+                #region Aprobar alta enviada
+                EntityValues registroValue = ContainerApp.db.Values(tipo).
+                    Set("id", registroAltaEnviadaData.id).
+                    Set("estado", "Aprobado").
+                    Set("evaluado", evaluado);
+
+                persist.Update(registroValue);
                 #endregion
 
                 #region insertar importe del registro
                 EntityValues importe = ContainerApp.db.Values("importe_" + tipo).
-                    Set(tipo, registroExistenteData.id).
+                    Set(tipo, registroAltaEnviadaData.id).
                     Set("valor", registroArchivo.monto).
                     Set("periodo", periodo).
                     Default();
@@ -532,44 +466,149 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
             else //el registro existente NO se encuentra en el archivo
             {
                 #region Inicializar variables para procesar bajas automaticas
-                respuesta[tipo]["bajas_automaticas"].Add(registroExistenteData);
+                respuesta[tipo]["altas_rechazadas"].Add(registroAltaEnviadaData);
                 #endregion
 
-                #region Marcar como modificados los registros existentes
-                IEnumerable<string> idRegistrosAModificar = ContainerApp.db.Query(tipo).
-                    Where("$persona = @0 AND $modificado IS NULL AND $codigo = @1").
-                    Parameters(registroExistenteData.persona, registroExistenteData.codigo).Column<string>("id");
+                #region Rechazar alta enviada
+                EntityValues registroValue = ContainerApp.db.Values(tipo).
+                    Set("id", registroAltaEnviadaData.id).
+                    Set("estado", "Rechazado").
+                    Set("evaluado", evaluado);
 
-                persist.UpdateValueIds("modificado", evaluado, idRegistrosAModificar);
-                #endregion
-
-                #region Insertar registro de baja automatica
-                EntityValues registroAInsertar = ContainerApp.db.Values(tipo).
-                    Set("persona", registroExistenteData.persona!).
-                    Set("creado", evaluado).
-                    Set("evaluado", evaluado).
-                    Set("motivo", "Baja").
-                    Set("estado", "Aprobado").
-                    Set("codigo", (int)registroExistenteData.codigo!).
-                    Set("departamento_judicial", registroExistenteData.departamento_judicial!).
-                    Set("departamento_judicial_informado", registroExistenteData.departamento_judicial_informado!).
-                    Set("organo", registroExistenteData.organo!).
-                    Set("monto", registroExistenteData.monto).
-                    Default().Reset();
-
-                if (!registroAInsertar.Check())
-                    throw new Exception("Error al Insertar registro " + registroAInsertar.logging.ToString());
-
-                persist.Insert(registroAInsertar);
+                persist.Update(registroValue);
                 #endregion
             }
         }
-        #endregion
+    }
+
+    /// <summary>
+    /// El resultado del procesamiento genera bajas_aprobadas y bajas_rechazadas
+    /// </summary>
+    /// <param name="tipo"></param>
+    private void ProcesarRegistrosBajasEnviadas(string tipo)
+    {
+        IDictionary<string, Data_RegistroDb> registrosBajasEnviadas =  ConsultarRegistrosDb(tipo, "Enviado", "Baja");
+
+        foreach (var (identifierRegistro, registroBajaEnviadaData) in registrosBajasEnviadas)
+        {
+            if (archivo[tipo].ContainsKey(identifierRegistro)) //el registro baja enviada se encuentra en el archivo, lo que significa que no ha sido aprobado
+            {
+                #region Inicializar variables para procesar bajas rechazadas
+                respuesta[tipo]["bajas_rechazadas"].Add(registroBajaEnviadaData);
+                var registroArchivo = archivo[tipo][identifierRegistro];
+                string codigoDepartamentoArchivo = registroArchivo.codigo_departamento;
+                string departamentoJudicialArchivo = codigosDepartamento[codigoDepartamentoArchivo].departamento_judicial!;
+                #endregion region
+
+                ActualizarDepartamentoJudicialInformadoSiEsDistinto(tipo, identifierRegistro, registroBajaEnviadaData);
+
+                VerificarNombreSiEsDistinto(tipo, identifierRegistro, registroBajaEnviadaData);
+
+                VerificarCoincidenciaMontoTramiteExcepcional(tipo, identifierRegistro, (decimal)registroBajaEnviadaData.monto!, registroArchivo.monto);
+
+                #region Rechazar baja enviada
+                EntityValues registroValue = ContainerApp.db.Values(tipo).
+                    Set("id", registroBajaEnviadaData.id).
+                    Set("estado", "Rechazado").
+                    Set("evaluado", evaluado);
+
+                persist.Update(registroValue);
+                #endregion
+
+                ModificarRegistrosExistentes(tipo, registroBajaEnviadaData.persona!, (int)registroBajaEnviadaData.codigo!);
+
+                #region Insertar registro de nueva alta correspondiente a la baja rechazada
+                EntityValues registroAInsertar = ContainerApp.db.Values(tipo).
+                    Set("persona", registroBajaEnviadaData.persona!).
+                    Set("creado", evaluado).
+                    Set("evaluado", evaluado).
+                    Set("motivo", "Alta").
+                    Set("estado", "Aprobado").
+                    Set("codigo", (int)registroBajaEnviadaData.codigo!).
+                    Set("departamento_judicial", registroBajaEnviadaData.departamento_judicial!).
+                    Set("departamento_judicial_informado", departamentoJudicialArchivo!).
+                    Set("organo", registroBajaEnviadaData.organo!).
+                    Set("monto", registroBajaEnviadaData.monto).
+                    Default().Reset();
+
+                persist.Insert(registroAInsertar);
+                #endregion
+
+                #region Insertar importe del registro
+                EntityValues importe = ContainerApp.db.Values("importe_" + tipo).
+                    Set(tipo, registroBajaEnviadaData.id).
+                    Set("valor", registroArchivo.monto).
+                    Set("periodo", periodo).
+                    Default();
+
+                persist.Insert(importe);
+                #endregion
+
+                #region Borrar registro del archivo porque ya fue procesado
+                archivo[tipo].Remove(identifierRegistro);
+                #endregion
+            }
+            else //la baja enviada NO se encuentra en el archivo, significa que fue aprobada
+            {
+                #region Inicializar variables para procesar bajas automaticas
+                respuesta[tipo]["bajas_aprobadas"].Add(registroBajaEnviadaData);
+                #endregion
+
+                #region Aprobar baja enviada
+                EntityValues registroValue = ContainerApp.db.Values(tipo).
+                    Set("id", registroBajaEnviadaData.id).
+                    Set("estado", "Aprobado").
+                    Set("evaluado", evaluado);
+
+                persist.Update(registroValue);
+                #endregion
+            }
+        }
     }
 
 
+
+    protected IDictionary<string, Data_RegistroDb> ConsultarRegistrosDb(string tipo, string estado, params string[] motivo)
+    {
+        #region Consultar registros bajas enviadas
+        return  ContainerApp.db.Query(tipo).
+            Where(@"$modificado IS NULL 
+                AND $estado = @0
+                AND $motivo IN (@1)
+                AND $organo = @2"
+            ).
+            Size(0).
+            Parameters(estado, motivo, dataForm.organo).
+            ColOfDictCache().
+            ColOfObj<Data_RegistroDb>().
+            DictOfObjByPropertyNames("persona__legajo", "codigo");
+        #endregion
+    }
+
     /// <summary>
-    /// Inserta un registro nuevo y "modifica" los existentes 
+    /// Actualizar departamento judicial informado si es distinto
+    /// </summary>
+    /// <remarks>Se actualiza el valor actual, deberia definirse uno nuevo!!!</remarks>
+    protected void ActualizarDepartamentoJudicialInformadoSiEsDistinto(string tipo, string identifierRegistro, Data_RegistroDb registro)
+    {
+        string codigoDepartamentoArchivo = archivo[tipo][identifierRegistro].codigo_departamento;
+        string departamentoJudicialArchivo = codigosDepartamento[codigoDepartamentoArchivo].departamento_judicial!;
+
+        if (!departamentoJudicialArchivo.Equals(registro.departamento_judicial_informado))
+        {
+            persist.UpdateValueIds(
+                tipo,
+                "departamento_judicial_informado",
+                departamentoJudicialArchivo,
+                registro.id!
+            );
+
+            errors.Add("Se actualizo el departamento judicial informado del registro " + identifierRegistro);
+        }
+    }
+    
+    /// <summary>
+    /// Marcar como modificados los registros existentes
     /// </summary>
     /// <param name="tipo"></param>
     /// <param name="idPersona"></param>
@@ -579,32 +618,41 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
     /// <param name="idDepartamentoJudicial"></param>
     /// <param name="idDepartamentoJudicialInformado"></param>
     /// <param name="monto"></param>
-    protected void InsertarRegistro(string tipo, string idPersona, string motivo, int codigoRegistro, string idOrgano, string idDepartamentoJudicial, string idDepartamentoJudicialInformado, decimal? monto = null)
+    protected void ModificarRegistrosExistentes(string tipo, string idPersona, int codigoRegistro)
     {
-        EntityValues registroAInsertar = ContainerApp.db.Values(tipo).
-            Set("persona", idPersona).
-            Set("creado", evaluado).
-            Set("evaluado", evaluado).
-            Set("motivo", motivo).
-            Set("estado", "Aprobado").
-            Set("codigo", codigoRegistro).
-            Set("departamento_judicial", idDepartamentoJudicial).
-            Set("departamento_judicial_informado", idDepartamentoJudicialInformado).
-            Set("organo", idOrgano).
-            Set("monto", monto).
-
-            Default().Reset();
-
-        if (!registroAInsertar.Check())
-            throw new Exception("Error al Insertar registro " + registroAInsertar.logging.ToString());
-
         IEnumerable<string> idRegistrosAModificar = ContainerApp.db.Query(tipo).
-            Where("$persona = @0 AND $modificado IS NULL AND $codigo = @1").
-            Parameters(idPersona, codigoRegistro).Column<string>("id");
+            Where("$persona = @0 AND $modificado IS NULL AND $codigo = @1 AND $organo = @2").
+            Parameters(idPersona, codigoRegistro, dataForm.organo).Column<string>("id");
 
         persist.UpdateValueIds("modificado", evaluado, idRegistrosAModificar);
     }
 
+
+    protected void VerificarNombreSiEsDistinto(string tipo, string identifierRegistro, Data_RegistroDb registro)
+    {
+        string nombre1 = "";
+        if (!registro.persona__nombres.IsNullOrEmptyOrDbNull()) nombre1 += registro.persona__nombres + " ";
+        nombre1 += registro.persona__apellidos;
+        string nombre2 = "";
+        if (!archivo[tipo][identifierRegistro].nombres.IsNullOrEmptyOrDbNull())
+            nombre2 += archivo[tipo][identifierRegistro].nombres + " ";
+        nombre2 += archivo[tipo][identifierRegistro].apellidos;
+        if(!nombre1.similarTo(nombre2))
+            errors.Add("Los nombres son diferentes en el registro " + identifierRegistro);
+    }
+
+    /// <summary>
+    /// Verificar si coincide monto informado con el de archivo para registro 80
+    /// </summary>
+    /// <param name="tipo"></param>
+    /// <param name="identifierRegistro"></param>
+    /// <param name="montoArchivo"></param>
+    /// <param name="montoRegistro"></param>
+    protected void VerificarCoincidenciaMontoTramiteExcepcional(string tipo, string identifierRegistro, decimal montoArchivo, decimal montoRegistro)
+    {
+        if (tipo == "tramite_excepcional" && montoRegistro! != montoArchivo)
+            errors.Add("El monto del archivo no coincide con el monto informado: " + identifierRegistro);
+    }
 
 
     public event PropertyChangedEventHandler? PropertyChanged;
