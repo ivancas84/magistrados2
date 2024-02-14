@@ -566,8 +566,6 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
         }
     }
 
-
-
     protected IDictionary<string, Data_RegistroDb> ConsultarRegistrosDb(string tipo, string estado, params string[] motivo)
     {
         #region Consultar registros bajas enviadas
