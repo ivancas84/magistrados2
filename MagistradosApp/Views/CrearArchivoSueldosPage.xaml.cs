@@ -111,7 +111,7 @@ public partial class CrearArchivoSueldosPage : Page, INotifyPropertyChanged
                     swd.WriteLine(now.ToString("dd'/'MM'/'yyyy"));
                     swd.WriteLine(tipo);
 
-                    EntityPersist persist = ContainerApp.db.Persist(request.tipo);
+                    EntityPersist persist = ContainerApp.db.Persist();
                     foreach(var reg in registrosCreados)
                     {
 
@@ -119,7 +119,7 @@ public partial class CrearArchivoSueldosPage : Page, INotifyPropertyChanged
                         updateData["id"] = reg["id"];
                         updateData["enviado"] = DateTime.Now;
                         updateData["estado"] = "Enviado";
-                        persist.Update(updateData);
+                        persist.Update(request.tipo, updateData);
 
 
                         string codigoDepartamento = (string)ContainerApp.db.Query("codigo_departamento").

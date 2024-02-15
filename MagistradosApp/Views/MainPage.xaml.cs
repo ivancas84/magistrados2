@@ -241,7 +241,7 @@ public partial class MainPage : Page, INotifyPropertyChanged
         {
             persona = (Data_persona)formGroupBox.DataContext;
             personaOC.Clear();
-            ContainerApp.db.Persist("persona").PersistObj(persona).Exec().RemoveCache();
+            ContainerApp.db.Persist().PersistObj("persona", persona).Exec().RemoveCache();
             new ToastContentBuilder()
                 .AddText("Administración de Persona")
                 .AddText("Los datos de la persona se han registrado correctamente.")
@@ -266,7 +266,7 @@ public partial class MainPage : Page, INotifyPropertyChanged
         {
             var button = (e.OriginalSource as Button);
             var afiliacionObj = (Data_afiliacion_r)button.DataContext;
-            var p = ContainerApp.db.Persist("afiliacion");
+            var p = ContainerApp.db.Persist();
 
             EntityValues afiliacion = ContainerApp.db.Values("afiliacion").SetObj(afiliacionObj).Reset();
             if (!afiliacion.Check())
@@ -284,7 +284,7 @@ public partial class MainPage : Page, INotifyPropertyChanged
                     ColOfVal<string>("id");
 
 
-                p.UpdateValueIds("modificado", afiliacionObj.creado, afiliacionesNoModificadas);
+                p.UpdateValueIds("afiliacion", "modificado", afiliacionObj.creado, afiliacionesNoModificadas);
                 p.Insert(afiliacion);
             }
 
@@ -324,7 +324,7 @@ public partial class MainPage : Page, INotifyPropertyChanged
         try
         {
             if (!a.id.IsNullOrEmpty())
-                ContainerApp.db.Persist("afiliacion").DeleteIds(new object[] { a.id! }).Exec().RemoveCache();
+                ContainerApp.db.Persist().DeleteIds("afiliacion", a.id!).Exec().RemoveCache();
             afiliacionOC.Remove(a);
             new ToastContentBuilder()
                 .AddText("Administración de Afiliado")

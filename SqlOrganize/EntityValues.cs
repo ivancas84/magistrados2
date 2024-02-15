@@ -20,12 +20,19 @@ namespace SqlOrganize
     */
     public class EntityValues : EntityFieldId
     {
-        public Logging logging { get; set; } = new Logging();
+        protected Logging logging = new Logging();
 
-        public IDictionary<string, object?> values = new Dictionary<string, object?>();
+        protected IDictionary<string, object?> values = new Dictionary<string, object?>();
 
         public EntityValues(Db _db, string _entityName, string? _fieldId = null) : base(_db, _entityName, _fieldId)
         {
+        }
+
+        public Logging Logging { get { return logging; } }
+
+        public IDictionary<string, object?> Values()
+        {
+            return values;
         }
 
         public EntityValues Values(IDictionary<string, object?> row)

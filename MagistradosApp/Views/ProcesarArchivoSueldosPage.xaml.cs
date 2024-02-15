@@ -39,7 +39,7 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
     List<string> errors; //errores en el procesamiento 
     EntityPersist persist;
     Data_Longitud longitud;
-
+    IDictionary<string, Data_persona_r> personasDeRegistrosRestantes;
     #endregion
 
     public ProcesarArchivoSueldosPage()
@@ -212,7 +212,7 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
             }
             #endregion
 
-            #region Procesar registros de archivo
+            #region Procesar registros existentes, altas enviadas y bajas enviadas
             ProcesarRegistrosExistentes("afiliacion");
             ProcesarRegistrosExistentes("tramite_excepcional");
 
@@ -223,33 +223,11 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
             ProcesarRegistrosBajasEnviadas("tramite_excepcional");
             #endregion
 
-            #region Ejecutar SQL
-            MySqlConnection connection = new MySqlConnection(ContainerApp.config.connectionString);
-            connection.Open();
-            using DbTransaction tran = connection.BeginTransaction();
-            try
-            {
-                string[] sqls = persist.sql.Split(";");
-                foreach (string s in sqls)
-                {
-                    if (s.Trim().IsNullOrEmpty())
-                        continue;
-                    var qu = ContainerApp.db.Query();
-                    qu.connection = connection;
-                    qu.sql = s;
-                    qu.parameters = persist.parameters;
-                    qu.Exec();
-                }
-                tran.Commit();
-            }
-            catch (Exception)
-            {
-                tran.Rollback();
-                throw;
-            }
+            #region Procesar registros restantes en el archivo
+            ConsultarPersonasDeRegistrosRestantes();
             #endregion
 
-
+            persist.TransactionSplit();
         }
         catch (Exception ex)
         {
@@ -261,6 +239,37 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
 
         
     }
+
+    private void ConsultarPersonasDeRegistrosRestantes()
+    {
+        if (archivo["afiliacion"].IsNullOrEmptyOrDbNull() && archivo["tramite_excepcional"].IsNullOrEmptyOrDbNull())
+            return;
+
+        List<object> legajos = new();
+
+        foreach(var (identifierRegistro, registro) in archivo["afiliacion"])
+            legajos.Add(registro.legajo);
+
+        foreach (var (identifierRegistro, registro) in archivo["tramite_excepcional"])
+            legajos.Add(registro.legajo);
+
+        var data = ContainerApp.db.Query("persona").
+            Where("$legajo IN ( @0 )").
+            Parameters(legajos).
+            Size(0).
+            ColOfDict();
+
+        personasDeRegistrosRestantes = ContainerApp.db.Query("persona").
+            Where("$legajo IN ( @0 )").
+            Parameters(legajos).
+            Size(0).
+            ColOfObj<Data_persona_r>().
+            DictOfObjByPropertyNames("legajo");
+
+    }   
+
+
+        
     private void InicializarAtributosProcesamiento()
     {
         longitud = new(dataForm.organo);
@@ -280,13 +289,18 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
             { "afiliacion", new()
                 {
                     { "altas_existentes", new() },
-                    { "bajas_automaticas", new() }
+                    { "bajas_automaticas", new() },
+                    { "bajas_rechazadas", new() },
+                    { "altas_automaticas", new() }
+
                 }
             },
             { "tramite_excepcional", new()
                 {
                     { "altas_existentes", new() },
-                    { "bajas_automaticas", new() }
+                    { "bajas_automaticas", new() },
+                    { "bajas_rechazadas", new() },
+                    { "altas_automaticas", new() }
                 }
             },
         };
@@ -305,6 +319,8 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
             ColOfObj<Data_codigo_departamento>().
             DictOfObjByPropertyNames("codigo");
         #endregion
+
+        List<Dictionary<string, object>> personasRegistrosRestantes = new();
     }
 
     private void AnalizarPeriodoProcesado(string tipo)
@@ -370,9 +386,10 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                 #region Inicializar variables para procesar altas existentes
                 respuesta[tipo]["altas_existentes"].Add(registroExistenteData);
                 var registroArchivo = archivo[tipo][identifierRegistro];
+                Data_persona personaDelRegistro = ContainerApp.db.Values("persona", "persona").SetObj(registroExistenteData).values.Obj<Data_persona>();
                 #endregion
 
-                VerificarNombreSiEsDistinto(tipo, identifierRegistro, registroExistenteData);
+                VerificarNombreSiEsDistinto(tipo, identifierRegistro, personaDelRegistro);
                 
                 ActualizarDepartamentoJudicialInformadoSiEsDistinto(tipo, identifierRegistro, registroExistenteData);
 
@@ -432,11 +449,12 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                 #region Inicializar variables para procesar altas existentes
                 respuesta[tipo]["altas_aprobadas"].Add(registroAltaEnviadaData);
                 var registroArchivo = archivo[tipo][identifierRegistro];
+                Data_persona_r personaDelRegistro = ContainerApp.db.Values("persona", "persona").SetObj(registroAltaEnviadaData).Values().Obj<Data_persona_r>();
                 #endregion region
 
                 ActualizarDepartamentoJudicialInformadoSiEsDistinto(tipo, identifierRegistro, registroAltaEnviadaData);
 
-                VerificarNombreSiEsDistinto(tipo, identifierRegistro, registroAltaEnviadaData);
+                VerificarNombreSiEsDistinto(tipo, identifierRegistro, personaDelRegistro);
 
                 VerificarCoincidenciaMontoTramiteExcepcional(tipo, identifierRegistro, (decimal)registroAltaEnviadaData.monto!, registroArchivo.monto);
 
@@ -498,11 +516,12 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                 var registroArchivo = archivo[tipo][identifierRegistro];
                 string codigoDepartamentoArchivo = registroArchivo.codigo_departamento;
                 string departamentoJudicialArchivo = codigosDepartamento[codigoDepartamentoArchivo].departamento_judicial!;
+                Data_persona personaDelRegistro = ContainerApp.db.Values("persona", "persona").SetObj(registroBajaEnviadaData).Values().Obj<Data_persona>();
                 #endregion region
 
                 ActualizarDepartamentoJudicialInformadoSiEsDistinto(tipo, identifierRegistro, registroBajaEnviadaData);
 
-                VerificarNombreSiEsDistinto(tipo, identifierRegistro, registroBajaEnviadaData);
+                VerificarNombreSiEsDistinto(tipo, identifierRegistro, personaDelRegistro);
 
                 VerificarCoincidenciaMontoTramiteExcepcional(tipo, identifierRegistro, (decimal)registroBajaEnviadaData.monto!, registroArchivo.monto);
 
@@ -604,7 +623,116 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
             errors.Add("Se actualizo el departamento judicial informado del registro " + identifierRegistro);
         }
     }
-    
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private void ProcesarRegistrosRestantes(string tipo)
+    {
+        if (archivo[tipo].IsNullOrEmptyOrDbNull())
+            return;
+
+        foreach (var (identifierRegistro, registro) in archivo[tipo])
+        {
+            #region Verificar existencia de persona
+            string legajo = archivo[tipo][identifierRegistro].legajo;
+            if (personasDeRegistrosRestantes.ContainsKey(legajo))
+            {
+                VerificarNombreSiEsDistinto(tipo, identifierRegistro, )
+
+            }
+            $legajo = $this->archivo[$tipo][$identifierRegistro]["legajo"];
+            if (key_exists($legajo,$this->personas))
+            {
+      $this->warningNombreSiEsDistinto(
+        $this->personas[$legajo]["nombres"],
+        $this->personas[$legajo]["apellidos"],
+        $tipo,
+        $identifierRegistro
+      );
+
+            }
+            else
+            {
+      $this->crearPersona(
+        $registro,
+        $legajo
+      );
+            }
+            return $this->personas[$legajo]["id"];
+            #endregion
+        }
+
+
+        #region Inicializar variables para procesar altas existentes
+        var registroArchivo = archivo[tipo][identifierRegistro];
+        #endregion
+
+
+
+        IDictionary<string, Data_RegistroDb> registrosExistentes = ConsultarRegistrosDb(tipo, "Aprobado", "Alta", "Modificacion");
+
+        #region Recorrer registros existentes para analizar si es alta_existente o baja_automatica
+        foreach (var (identifierRegistro, registroExistenteData) in registrosExistentes)
+        {
+            if (archivo[tipo].ContainsKey(identifierRegistro)) //el registro existente se encuentra en el archivo
+            {
+                #region Inicializar variables para procesar altas existentes
+                respuesta[tipo]["altas_existentes"].Add(registroExistenteData);
+                Data_persona personaDelRegistro = ContainerApp.db.Values("persona", "persona").SetObj(registroExistenteData).Values().Obj<Data_persona>();
+
+                #endregion
+
+                VerificarNombreSiEsDistinto(tipo, identifierRegistro, personaDelRegistro);
+
+                ActualizarDepartamentoJudicialInformadoSiEsDistinto(tipo, identifierRegistro, registroExistenteData);
+
+                VerificarCoincidenciaMontoTramiteExcepcional(tipo, identifierRegistro, (decimal)registroExistenteData.monto!, registroArchivo.monto);
+
+                #region insertar importe del registro
+                EntityValues importe = ContainerApp.db.Values("importe_" + tipo).
+                    Set(tipo, registroExistenteData.id).
+                    Set("valor", registroArchivo.monto).
+                    Set("periodo", periodo).
+                    Default();
+
+                persist.Insert(importe);
+                #endregion
+
+                #region Borrar registro del archivo porque ya fue procesado
+                archivo[tipo].Remove(identifierRegistro);
+                #endregion
+            }
+            else //el registro existente NO se encuentra en el archivo
+            {
+                #region Inicializar variables para procesar bajas automaticas
+                respuesta[tipo]["bajas_automaticas"].Add(registroExistenteData);
+                #endregion
+
+                ModificarRegistrosExistentes(tipo, registroExistenteData.persona!, (int)registroExistenteData.codigo!);
+
+                #region Insertar registro de baja automatica
+                EntityValues registroAInsertar = ContainerApp.db.Values(tipo).
+                    Set("persona", registroExistenteData.persona!).
+                    Set("creado", evaluado).
+                    Set("evaluado", evaluado).
+                    Set("motivo", "Baja").
+                    Set("estado", "Aprobado").
+                    Set("codigo", (int)registroExistenteData.codigo!).
+                    Set("departamento_judicial", registroExistenteData.departamento_judicial!).
+                    Set("departamento_judicial_informado", registroExistenteData.departamento_judicial_informado!).
+                    Set("organo", registroExistenteData.organo!).
+                    Set("monto", registroExistenteData.monto).
+                    Default().Reset();
+
+                persist.Insert(registroAInsertar);
+                #endregion
+            }
+        }
+        #endregion
+    }
+
     /// <summary>
     /// Marcar como modificados los registros existentes
     /// </summary>
@@ -622,15 +750,15 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
             Where("$persona = @0 AND $modificado IS NULL AND $codigo = @1 AND $organo = @2").
             Parameters(idPersona, codigoRegistro, dataForm.organo).Column<string>("id");
 
-        persist.UpdateValueIds("modificado", evaluado, idRegistrosAModificar);
+        persist.UpdateValueIds(tipo, "modificado", evaluado, idRegistrosAModificar);
     }
 
 
-    protected void VerificarNombreSiEsDistinto(string tipo, string identifierRegistro, Data_RegistroDb registro)
+    protected void VerificarNombreSiEsDistinto(string tipo, string identifierRegistro, Data_persona registro)
     {
         string nombre1 = "";
-        if (!registro.persona__nombres.IsNullOrEmptyOrDbNull()) nombre1 += registro.persona__nombres + " ";
-        nombre1 += registro.persona__apellidos;
+        if (!registro.nombres.IsNullOrEmptyOrDbNull()) nombre1 += registro.nombres + " ";
+        nombre1 += registro.apellidos;
         string nombre2 = "";
         if (!archivo[tipo][identifierRegistro].nombres.IsNullOrEmptyOrDbNull())
             nombre2 += archivo[tipo][identifierRegistro].nombres + " ";
