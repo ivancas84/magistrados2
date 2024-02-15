@@ -13,10 +13,6 @@ using Utils;
 using MySql.Data.MySqlClient;
 using System.Data.Common;
 using Microsoft.Win32;
-using MagistradosApp.DAO;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Drawing;
-using Microsoft.Xaml.Behaviors.Media;
 
 namespace MagistradosApp.Views;
 
@@ -34,7 +30,7 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
     private DateTime evaluado = DateTime.Now;
 
     private Dictionary<string, List<string>> legajosProcesados; //debido a la similitud de procesamiento entre afiliaciones y tramites excepcionales, se almacenan los datos en una misma variable
-    private Dictionary<string, Dictionary<string, List<Data_RegistroDb>>> respuesta; //debido a la similitud de procesamiento entre afiliaciones y tramites excepcionales, se almacenan los datos en una misma variable
+    private Dictionary<string, Dictionary<string, List<Data_Registro>>> respuesta; //debido a la similitud de procesamiento entre afiliaciones y tramites excepcionales, se almacenan los datos en una misma variable
     IDictionary<string, Data_codigo_departamento> codigosDepartamento; //Lista de departamentos clasificados por codigo
     List<string> errors; //errores en el procesamiento 
     EntityPersist persist;
@@ -142,56 +138,56 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                 #region Registros archivo > definir datos iniciales de registro a procesar
                 Data_Registro registro = new();
                 registro.codigo_departamento = lines[i].Substring(longitud.inicioCodigoDepartamento, longitud.longitudCodigoDepartamento).Trim().PadLeft(longitud.longitudCodigoDepartamento, '0');
-                registro.codigo_afiliacion = lines[i].Substring(longitud.inicioCodigoAfiliacion, longitud.longitudCodigoAfiliacion).Trim();
-                registro.descripcion_afiliacion = lines[i].Substring(longitud.inicioDescripcionAfiliacion, longitud.longitudDescripcionAfiliacion).Trim();
-                registro.legajo = lines[i].Substring(longitud.inicioLegajo, longitud.longitudLegajo).Trim();
+                registro.codigo = Convert.ToInt32(lines[i].Substring(longitud.inicioCodigoAfiliacion, longitud.longitudCodigoAfiliacion).Trim());
+                registro.descripcion = lines[i].Substring(longitud.inicioDescripcionAfiliacion, longitud.longitudDescripcionAfiliacion).Trim();
+                registro.persona__legajo = lines[i].Substring(longitud.inicioLegajo, longitud.longitudLegajo).Trim();
                 registro.monto = decimal.Parse(lines[i].Substring(longitud.inicioMonto, longitud.longitudMonto), CultureInfo.InvariantCulture);
                 //registro.numero = lines[i].Substring(longitud.inicioNumero, longitud.longitudNumero).Trim();
                 #endregion
 
                 #region Registros archivo > definir nombres y apellidos de registro
                 string[] nombre = lines[i].Substring(longitud.inicioNombre, longitud.longitudNombre).Trim().Split(",");
-                registro.apellidos = nombre[0];
+                registro.persona__apellidos = nombre[0];
 
                 if (nombre.Length > 1 && !nombre[1].Trim().IsNullOrEmpty())
-                    registro.nombres = nombre[1];
+                    registro.persona__nombres = nombre[1];
 
-                if(!registro.apellidos.IsNullOrEmpty())
-                    for (int j = 0; j < registro.apellidos.Length; j++)
-                        if (!Char.IsLetter(registro.apellidos, j) && !registro.apellidos[j].Equals(' '))
-                            registro.apellidos = registro.apellidos.Remove(j, 1).Insert(j, "Ñ");
+                if(!registro.persona__apellidos.IsNullOrEmpty())
+                    for (int j = 0; j < registro.persona__apellidos.Length; j++)
+                        if (!Char.IsLetter(registro.persona__apellidos, j) && !registro.persona__apellidos[j].Equals(' '))
+                            registro.persona__apellidos = registro.persona__apellidos.Remove(j, 1).Insert(j, "Ñ");
 
-                if (!registro.nombres.IsNullOrEmpty())
-                    for (int j = 0; j < registro.nombres.Length; j++)
-                        if (!Char.IsLetter(registro.nombres, j) && !registro.nombres[j].Equals(' '))
-                            registro.nombres = registro.nombres.Remove(j, 1).Insert(j, "Ñ");
+                if (!registro.persona__nombres.IsNullOrEmpty())
+                    for (int j = 0; j < registro.persona__nombres.Length; j++)
+                        if (!Char.IsLetter(registro.persona__nombres, j) && !registro.persona__nombres[j].Equals(' '))
+                            registro.persona__nombres = registro.persona__nombres.Remove(j, 1).Insert(j, "Ñ");
                 #endregion
 
                 #region Registros archivo > Verificar codigo de departamento de registro
                 if (!codigosDepartamento.ContainsKey(registro.codigo_departamento))
                 {
-                    errors.Add(string.Format("REGISTRO {0} SIN PROCESAR: No existe departamento judicial para legajo {1}", i, registro.legajo));
+                    errors.Add(string.Format("REGISTRO {0} SIN PROCESAR: No existe departamento judicial para legajo {1}", i, registro.persona__legajo));
                     continue;
                 }
                 #endregion
 
                 #region Registros archivo > Analizar codigo de afiliacion
-                string indiceRegistro = registro.legajo + "~" + registro.codigo_afiliacion;
+                string indiceRegistro = registro.persona__legajo + "~" + registro.codigo;
 
-                switch (registro.codigo_afiliacion)
+                switch (registro.codigo)
                 {
                     
-                    case "161": case "162": case "1621": case "1622":
+                    case 161: case 162: case 1621: case 1622:
                         VerificarLegajoRepetido("afiliacion", registro);
                         if(SumarImportesOAgregarRegistro("afiliacion", indiceRegistro, registro))
                             continue;
                         
                         break;
 
-                    case "1631": case "1632":
+                    case 1631: case 1632:
                         #region Registros archivo > Analizar codigo de tramite excepcional > Verificar si existe afiliacion para el tramite excepcional
-                        if (!legajosProcesados["afiliacion"].Contains(registro.legajo))
-                            errors.Add("Legajo " + registro.legajo + " posee registro 80 y no registro 40.");
+                        if (!legajosProcesados["afiliacion"].Contains(registro.persona__legajo))
+                            errors.Add("Legajo " + registro.persona__legajo + " posee registro 80 y no registro 40.");
                         #endregion
 
                         VerificarLegajoRepetido("tramite_excepcional", registro);
@@ -200,7 +196,7 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                         break;
 
                     default: 
-                        errors.Add("Registro " + indiceRegistro + " tiene codigo de registro invalido, será ignorado: " + registro.codigo_afiliacion + ".");
+                        errors.Add("Registro " + indiceRegistro + " tiene codigo de registro invalido, será ignorado: " + registro.codigo + ".");
                         continue;
 
                 }
@@ -225,6 +221,8 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
 
             #region Procesar registros restantes en el archivo
             ConsultarPersonasDeRegistrosRestantes();
+            ProcesarRegistrosRestantes("afiliacion");
+            ProcesarRegistrosRestantes("tramite_excepcional");
             #endregion
 
             persist.TransactionSplit();
@@ -248,10 +246,10 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
         List<object> legajos = new();
 
         foreach(var (identifierRegistro, registro) in archivo["afiliacion"])
-            legajos.Add(registro.legajo);
+            legajos.Add(registro.persona__legajo);
 
         foreach (var (identifierRegistro, registro) in archivo["tramite_excepcional"])
-            legajos.Add(registro.legajo);
+            legajos.Add(registro.persona__legajo);
 
         var data = ContainerApp.db.Query("persona").
             Where("$legajo IN ( @0 )").
@@ -265,7 +263,6 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
             Size(0).
             ColOfObj<Data_persona_r>().
             DictOfObjByPropertyNames("legajo");
-
     }   
 
 
@@ -320,7 +317,6 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
             DictOfObjByPropertyNames("codigo");
         #endregion
 
-        List<Dictionary<string, object>> personasRegistrosRestantes = new();
     }
 
     private void AnalizarPeriodoProcesado(string tipo)
@@ -343,10 +339,10 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
     /// <param name="registro">Registro a analizar</param>
     private void VerificarLegajoRepetido(string tipo, Data_Registro registro)
     {
-        if (legajosProcesados[tipo].Contains(registro.legajo))
-            errors.Add("Legajo " + registro.legajo + " posee mas de un registro de " + tipo);
+        if (legajosProcesados[tipo].Contains(registro.persona__legajo))
+            errors.Add("Legajo " + registro.persona__legajo + " posee mas de un registro de " + tipo);
         else
-            legajosProcesados[tipo].Add(registro.legajo);
+            legajosProcesados[tipo].Add(registro.persona__legajo);
 
     }
 
@@ -372,11 +368,11 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
     }
     
     /// <summary>
-    /// 
+    /// Procesar registros existentes
     /// </summary>
     private void ProcesarRegistrosExistentes(string tipo)
     {
-        IDictionary<string, Data_RegistroDb> registrosExistentes = ConsultarRegistrosDb(tipo, "Aprobado", "Alta", "Modificacion");
+        IDictionary<string, Data_Registro> registrosExistentes = ConsultarRegistrosDb(tipo, "Aprobado", "Alta", "Modificacion");
 
         #region Recorrer registros existentes para analizar si es alta_existente o baja_automatica
         foreach (var (identifierRegistro, registroExistenteData) in registrosExistentes)
@@ -386,14 +382,14 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                 #region Inicializar variables para procesar altas existentes
                 respuesta[tipo]["altas_existentes"].Add(registroExistenteData);
                 var registroArchivo = archivo[tipo][identifierRegistro];
-                Data_persona personaDelRegistro = ContainerApp.db.Values("persona", "persona").SetObj(registroExistenteData).values.Obj<Data_persona>();
+                Data_persona personaDelRegistro = ContainerApp.db.Values("persona", "persona").SetObj(registroExistenteData).Values().Obj<Data_persona>();
                 #endregion
 
                 VerificarNombreSiEsDistinto(tipo, identifierRegistro, personaDelRegistro);
                 
                 ActualizarDepartamentoJudicialInformadoSiEsDistinto(tipo, identifierRegistro, registroExistenteData);
 
-                VerificarCoincidenciaMontoTramiteExcepcional(tipo, identifierRegistro, (decimal)registroExistenteData.monto!, registroArchivo.monto);
+                VerificarCoincidenciaMontoTramiteExcepcional(tipo, identifierRegistro, (decimal)registroExistenteData.monto!, (decimal)registroArchivo.monto!);
 
                 #region insertar importe del registro
                 EntityValues importe = ContainerApp.db.Values("importe_" + tipo).
@@ -440,7 +436,7 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
 
     private void ProcesarRegistrosAltasEnviadas(string tipo)
     {
-        IDictionary<string, Data_RegistroDb> registrosAltasEnviadas = ConsultarRegistrosDb(tipo, "Enviado", "Alta", "Modificacion");
+        IDictionary<string, Data_Registro> registrosAltasEnviadas = ConsultarRegistrosDb(tipo, "Enviado", "Alta", "Modificacion");
 
         foreach (var (identifierRegistro, registroAltaEnviadaData) in registrosAltasEnviadas)
         {
@@ -456,7 +452,7 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
 
                 VerificarNombreSiEsDistinto(tipo, identifierRegistro, personaDelRegistro);
 
-                VerificarCoincidenciaMontoTramiteExcepcional(tipo, identifierRegistro, (decimal)registroAltaEnviadaData.monto!, registroArchivo.monto);
+                VerificarCoincidenciaMontoTramiteExcepcional(tipo, identifierRegistro, (decimal)registroAltaEnviadaData.monto!, (decimal)registroArchivo.monto!);
 
                 #region Aprobar alta enviada
                 EntityValues registroValue = ContainerApp.db.Values(tipo).
@@ -505,7 +501,7 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
     /// <param name="tipo"></param>
     private void ProcesarRegistrosBajasEnviadas(string tipo)
     {
-        IDictionary<string, Data_RegistroDb> registrosBajasEnviadas =  ConsultarRegistrosDb(tipo, "Enviado", "Baja");
+        IDictionary<string, Data_Registro> registrosBajasEnviadas =  ConsultarRegistrosDb(tipo, "Enviado", "Baja");
 
         foreach (var (identifierRegistro, registroBajaEnviadaData) in registrosBajasEnviadas)
         {
@@ -523,7 +519,7 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
 
                 VerificarNombreSiEsDistinto(tipo, identifierRegistro, personaDelRegistro);
 
-                VerificarCoincidenciaMontoTramiteExcepcional(tipo, identifierRegistro, (decimal)registroBajaEnviadaData.monto!, registroArchivo.monto);
+                VerificarCoincidenciaMontoTramiteExcepcional(tipo, identifierRegistro, (decimal)registroBajaEnviadaData.monto!, (decimal)registroArchivo.monto!);
 
                 #region Rechazar baja enviada
                 EntityValues registroValue = ContainerApp.db.Values(tipo).
@@ -585,10 +581,16 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
         }
     }
 
-    protected IDictionary<string, Data_RegistroDb> ConsultarRegistrosDb(string tipo, string estado, params string[] motivo)
+    /// <summary>
+    /// Consultar registros de la base de datos
+    /// </summary>
+    /// <param name="tipo">afiliacion o tramite_excepcional</param>
+    /// <param name="estado">Aprobado, Modificado, Rechazado, Enviado, Creado</param>
+    /// <param name="motivo">Alta, Baja, Modificación</param>
+    /// <returns></returns>
+    protected IDictionary<string, Data_Registro> ConsultarRegistrosDb(string tipo, string estado, params string[] motivo)
     {
-        #region Consultar registros bajas enviadas
-        return  ContainerApp.db.Query(tipo).
+        return ContainerApp.db.Query(tipo).
             Where(@"$modificado IS NULL 
                 AND $estado = @0
                 AND $motivo IN (@1)
@@ -597,16 +599,15 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
             Size(0).
             Parameters(estado, motivo, dataForm.organo).
             ColOfDictCache().
-            ColOfObj<Data_RegistroDb>().
+            ColOfObj<Data_Registro>().
             DictOfObjByPropertyNames("persona__legajo", "codigo");
-        #endregion
     }
 
     /// <summary>
     /// Actualizar departamento judicial informado si es distinto
     /// </summary>
     /// <remarks>Se actualiza el valor actual, deberia definirse uno nuevo!!!</remarks>
-    protected void ActualizarDepartamentoJudicialInformadoSiEsDistinto(string tipo, string identifierRegistro, Data_RegistroDb registro)
+    protected void ActualizarDepartamentoJudicialInformadoSiEsDistinto(string tipo, string identifierRegistro, Data_Registro registro)
     {
         string codigoDepartamentoArchivo = archivo[tipo][identifierRegistro].codigo_departamento;
         string departamentoJudicialArchivo = codigosDepartamento[codigoDepartamentoArchivo].departamento_judicial!;
@@ -626,111 +627,68 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
 
 
     /// <summary>
-    /// 
+    /// Procesar registros restantes
     /// </summary>
     private void ProcesarRegistrosRestantes(string tipo)
     {
         if (archivo[tipo].IsNullOrEmptyOrDbNull())
             return;
 
-        foreach (var (identifierRegistro, registro) in archivo[tipo])
+        foreach (var (identifierRegistro, registroArchivo) in archivo[tipo])
         {
             #region Verificar existencia de persona
-            string legajo = archivo[tipo][identifierRegistro].legajo;
-            if (personasDeRegistrosRestantes.ContainsKey(legajo))
-            {
-                VerificarNombreSiEsDistinto(tipo, identifierRegistro, )
+            string legajo = archivo[tipo][identifierRegistro].persona__legajo!;
+            EntityValues personaVal = ContainerApp.db.Values("persona", "persona").SetObj(registroArchivo);
+            Data_persona personaDeArchivo = personaVal.Values().Obj<Data_persona>();
 
-            }
-            $legajo = $this->archivo[$tipo][$identifierRegistro]["legajo"];
-            if (key_exists($legajo,$this->personas))
+            if (personasDeRegistrosRestantes.ContainsKey(legajo)) //si existe persona se verifica nombre
             {
-      $this->warningNombreSiEsDistinto(
-        $this->personas[$legajo]["nombres"],
-        $this->personas[$legajo]["apellidos"],
-        $tipo,
-        $identifierRegistro
-      );
-
+                VerificarNombreSiEsDistinto(tipo, identifierRegistro, personaDeArchivo);
             }
-            else
+            else //si no existe persona se crea
             {
-      $this->crearPersona(
-        $registro,
-        $legajo
-      );
+                personaVal.Default().Reset();
+                if (!personaVal.Check())
+                {
+                    errors.Add("Error al procesar persona de registro " + identifierRegistro + " " + personaVal.Logging.ToString());
+                    continue;
+                }
+                ContainerApp.db.Persist().Insert(personaVal);
+                personaDeArchivo.id = (string)personaVal.Get("id");
             }
-            return $this->personas[$legajo]["id"];
             #endregion
-        }
 
+            #region Insertar registro de baja automatica
+            string departamentoJudicialArchivo = codigosDepartamento[registroArchivo.codigo_departamento].departamento_judicial!;
 
-        #region Inicializar variables para procesar altas existentes
-        var registroArchivo = archivo[tipo][identifierRegistro];
-        #endregion
+            ModificarRegistrosExistentes(tipo, personaDeArchivo.id, (int)registroArchivo.codigo!);
 
+            EntityValues registroAInsertar = ContainerApp.db.Values(tipo).
+                Set("persona", personaDeArchivo.id!).
+                Set("creado", evaluado).
+                Set("evaluado", evaluado).
+                Set("motivo", "Alta").
+                Set("estado", "Aprobado").
+                Set("codigo", registroArchivo.codigo).
+                Set("departamento_judicial", departamentoJudicialArchivo!).
+                Set("departamento_judicial_informado", departamentoJudicialArchivo!).
+                Set("organo", dataForm.organo).
+                Set("monto", registroArchivo.monto).
+                Default().Reset();
 
+            persist.Insert(registroAInsertar);
 
-        IDictionary<string, Data_RegistroDb> registrosExistentes = ConsultarRegistrosDb(tipo, "Aprobado", "Alta", "Modificacion");
-
-        #region Recorrer registros existentes para analizar si es alta_existente o baja_automatica
-        foreach (var (identifierRegistro, registroExistenteData) in registrosExistentes)
-        {
-            if (archivo[tipo].ContainsKey(identifierRegistro)) //el registro existente se encuentra en el archivo
-            {
-                #region Inicializar variables para procesar altas existentes
-                respuesta[tipo]["altas_existentes"].Add(registroExistenteData);
-                Data_persona personaDelRegistro = ContainerApp.db.Values("persona", "persona").SetObj(registroExistenteData).Values().Obj<Data_persona>();
-
-                #endregion
-
-                VerificarNombreSiEsDistinto(tipo, identifierRegistro, personaDelRegistro);
-
-                ActualizarDepartamentoJudicialInformadoSiEsDistinto(tipo, identifierRegistro, registroExistenteData);
-
-                VerificarCoincidenciaMontoTramiteExcepcional(tipo, identifierRegistro, (decimal)registroExistenteData.monto!, registroArchivo.monto);
-
-                #region insertar importe del registro
-                EntityValues importe = ContainerApp.db.Values("importe_" + tipo).
-                    Set(tipo, registroExistenteData.id).
+            EntityValues importe = ContainerApp.db.Values("importe_" + tipo).
+                    Set(tipo, registroAInsertar.Get("id")).
                     Set("valor", registroArchivo.monto).
                     Set("periodo", periodo).
-                    Default();
-
-                persist.Insert(importe);
-                #endregion
-
-                #region Borrar registro del archivo porque ya fue procesado
-                archivo[tipo].Remove(identifierRegistro);
-                #endregion
-            }
-            else //el registro existente NO se encuentra en el archivo
-            {
-                #region Inicializar variables para procesar bajas automaticas
-                respuesta[tipo]["bajas_automaticas"].Add(registroExistenteData);
-                #endregion
-
-                ModificarRegistrosExistentes(tipo, registroExistenteData.persona!, (int)registroExistenteData.codigo!);
-
-                #region Insertar registro de baja automatica
-                EntityValues registroAInsertar = ContainerApp.db.Values(tipo).
-                    Set("persona", registroExistenteData.persona!).
-                    Set("creado", evaluado).
-                    Set("evaluado", evaluado).
-                    Set("motivo", "Baja").
-                    Set("estado", "Aprobado").
-                    Set("codigo", (int)registroExistenteData.codigo!).
-                    Set("departamento_judicial", registroExistenteData.departamento_judicial!).
-                    Set("departamento_judicial_informado", registroExistenteData.departamento_judicial_informado!).
-                    Set("organo", registroExistenteData.organo!).
-                    Set("monto", registroExistenteData.monto).
                     Default().Reset();
 
-                persist.Insert(registroAInsertar);
-                #endregion
-            }
+            persist.Insert(importe);
+            #endregion
+
+            respuesta[tipo]["altas_automaticas"].Add(registroArchivo);
         }
-        #endregion
     }
 
     /// <summary>
@@ -753,16 +711,16 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
         persist.UpdateValueIds(tipo, "modificado", evaluado, idRegistrosAModificar);
     }
 
-
+    
     protected void VerificarNombreSiEsDistinto(string tipo, string identifierRegistro, Data_persona registro)
     {
         string nombre1 = "";
         if (!registro.nombres.IsNullOrEmptyOrDbNull()) nombre1 += registro.nombres + " ";
         nombre1 += registro.apellidos;
         string nombre2 = "";
-        if (!archivo[tipo][identifierRegistro].nombres.IsNullOrEmptyOrDbNull())
-            nombre2 += archivo[tipo][identifierRegistro].nombres + " ";
-        nombre2 += archivo[tipo][identifierRegistro].apellidos;
+        if (!archivo[tipo][identifierRegistro].persona__nombres.IsNullOrEmptyOrDbNull())
+            nombre2 += archivo[tipo][identifierRegistro].persona__nombres + " ";
+        nombre2 += archivo[tipo][identifierRegistro].persona__apellidos;
         if(!nombre1.similarTo(nombre2))
             errors.Add("Los nombres son diferentes en el registro " + identifierRegistro);
     }

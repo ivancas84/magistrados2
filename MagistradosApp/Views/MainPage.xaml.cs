@@ -270,7 +270,7 @@ public partial class MainPage : Page, INotifyPropertyChanged
 
             EntityValues afiliacion = ContainerApp.db.Values("afiliacion").SetObj(afiliacionObj).Reset();
             if (!afiliacion.Check())
-                throw new Exception("Los campos poseen errores: " + afiliacion.logging.ToString());
+                throw new Exception("Los campos poseen errores: " + afiliacion.Logging.ToString());
 
             IDictionary<string, object?>? row = ContainerApp.dao.RowByUnique(afiliacion);
 
@@ -292,7 +292,7 @@ public partial class MainPage : Page, INotifyPropertyChanged
             else
             {
                 afiliacion.Set("id", row["id"]);
-                afiliacion.Update(p);
+                p.Update(afiliacion);
             }
 
             p.Transaction().RemoveCache();

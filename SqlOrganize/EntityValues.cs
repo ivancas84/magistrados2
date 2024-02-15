@@ -46,7 +46,15 @@ namespace SqlOrganize
             values = obj.Dict() ?? new Dictionary<string, object?>();
             return this;
         }
-
+     
+        /// <summary>
+        /// Existe valor de field
+        /// </summary>
+        public bool ContainsValue(string fieldId)
+        {
+            return values.ContainsKey(fieldId);
+        }
+        
         public EntityValues Clear()
         {
             values.Clear();
@@ -512,24 +520,6 @@ namespace SqlOrganize
             return q.Value<ulong>();
         }
 
-        public EntityValues Update(EntityPersist persist)
-        {
-            persist.Update(this);
-            return this;
-        }
-
-        public EntityValues Insert(EntityPersist persist)
-        {
-            persist.Insert(this);
-            return this;
-        }
-
-        public EntityValues Persist(EntityPersist persist)
-        {
-            persist.Persist(this);
-            return this;
-        }
-
         public EntityValues? ValuesTree(string fieldId)
         {
             Entity entity = db.Entity(entityName);
@@ -564,7 +554,6 @@ namespace SqlOrganize
             }
             return null;
         }
-
 
         public override string ToString()
         {
@@ -611,7 +600,6 @@ namespace SqlOrganize
             return fields;
         }
 
-
         public (string? fieldId, string fieldName, string entityName, object? value) ParentVariables(string mainEntityName)
         {
             object? value;
@@ -643,8 +631,6 @@ namespace SqlOrganize
 
             return (newFieldId, fieldName, entityName, value);
         }
-
-
 
         /// <summary>
         /// Valor por defecto de field
@@ -719,7 +705,6 @@ namespace SqlOrganize
                     return field.defaultValue;
             }
         }
-
         protected object? DefaultFieldInt(Field field)
         {
             if (field.defaultValue.ToString()!.ToLower().Contains("next"))
