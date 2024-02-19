@@ -144,7 +144,7 @@ namespace SqlOrganize
             {
                 foreach (var (key, value) in row)
                 {
-                    if (key == fieldName)
+                    if ((key == fieldName) && (!value.IsNullOrEmptyOrDbNull()))
                     {
                         var v = (value == null) ? DBNull.Value : value;
                         whereUniqueList.Add("$" + key + " = @" + parameters.Count);

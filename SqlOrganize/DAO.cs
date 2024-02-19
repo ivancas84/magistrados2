@@ -50,7 +50,7 @@ namespace SqlOrganize
             var q = Db.Query(entityName).Unique(source);
 
             if (source.ContainsKey(Db.config.id) && !source[Db.config.id]!.IsNullOrEmptyOrDbNull())
-                q.And("$" + Db.config.id + " != @").Parameters(source[Db.config.id]!);
+                q.And("$" + Db.config.id + " != @"+q.parameters.Count()).Parameters(source[Db.config.id]!);
 
             return q.DictCache();
         }
@@ -91,13 +91,13 @@ namespace SqlOrganize
         }
 
 
-        public IDictionary<string, object>? RowByUniqueFieldOrValues(string fieldName, EntityValues values)
+        public IDictionary<string, object?>? RowByUniqueFieldOrValues(string fieldName, EntityValues values)
         {
             try { 
                 if (Db.Field(values.entityName, fieldName).IsUnique())
                     return RowByFieldValue(values.entityName, fieldName, values.Get(fieldName));
                 else
-                    return RowByUniqueWithoutIdIfExists(values.entityName, values.Get());
+                    return RowByUniqueWithoutIdIfExists(values.entityName, values.Values());
             } catch (UniqueException ex)
             {
                 return null;
