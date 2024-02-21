@@ -12,12 +12,12 @@ namespace MagistradosApp.Data
             Initialize();
         }
 
-        public Data_codigo_departamento_r (DataInitMode mode = DataInitMode.Default) : base(mode)
+        public Data_codigo_departamento_r (DataInitMode mode) : base(mode)
         {
             Initialize(mode);
         }
 
-        protected override void Initialize(DataInitMode mode = DataInitMode.Default)
+        protected override void Initialize(DataInitMode mode = DataInitMode.Null)
         {
             base.Initialize(mode);
             switch(mode)

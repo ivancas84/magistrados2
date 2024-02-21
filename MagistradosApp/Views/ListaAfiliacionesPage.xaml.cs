@@ -1,6 +1,4 @@
 ﻿using CommunityToolkit.WinUI.Notifications;
-using ControlzEx.Standard;
-using MagistradosApp.DAO;
 using MagistradosApp.Data;
 using SqlOrganize;
 using System.Collections.ObjectModel;
