@@ -169,6 +169,8 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                     errors.Add(string.Format("REGISTRO {0} SIN PROCESAR: No existe departamento judicial para legajo {1}", i, registro.persona__legajo));
                     continue;
                 }
+                registro.departamento_judicial = codigosDepartamento[registro.codigo_departamento].departamento_judicial;
+                registro.departamento_judicial_informado = codigosDepartamento[registro.codigo_departamento].departamento_judicial;
                 #endregion
 
                 #region Registros archivo > Analizar codigo de afiliacion
@@ -177,14 +179,14 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                 switch (registro.codigo)
                 {
                     
-                    case 161: case 162: case 1621: case 1622:
+                    case 161: case 162: case 1621: case 1622: //afiliacion
                         VerificarLegajoRepetido("afiliacion", registro);
                         if(SumarImportesOAgregarRegistro("afiliacion", indiceRegistro, registro))
                             continue;
                         
                         break;
 
-                    case 1631: case 1632:
+                    case 1631: case 1632: //tramite excepcional
                         #region Registros archivo > Analizar codigo de tramite excepcional > Verificar si existe afiliacion para el tramite excepcional
                         if (!legajosProcesados["afiliacion"].Contains(registro.persona__legajo))
                             errors.Add("Legajo " + registro.persona__legajo + " posee registro 80 y no registro 40.");
@@ -251,11 +253,6 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
         foreach (var (identifierRegistro, registro) in archivo["tramite_excepcional"])
             legajos.Add(registro.persona__legajo);
 
-        var data = ContainerApp.db.Query("persona").
-            Where("$legajo IN ( @0 )").
-            Parameters(legajos).
-            Size(0).
-            ColOfDict();
 
         personasDeRegistrosRestantes = ContainerApp.db.Query("persona").
             Where("$legajo IN ( @0 )").
@@ -287,6 +284,9 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                 {
                     { "altas_existentes", new() },
                     { "bajas_automaticas", new() },
+                    { "altas_aprobadas", new() },
+                    { "altas_rechazadas", new() },
+                    { "bajas_aprobadas", new() },
                     { "bajas_rechazadas", new() },
                     { "altas_automaticas", new() }
 
@@ -296,6 +296,9 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                 {
                     { "altas_existentes", new() },
                     { "bajas_automaticas", new() },
+                    { "altas_aprobadas", new() },
+                    { "altas_rechazadas", new() },
+                    { "bajas_aprobadas", new() },
                     { "bajas_rechazadas", new() },
                     { "altas_automaticas", new() }
                 }
@@ -389,7 +392,7 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                 
                 ActualizarDepartamentoJudicialInformadoSiEsDistinto(tipo, identifierRegistro, registroExistenteData);
 
-                VerificarCoincidenciaMontoTramiteExcepcional(tipo, identifierRegistro, (decimal)registroExistenteData.monto!, (decimal)registroArchivo.monto!);
+                VerificarCoincidenciaMontoTramiteExcepcional(tipo, identifierRegistro, registroExistenteData.monto);
 
                 #region insertar importe del registro
                 EntityValues importe = ContainerApp.db.Values("importe_" + tipo).
@@ -452,7 +455,7 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
 
                 VerificarNombreSiEsDistinto(tipo, identifierRegistro, personaDelRegistro);
 
-                VerificarCoincidenciaMontoTramiteExcepcional(tipo, identifierRegistro, (decimal)registroAltaEnviadaData.monto!, (decimal)registroArchivo.monto!);
+                VerificarCoincidenciaMontoTramiteExcepcional(tipo, identifierRegistro, (decimal?)registroAltaEnviadaData.monto);
 
                 #region Aprobar alta enviada
                 EntityValues registroValue = ContainerApp.db.Values(tipo).
@@ -510,8 +513,6 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                 #region Inicializar variables para procesar bajas rechazadas
                 respuesta[tipo]["bajas_rechazadas"].Add(registroBajaEnviadaData);
                 var registroArchivo = archivo[tipo][identifierRegistro];
-                string codigoDepartamentoArchivo = registroArchivo.codigo_departamento;
-                string departamentoJudicialArchivo = codigosDepartamento[codigoDepartamentoArchivo].departamento_judicial!;
                 Data_persona personaDelRegistro = ContainerApp.db.Values("persona", "persona").SetObj(registroBajaEnviadaData).Values().Obj<Data_persona>();
                 #endregion region
 
@@ -519,7 +520,7 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
 
                 VerificarNombreSiEsDistinto(tipo, identifierRegistro, personaDelRegistro);
 
-                VerificarCoincidenciaMontoTramiteExcepcional(tipo, identifierRegistro, (decimal)registroBajaEnviadaData.monto!, (decimal)registroArchivo.monto!);
+                VerificarCoincidenciaMontoTramiteExcepcional(tipo, identifierRegistro, (decimal?)registroBajaEnviadaData.monto!);
 
                 #region Rechazar baja enviada
                 EntityValues registroValue = ContainerApp.db.Values(tipo).
@@ -541,8 +542,8 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                     Set("estado", "Aprobado").
                     Set("codigo", (int)registroBajaEnviadaData.codigo!).
                     Set("departamento_judicial", registroBajaEnviadaData.departamento_judicial!).
-                    Set("departamento_judicial_informado", departamentoJudicialArchivo!).
-                    Set("organo", registroBajaEnviadaData.organo!).
+                    Set("departamento_judicial_informado", registroArchivo.departamento_judicial_informado!).
+                    Set("organo", dataForm.organo!).
                     Set("monto", registroBajaEnviadaData.monto).
                     Default().Reset();
 
@@ -609,8 +610,7 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
     /// <remarks>Se actualiza el valor actual, deberia definirse uno nuevo!!!</remarks>
     protected void ActualizarDepartamentoJudicialInformadoSiEsDistinto(string tipo, string identifierRegistro, Data_Registro registro)
     {
-        string codigoDepartamentoArchivo = archivo[tipo][identifierRegistro].codigo_departamento;
-        string departamentoJudicialArchivo = codigosDepartamento[codigoDepartamentoArchivo].departamento_judicial!;
+        string departamentoJudicialArchivo = archivo[tipo][identifierRegistro].departamento_judicial_informado;
 
         if (!departamentoJudicialArchivo.Equals(registro.departamento_judicial_informado))
         {
@@ -732,10 +732,11 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
     /// <param name="identifierRegistro"></param>
     /// <param name="montoArchivo"></param>
     /// <param name="montoRegistro"></param>
-    protected void VerificarCoincidenciaMontoTramiteExcepcional(string tipo, string identifierRegistro, decimal montoArchivo, decimal montoRegistro)
+    protected void VerificarCoincidenciaMontoTramiteExcepcional(string tipo, string identifierRegistro, decimal? montoRegistro)
     {
-        if (tipo == "tramite_excepcional" && montoRegistro! != montoArchivo)
-            errors.Add("El monto del archivo no coincide con el monto informado: " + identifierRegistro);
+        if (tipo.Equals("tramite_excepcional"))
+            if(montoRegistro! != archivo[tipo][identifierRegistro].monto!)
+                errors.Add("El monto del archivo no coincide con el monto informado: " + identifierRegistro);
     }
 
 
