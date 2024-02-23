@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
+using SqlOrganize;
+
 using System.Configuration;
 
 namespace MagistradosWpfApp
