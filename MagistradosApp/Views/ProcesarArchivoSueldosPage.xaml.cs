@@ -13,6 +13,8 @@ using Utils;
 using MySql.Data.MySqlClient;
 using System.Data.Common;
 using Microsoft.Win32;
+using Windows.UI.Notifications;
+using Windows.Data.Xml.Dom;
 
 namespace MagistradosApp.Views;
 
@@ -227,14 +229,72 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
             ProcesarRegistrosRestantes("tramite_excepcional");
             #endregion
 
-            persist.TransactionSplit();
+            #region persistir datos
+            var connection = new MySqlConnection(ContainerApp.config.connectionString);
+            connection.Open();
+            using DbTransaction tran = connection!.BeginTransaction();
+            string sql = "";
+            try
+            {
+                string[] sqls = persist.sql.Split(";");
+
+                foreach (string s in sqls)
+                {
+                    sql = s;
+                    if (s.Trim().IsNullOrEmpty())
+                        continue;
+
+                    var qu = ContainerApp.db.Query();
+                    qu.connection = connection;
+                    qu.sql = s;
+                    qu.parameters = persist.parameters;
+                    qu.Exec();
+                }
+
+                tran.Commit();
+                persist.RemoveCache();
+            }
+
+            catch (Exception ex)
+            {
+                tran.Rollback();
+                throw new Exception(ex.Message + " - " + sql);
+            }
+            connection.Close();
+            #endregion
+
         }
         catch (Exception ex)
         {
-            new ToastContentBuilder()
+            var content = new ToastContent()
+            {
+                Visual = new ToastVisual()
+                {
+                    BindingGeneric = new ToastBindingGeneric()
+                    {
+                        Children =
+                        {
+                            new AdaptiveText()
+                            {
+                                Text = ex.Message
+                            },
+
+                        }
+                    }
+                }
+            };
+
+            var doc = new XmlDocument();
+            doc.LoadXml(content.GetContent());
+            var toast = new ToastNotification(doc);
+          
+            // And show the toast
+            ToastNotificationManagerCompat.CreateToastNotifier().Show(toast);
+
+            /*new ToastContentBuilder()
                 .AddText("Procesar Archivo de Sueldos")
                 .AddText("ERROR: " + ex.Message)
-            .Show();
+            .Show();*/
         }
 
         
@@ -428,6 +488,7 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                     Set("departamento_judicial_informado", registroExistenteData.departamento_judicial_informado!).
                     Set("organo", registroExistenteData.organo!).
                     Set("monto", registroExistenteData.monto).
+                    Set("observaciones", "Baja automática").
                     Default().Reset();
 
                 persist.Insert(registroAInsertar);
@@ -545,6 +606,7 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                     Set("departamento_judicial_informado", registroArchivo.departamento_judicial_informado!).
                     Set("organo", dataForm.organo!).
                     Set("monto", registroBajaEnviadaData.monto).
+                    Set("observaciones", "Nueva alta por baja rechazada").
                     Default().Reset();
 
                 persist.Insert(registroAInsertar);
@@ -552,7 +614,7 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
 
                 #region Insertar importe del registro
                 EntityValues importe = ContainerApp.db.Values("importe_" + tipo).
-                    Set(tipo, registroBajaEnviadaData.id).
+                    Set(tipo, registroAInsertar.Get("id")).
                     Set("valor", registroArchivo.monto).
                     Set("periodo", periodo).
                     Default();
@@ -638,30 +700,28 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
         {
             #region Verificar existencia de persona
             string legajo = archivo[tipo][identifierRegistro].persona__legajo!;
-            EntityValues personaVal = ContainerApp.db.Values("persona", "persona").SetObj(registroArchivo);
+            EntityValues personaVal = ContainerApp.db.Values("persona", "persona").Default().SetNotNull(registroArchivo.Dict());
             Data_persona personaDeArchivo = personaVal.Values().Obj<Data_persona>();
 
             if (personasDeRegistrosRestantes.ContainsKey(legajo)) //si existe persona se verifica nombre
             {
+                personaDeArchivo.id = personasDeRegistrosRestantes[legajo].id;
                 VerificarNombreSiEsDistinto(tipo, identifierRegistro, personaDeArchivo);
             }
             else //si no existe persona se crea
             {
-                personaVal.Default().Reset();
-                if (!personaVal.Check())
+                if (!personaVal.Reset().Check())
                 {
                     errors.Add("Error al procesar persona de registro " + identifierRegistro + " " + personaVal.Logging.ToString());
                     continue;
                 }
-                ContainerApp.db.Persist().Insert(personaVal);
+                persist.Insert(personaVal);
                 personaDeArchivo.id = (string)personaVal.Get("id");
             }
             #endregion
 
             #region Insertar registro de baja automatica
-            string departamentoJudicialArchivo = codigosDepartamento[registroArchivo.codigo_departamento].departamento_judicial!;
-
-            ModificarRegistrosExistentes(tipo, personaDeArchivo.id, (int)registroArchivo.codigo!);
+            ModificarRegistrosExistentes(tipo, personaDeArchivo.id!, (int)registroArchivo.codigo!);
 
             EntityValues registroAInsertar = ContainerApp.db.Values(tipo).
                 Set("persona", personaDeArchivo.id!).
@@ -670,10 +730,11 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                 Set("motivo", "Alta").
                 Set("estado", "Aprobado").
                 Set("codigo", registroArchivo.codigo).
-                Set("departamento_judicial", departamentoJudicialArchivo!).
-                Set("departamento_judicial_informado", departamentoJudicialArchivo!).
+                Set("departamento_judicial", registroArchivo.departamento_judicial!).
+                Set("departamento_judicial_informado", registroArchivo.departamento_judicial_informado!).
                 Set("organo", dataForm.organo).
                 Set("monto", registroArchivo.monto).
+                Set("observaciones", "Alta automática").
                 Default().Reset();
 
             persist.Insert(registroAInsertar);
@@ -707,8 +768,9 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
         IEnumerable<string> idRegistrosAModificar = ContainerApp.db.Query(tipo).
             Where("$persona = @0 AND $modificado IS NULL AND $codigo = @1 AND $organo = @2").
             Parameters(idPersona, codigoRegistro, dataForm.organo).Column<string>("id");
-
-        persist.UpdateValueIds(tipo, "modificado", evaluado, idRegistrosAModificar);
+        
+        if(!idRegistrosAModificar.IsNullOrEmpty())
+            persist.UpdateValueIds(tipo, "modificado", evaluado, idRegistrosAModificar.ToArray());
     }
 
     
