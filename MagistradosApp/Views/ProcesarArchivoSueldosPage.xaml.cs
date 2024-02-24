@@ -35,7 +35,7 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
     private Dictionary<string, Dictionary<string, List<Data_Registro>>> respuesta; //debido a la similitud de procesamiento entre afiliaciones y tramites excepcionales, se almacenan los datos en una misma variable
     IDictionary<string, Data_codigo_departamento> codigosDepartamento; //Lista de departamentos clasificados por codigo
     List<string> errors; //errores en el procesamiento 
-    EntityPersist persist;
+    List<EntityPersist> persists = new();
     Data_Longitud longitud;
     IDictionary<string, Data_persona_r> personasDeRegistrosRestantes;
     #endregion
@@ -236,23 +236,14 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
             string sql = "";
             try
             {
-                string[] sqls = persist.sql.Split(";");
-
-                foreach (string s in sqls)
+                foreach (EntityPersist p in persists)
                 {
-                    sql = s;
-                    if (s.Trim().IsNullOrEmpty())
-                        continue;
-
-                    var qu = ContainerApp.db.Query();
-                    qu.connection = connection;
-                    qu.sql = s;
-                    qu.parameters = persist.parameters;
-                    qu.Exec();
+                    p.SetConn(connection!);
+                    p.Exec();
                 }
 
                 tran.Commit();
-                persist.RemoveCache();
+                ContainerApp.db.Cache.Clear();
             }
 
             catch (Exception ex)
@@ -367,8 +358,6 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
             
         errors = new(); //errores en el procesamiento 
 
-        persist = ContainerApp.db.Persist();
-
         periodo = new DateTime(dataForm.periodo_anio, dataForm.periodo_mes, DateTime.Now.Day);
 
         #region Obtener codigos de departamentos judiciales del organo para definir registros de archivo
@@ -461,7 +450,8 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                     Set("periodo", periodo).
                     Default();
 
-                persist.Insert(importe);
+                EntityPersist p = ContainerApp.db.Persist().Insert(importe);
+                persists.Add(p);
                 #endregion
 
                 #region Borrar registro del archivo porque ya fue procesado
@@ -491,7 +481,8 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                     Set("observaciones", "Baja automática").
                     Default().Reset();
 
-                persist.Insert(registroAInsertar);
+                var p = ContainerApp.db.Persist().Insert(registroAInsertar);
+                persists.Add(p);
                 #endregion
             }
         }
@@ -504,6 +495,8 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
 
         foreach (var (identifierRegistro, registroAltaEnviadaData) in registrosAltasEnviadas)
         {
+            var p = ContainerApp.db.Persist();
+
             if (archivo[tipo].ContainsKey(identifierRegistro)) //el registro alta enviada se encuentra en el archivo
             {
                 #region Inicializar variables para procesar altas existentes
@@ -524,7 +517,7 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                     Set("estado", "Aprobado").
                     Set("evaluado", evaluado);
 
-                persist.Update(registroValue);
+                p.Update(registroValue);
                 #endregion
 
                 #region insertar importe del registro
@@ -534,7 +527,7 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                     Set("periodo", periodo).
                     Default();
 
-                persist.Insert(importe);
+                p.Insert(importe);
                 #endregion
 
                 #region Borrar registro del archivo porque ya fue procesado
@@ -553,9 +546,12 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                     Set("estado", "Rechazado").
                     Set("evaluado", evaluado);
 
-                persist.Update(registroValue);
+                p.Update(registroValue);
                 #endregion
             }
+
+            persists.Add(p);
+
         }
     }
 
@@ -569,6 +565,8 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
 
         foreach (var (identifierRegistro, registroBajaEnviadaData) in registrosBajasEnviadas)
         {
+            var persist = ContainerApp.db.Persist();
+
             if (archivo[tipo].ContainsKey(identifierRegistro)) //el registro baja enviada se encuentra en el archivo, lo que significa que no ha sido aprobado
             {
                 #region Inicializar variables para procesar bajas rechazadas
@@ -641,7 +639,10 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
                 persist.Update(registroValue);
                 #endregion
             }
+
+            persists.Add(persist);
         }
+
     }
 
     /// <summary>
@@ -673,16 +674,17 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
     protected void ActualizarDepartamentoJudicialInformadoSiEsDistinto(string tipo, string identifierRegistro, Data_Registro registro)
     {
         string departamentoJudicialArchivo = archivo[tipo][identifierRegistro].departamento_judicial_informado;
+        
 
         if (!departamentoJudicialArchivo.Equals(registro.departamento_judicial_informado))
         {
-            persist.UpdateValueIds(
+            var persist = ContainerApp.db.Persist().UpdateValueIds(
                 tipo,
                 "departamento_judicial_informado",
                 departamentoJudicialArchivo,
                 registro.id!
             );
-
+            persists.Add(persist);
             errors.Add("Se actualizo el departamento judicial informado del registro " + identifierRegistro);
         }
     }
@@ -698,6 +700,9 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
 
         foreach (var (identifierRegistro, registroArchivo) in archivo[tipo])
         {
+
+            var persist = ContainerApp.db.Persist();
+
             #region Verificar existencia de persona
             string legajo = archivo[tipo][identifierRegistro].persona__legajo!;
             EntityValues personaVal = ContainerApp.db.Values("persona", "persona").Default().SetNotNull(registroArchivo.Dict());
@@ -748,6 +753,7 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
             persist.Insert(importe);
             #endregion
 
+            persists.Add(persist);
             respuesta[tipo]["altas_automaticas"].Add(registroArchivo);
         }
     }
@@ -768,9 +774,11 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
         IEnumerable<string> idRegistrosAModificar = ContainerApp.db.Query(tipo).
             Where("$persona = @0 AND $modificado IS NULL AND $codigo = @1 AND $organo = @2").
             Parameters(idPersona, codigoRegistro, dataForm.organo).Column<string>("id");
-        
-        if(!idRegistrosAModificar.IsNullOrEmpty())
-            persist.UpdateValueIds(tipo, "modificado", evaluado, idRegistrosAModificar.ToArray());
+
+        if (!idRegistrosAModificar.IsNullOrEmpty()) { 
+            var persist = ContainerApp.db.Persist().UpdateValueIds(tipo, "modificado", evaluado, idRegistrosAModificar.ToArray());
+            persists.Add(persist);
+        }
     }
 
     
