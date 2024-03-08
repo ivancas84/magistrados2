@@ -67,6 +67,16 @@ namespace SqlOrganize
             return Set(d);
         }
 
+        public EntityValues Sset(IDictionary<string, object?> row)
+        {
+            foreach (var fieldName in db.FieldNames(entityName))
+                if (row.ContainsKey(Pf() + fieldName))
+                    Sset(fieldName, row[Pf() + fieldName]);
+
+            return this;
+        }
+
+
         public EntityValues Set(IDictionary<string, object?> row)
         {
             foreach (var fieldName in db.FieldNames(entityName))
@@ -174,7 +184,12 @@ namespace SqlOrganize
             switch (field.type)
             {
                 case "string":
-                    values[fieldName] = (string)value;
+                    try { 
+                        values[fieldName] = (string)value;
+                    } catch (Exception e)
+                    {
+                        values[fieldName] = value.ToString();
+                    }
                     break;
 
                 case "decimal":
@@ -433,6 +448,12 @@ namespace SqlOrganize
         }
 
 
+        public IDictionary<string, object?> CompareFields(EntityValues val, IEnumerable<string> fieldsToCompare, bool ignoreNull = true, bool ignoreNonExistent = true)
+        {
+            return CompareFields(val.values!, fieldsToCompare, ignoreNull, ignoreNonExistent);
+        }
+
+
         /// <summary>
         /// Comparar valores con los indicados en parametro
         /// </summary>
@@ -555,18 +576,51 @@ namespace SqlOrganize
             return null;
         }
 
-        public override string ToString()
+
+        /// <summary>Concatena strings indicados en el parametro</summary>
+        public string ToStringFields(params string[] fields)
         {
-            List<string> fieldNames = ToStringFields();
+            string s = "";
+            foreach (string field in fields)
+            {
+                s += GetOrNull(field)?.ToString() ?? "?";
+                s += ", ";
+            }
+            return s;
+        }
+
+        public string ToStringExcept(params string[] fields)
+        {
+            List<string> fieldNames = db.FieldNames(entityName);
+
+            foreach (string field in fields)
+                fieldNames.Remove(field);
 
             var label = "";
-            foreach(string fieldName in fieldNames)
+            foreach (string fieldName in fieldNames) { 
                 label += GetOrNull(fieldName)?.ToString() ?? " ";
+                label += ", ";
+            }
 
             return label.RemoveMultipleSpaces().Trim();
         }
 
-        protected List<string> ToStringFields()
+        public override string ToString()
+        {
+            List<string> fieldNames = ToStringWhat();
+
+            var label = "";
+            foreach (string fieldName in fieldNames)
+            { 
+                label += GetOrNull(fieldName)?.ToString() ?? " ";
+                label += ", ";
+            }
+
+            return label.RemoveMultipleSpaces().Trim();
+        }
+
+        /// <summary>Retorna una lista de los fields de la entidad más adecuados para ser utilizados como Label</summary>
+        protected List<string> ToStringWhat()
         {
             var entity = db.Entity(entityName);
             List<string> fields = new();
@@ -700,6 +754,12 @@ namespace SqlOrganize
 
                 case "ushort":
                     return Convert.ToUInt16(DefaultFieldInt(field));
+
+                case "Guid":
+                    if (field.defaultValue.ToString()!.ToLower().Contains("new"))
+                        return Guid.NewGuid();
+                    else
+                        return field.defaultValue;
 
                 default:
                     return field.defaultValue;

@@ -1,20 +1,19 @@
 ﻿using CommunityToolkit.WinUI.Notifications;
 using MagistradosApp.Data;
 using MagistradosApp.Views.ProcesarArchivoSueldos;
+using MySql.Data.MySqlClient;
 using SqlOrganize;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data.Common;
+using System.Globalization;
 using System.Net;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
-using System.Globalization;
 using Utils;
-using MySql.Data.MySqlClient;
-using System.Data.Common;
-using Microsoft.Win32;
-using Windows.UI.Notifications;
 using Windows.Data.Xml.Dom;
+using Windows.UI.Notifications;
 
 namespace MagistradosApp.Views;
 
