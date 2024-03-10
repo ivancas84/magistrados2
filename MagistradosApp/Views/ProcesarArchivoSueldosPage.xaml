@@ -131,14 +131,25 @@
 				</GroupBox>
 
 				<GroupBox
-					Name="asignacionGroupBox"
+					Name="resultadoGroupBox"
 					Grid.Row="2"
 					Margin="10">
 					<GroupBox.Header>
-						<Label Foreground="White">Asignaciones</Label>
+						<Label Foreground="White">Resultado</Label>
 					</GroupBox.Header>
-					<!-- DataGrid de asignaciones -->
-				</GroupBox>
+                    <StackPanel>
+                        <Expander IsExpanded="False" Header="Altas Existentes">
+                            <DataGrid Name="afiliacionesAltasExistentesDataGrid"></DataGrid>
+                        </Expander>
+                        <Expander IsExpanded="False" Header="Altas Aprobadas">
+                            <DataGrid Name="afiliacionesAltasAprobadasDataGrid"></DataGrid>
+                        </Expander>
+                        <Expander IsExpanded="False" Header="Altas Rechazadas">
+                        </Expander>
+                        <Expander IsExpanded="False" Header="Altas Automáticas">
+                        </Expander>
+                    </StackPanel>
+                </GroupBox>
 			</Grid>
 
 
