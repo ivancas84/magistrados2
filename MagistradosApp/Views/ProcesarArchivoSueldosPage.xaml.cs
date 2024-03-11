@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.WinUI.Notifications;
+using Google.Protobuf.WellKnownTypes;
 using MagistradosApp.Data;
 using MagistradosApp.Views.ProcesarArchivoSueldos;
 using MySql.Data.MySqlClient;
@@ -6,6 +7,7 @@ using SqlOrganize;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data.Common;
+using System.Diagnostics;
 using System.Globalization;
 using System.Net;
 using System.Runtime.CompilerServices;
@@ -31,7 +33,7 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
     private DateTime evaluado = DateTime.Now;
 
     private Dictionary<string, List<string>> legajosProcesados; //debido a la similitud de procesamiento entre afiliaciones y tramites excepcionales, se almacenan los datos en una misma variable
-    private Dictionary<string, Dictionary<string, List<Data_Registro>>> respuesta; //debido a la similitud de procesamiento entre afiliaciones y tramites excepcionales, se almacenan los datos en una misma variable
+    private Dictionary<string, Dictionary<string, ObservableCollection<Data_Registro>>> respuesta; //debido a la similitud de procesamiento entre afiliaciones y tramites excepcionales, se almacenan los datos en una misma variable
     IDictionary<string, Data_codigo_departamento> codigosDepartamento; //Lista de departamentos clasificados por codigo
     List<string> errors; //errores en el procesamiento 
     List<EntityPersist> persists = new();
@@ -87,6 +89,51 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
         organoOC.Clear();
         organoOC.AddRange(data2);
         #endregion
+
+        #region Inicializar atributos de respuesta que se visualizaran en el XAML
+        respuesta = new() { //debido a la similitud de procesamiento entre afiliaciones y tramites excepcionales, se almacenan los datos en una misma variable
+            { "afiliacion", new()
+                {
+                    { "altas_existentes", new() },
+                    { "bajas_automaticas", new() },
+                    { "altas_aprobadas", new() },
+                    { "altas_rechazadas", new() },
+                    { "bajas_aprobadas", new() },
+                    { "bajas_rechazadas", new() },
+                    { "altas_automaticas", new() }
+
+                }
+            },
+            { "tramite_excepcional", new()
+                {
+                    { "altas_existentes", new() },
+                    { "bajas_automaticas", new() },
+                    { "altas_aprobadas", new() },
+                    { "altas_rechazadas", new() },
+                    { "bajas_aprobadas", new() },
+                    { "bajas_rechazadas", new() },
+                    { "altas_automaticas", new() }
+                }
+            },
+        };
+
+        altasExistentes40DataGrid.ItemsSource = respuesta["afiliacion"]["altas_existentes"];
+        altasAprobadas40DataGrid.ItemsSource = respuesta["afiliacion"]["altas_aprobadas"];
+        altasRechazadas40DataGrid.ItemsSource = respuesta["afiliacion"]["altas_rechazadas"];
+        altasAutomaticas40DataGrid.ItemsSource = respuesta["afiliacion"]["altas_automaticas"];
+        bajasAprobadas40DataGrid.ItemsSource = respuesta["afiliacion"]["bajas_aprobadas"];
+        bajasRechazadas40DataGrid.ItemsSource = respuesta["afiliacion"]["bajas_rechazadas"];
+        bajasAutomaticas40DataGrid.ItemsSource = respuesta["afiliacion"]["bajas_automaticas"];
+
+        altasExistentes80DataGrid.ItemsSource = respuesta["tramite_excepcional"]["altas_existentes"];
+        altasAprobadas80DataGrid.ItemsSource = respuesta["tramite_excepcional"]["altas_aprobadas"];
+        altasRechazadas80DataGrid.ItemsSource = respuesta["tramite_excepcional"]["altas_rechazadas"];
+        altasAutomaticas80DataGrid.ItemsSource = respuesta["tramite_excepcional"]["altas_automaticas"];
+        bajasAprobadas80DataGrid.ItemsSource = respuesta["tramite_excepcional"]["bajas_aprobadas"];
+        bajasRechazadas80DataGrid.ItemsSource = respuesta["tramite_excepcional"]["bajas_rechazadas"];
+        bajasAutomaticas80DataGrid.ItemsSource = respuesta["tramite_excepcional"]["bajas_automaticas"];
+        #endregion
+
     }
 
     private void BuscarArchivoButton_Click(object sender, RoutedEventArgs e)
@@ -228,66 +275,55 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
             ProcesarRegistrosRestantes("tramite_excepcional");
             #endregion
 
-            #region persistir datos
-            var connection = new MySqlConnection(ContainerApp.config.connectionString);
-            connection.Open();
-            using DbTransaction tran = connection!.BeginTransaction();
-            string sql = "";
-            try
-            {
-                foreach (EntityPersist p in persists)
-                {
-                    p.SetConn(connection!);
-                    p.Exec();
-                }
-
-                tran.Commit();
-                ContainerApp.db.Cache.Clear();
-            }
-
-            catch (Exception ex)
-            {
-                tran.Rollback();
-                throw new Exception(ex.Message + " - " + sql);
-            }
-            connection.Close();
-            #endregion
+            
 
         }
         catch (Exception ex)
         {
-            var content = new ToastContent()
-            {
-                Visual = new ToastVisual()
-                {
-                    BindingGeneric = new ToastBindingGeneric()
-                    {
-                        Children =
-                        {
-                            new AdaptiveText()
-                            {
-                                Text = ex.Message
-                            },
+            var st = new StackTrace(ex, true);
+            // Get the top stack frame
+            var frame = st.GetFrame(0);
+            // Get the line number from the stack frame
+            var lineNumber = frame.GetFileLineNumber();
 
-                        }
-                    }
-                }
-            };
+            string fileName = frame.GetFileName();
+            int columnNumber = frame.GetFileColumnNumber();
+            var method = frame.GetMethod();
+            var type = frame.GetMethod().DeclaringType;
 
-            var doc = new XmlDocument();
-            doc.LoadXml(content.GetContent());
-            var toast = new ToastNotification(doc);
-          
-            // And show the toast
-            ToastNotificationManagerCompat.CreateToastNotifier().Show(toast);
-
-            /*new ToastContentBuilder()
-                .AddText("Procesar Archivo de Sueldos")
-                .AddText("ERROR: " + ex.Message)
-            .Show();*/
+            new ToastContentBuilder()
+                .AddText(this.Title)
+                .AddText("ERROR " + fileName +"-"+lineNumber.ToString()   + ": " + ex.Message)
+            .Show();
         }
 
         
+    }
+
+    private void Commit()
+    {
+        var connection = new MySqlConnection(ContainerApp.config.connectionString);
+        connection.Open();
+        using DbTransaction tran = connection!.BeginTransaction();
+        string sql = "";
+        try
+        {
+            foreach (EntityPersist p in persists)
+            {
+                p.SetConn(connection!);
+                p.Exec();
+            }
+
+            tran.Commit();
+            ContainerApp.db.Cache.Clear();
+        }
+
+        catch (Exception ex)
+        {
+            tran.Rollback();
+            throw new Exception(ex.Message + " - " + sql);
+        }
+        connection.Close();
     }
 
     private void ConsultarPersonasDeRegistrosRestantes()
@@ -329,31 +365,6 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
             { "tramite_excepcional", new() }, //tramites obtenidos del archivo
         };
 
-        respuesta = new() { //debido a la similitud de procesamiento entre afiliaciones y tramites excepcionales, se almacenan los datos en una misma variable
-            { "afiliacion", new()
-                {
-                    { "altas_existentes", new() },
-                    { "bajas_automaticas", new() },
-                    { "altas_aprobadas", new() },
-                    { "altas_rechazadas", new() },
-                    { "bajas_aprobadas", new() },
-                    { "bajas_rechazadas", new() },
-                    { "altas_automaticas", new() }
-
-                }
-            },
-            { "tramite_excepcional", new()
-                {
-                    { "altas_existentes", new() },
-                    { "bajas_automaticas", new() },
-                    { "altas_aprobadas", new() },
-                    { "altas_rechazadas", new() },
-                    { "bajas_aprobadas", new() },
-                    { "bajas_rechazadas", new() },
-                    { "altas_automaticas", new() }
-                }
-            },
-        };
             
         errors = new(); //errores en el procesamiento 
 
