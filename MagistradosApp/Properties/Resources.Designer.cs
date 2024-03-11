@@ -97,6 +97,15 @@ namespace MagistradosApp.Properties {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a ProcesarArchivoSueldos.
+        /// </summary>
+        public static string ProcesarArchivoSueldosPageTitle {
+            get {
+                return ResourceManager.GetString("ProcesarArchivoSueldosPageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Magistrados Versión 2.
         /// </summary>
         public static string SettingsPageAboutText {
@@ -241,6 +250,15 @@ namespace MagistradosApp.Properties {
         }
         
         /// <summary>
+        ///   Busca una cadena traducida similar a Procesar Archivo Sueldos.
+        /// </summary>
+        public static string ShellMenuItemViewsProcesarArchivoSueldosPageHeader {
+            get {
+                return ResourceManager.GetString("ShellMenuItemViewsProcesarArchivoSueldosPageHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Busca una cadena traducida similar a Configuración.
         /// </summary>
         public static string ShellMenuItemViewsSettingsPageHeader {
@@ -255,28 +273,6 @@ namespace MagistradosApp.Properties {
         public static string ShellMenuViewsHeader {
             get {
                 return ResourceManager.GetString("ShellMenuViewsHeader", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to ProcesarArchivoSueldos.
-        /// </summary>
-        public static string ProcesarArchivoSueldosPageTitle
-        {
-            get
-            {
-                return ResourceManager.GetString("ProcesarArchivoSueldosPageTitle", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to MenuItemViewsProcesarArchivoSueldosPageHeader.
-        /// </summary>
-        public static string ShellMenuItemViewsProcesarArchivoSueldosPageHeader
-        {
-            get
-            {
-                return ResourceManager.GetString("ShellMenuItemViewsProcesarArchivoSueldosPageHeader", resourceCulture);
             }
         }
     }

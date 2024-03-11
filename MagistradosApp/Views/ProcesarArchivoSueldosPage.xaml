@@ -28,6 +28,8 @@
 					<RowDefinition Height = "Auto" />
 					<RowDefinition Height = "Auto" />
                     <RowDefinition Height = "Auto" />
+                    <RowDefinition Height = "Auto" />
+                    <RowDefinition Height = "Auto" />
                 </Grid.RowDefinitions>
 
 				<Grid.ColumnDefinitions>
@@ -49,7 +51,8 @@
 							<RowDefinition Height = "Auto" />
 							<RowDefinition Height = "Auto" />
 							<RowDefinition Height = "Auto" />
-						</Grid.RowDefinitions>
+                            <RowDefinition Height = "Auto" />
+                        </Grid.RowDefinitions>
 
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width = "Auto" />
@@ -139,48 +142,80 @@
                         <Label Foreground="White">Resultado Registro 40</Label>
                     </GroupBox.Header>
                     <StackPanel>
-                        <Expander IsExpanded="False" Header="Altas Existentes">
-                            <DataGrid Name="altasExistentes40DataGrid"></DataGrid>
+                        <Expander IsExpanded="False" Header="Altas Existentes"  >
+                            <DataGrid Name="altasExistentes40DataGrid" AutoGenerateColumns="False"  CanUserAddRows="False">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Apellidos" Binding="{Binding persona__apellidos}"></DataGridTextColumn>
+                                    <DataGridTextColumn Header="Nombres" Binding="{Binding persona__nombres}"></DataGridTextColumn>
+                                    <DataGridTextColumn Header="Legajo" Binding="{Binding persona__legajo}"></DataGridTextColumn>
+                                    <DataGridTextColumn Header="Dto Jud" Binding="{Binding departamento_judicial__nombre}"></DataGridTextColumn>
+                                    <DataGridTextColumn Header="Dto Jud Inf" Binding="{Binding departamento_judicial_informado__nombre}"></DataGridTextColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
                         </Expander>
                         <Expander IsExpanded="False" Header="Altas Aprobadas">
-                            <DataGrid Name="altasAprobadas40DataGrid" AutoGenerateColumns="False" CanUserAddRows="False">>
+                            <DataGrid Name="altasAprobadas40DataGrid" AutoGenerateColumns="False" CanUserAddRows="False">
                                 <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Apellidos" Binding="{Binding persona__apellidos}"></DataGridTextColumn>
                                     <DataGridTextColumn Header="Nombres" Binding="{Binding persona__nombres}"></DataGridTextColumn>
+                                    <DataGridTextColumn Header="Legajo" Binding="{Binding persona__legajo}"></DataGridTextColumn>
+                                    <DataGridTextColumn Header="Dto Jud" Binding="{Binding departamento_judicial__nombre}"></DataGridTextColumn>
+                                    <DataGridTextColumn Header="Dto Jud Inf" Binding="{Binding departamento_judicial_informado__nombre}"></DataGridTextColumn>
                                 </DataGrid.Columns>
                             </DataGrid>
                         </Expander>
                         <Expander IsExpanded="False" Header="Altas Rechazadas">
                             <DataGrid Name="altasRechazadas40DataGrid" AutoGenerateColumns="False" CanUserAddRows="False">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Nombres" Binding="{Binding persona__nombres}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Apellidos" Binding="{Binding persona__apellidos}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Nombres" Binding="{Binding persona__nombres}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Legajo" Binding="{Binding persona__legajo}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Dto Jud" Binding="{Binding departamento_judicial__nombre}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Dto Jud Inf" Binding="{Binding departamento_judicial_informado__nombre}"></DataGridTextColumn>
                                 </DataGrid.Columns>
                             </DataGrid>
                         </Expander>
                         <Expander IsExpanded="False" Header="Altas Automáticas">
-                            <DataGrid Name="altasAutomaticas40DataGrid" AutoGenerateColumns="False" CanUserAddRows="False">>
+                            <DataGrid Name="altasAutomaticas40DataGrid" AutoGenerateColumns="False" CanUserAddRows="False">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Nombres" Binding="{Binding persona__nombres}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Apellidos" Binding="{Binding persona__apellidos}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Nombres" Binding="{Binding persona__nombres}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Legajo" Binding="{Binding persona__legajo}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Dto Jud" Binding="{Binding departamento_judicial__nombre}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Dto Jud Inf" Binding="{Binding departamento_judicial_informado__nombre}"></DataGridTextColumn>
                                 </DataGrid.Columns>
                             </DataGrid>
                         </Expander>
                         <Expander IsExpanded="False" Header="Bajas Aprobadas">
-                            <DataGrid Name="bajasAprobadas40DataGrid" AutoGenerateColumns="False" CanUserAddRows="False">>
+                            <DataGrid Name="bajasAprobadas40DataGrid" AutoGenerateColumns="False" CanUserAddRows="False">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Nombres" Binding="{Binding persona__nombres}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Apellidos" Binding="{Binding persona__apellidos}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Nombres" Binding="{Binding persona__nombres}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Legajo" Binding="{Binding persona__legajo}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Dto Jud" Binding="{Binding departamento_judicial__nombre}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Dto Jud Inf" Binding="{Binding departamento_judicial_informado__nombre}"></DataGridTextColumn>
                                 </DataGrid.Columns>
                             </DataGrid>
                         </Expander>
                         <Expander IsExpanded="False" Header="Bajas Rechazadas">
-                            <DataGrid Name="bajasRechazadas40DataGrid" AutoGenerateColumns="False" CanUserAddRows="False">>
+                            <DataGrid Name="bajasRechazadas40DataGrid" AutoGenerateColumns="False" CanUserAddRows="False">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Nombres" Binding="{Binding persona__nombres}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Apellidos" Binding="{Binding persona__apellidos}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Nombres" Binding="{Binding persona__nombres}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Legajo" Binding="{Binding persona__legajo}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Dto Jud" Binding="{Binding departamento_judicial__nombre}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Dto Jud Inf" Binding="{Binding departamento_judicial_informado__nombre}"></DataGridTextColumn>
                                 </DataGrid.Columns>
                             </DataGrid>
                         </Expander>
                         <Expander IsExpanded="False" Header="Bajas Automáticas">
-                            <DataGrid Name="bajasAutomaticas40DataGrid" AutoGenerateColumns="False" CanUserAddRows="False">>
+                            <DataGrid Name="bajasAutomaticas40DataGrid" AutoGenerateColumns="False" CanUserAddRows="False">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Nombres" Binding="{Binding persona__nombres}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Apellidos" Binding="{Binding persona__apellidos}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Nombres" Binding="{Binding persona__nombres}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Legajo" Binding="{Binding persona__legajo}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Dto Jud" Binding="{Binding departamento_judicial__nombre}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Dto Jud Inf" Binding="{Binding departamento_judicial_informado__nombre}"></DataGridTextColumn>
                                 </DataGrid.Columns>
                             </DataGrid>
                         </Expander>
@@ -197,56 +232,122 @@
                     </GroupBox.Header>
                     <StackPanel>
                         <Expander IsExpanded="False" Header="Altas Existentes">
-                            <DataGrid Name="altasExistentes80DataGrid" AutoGenerateColumns="False" CanUserAddRows="False">>
+                            <DataGrid Name="altasExistentes80DataGrid" AutoGenerateColumns="False" CanUserAddRows="False">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Nombres" Binding="{Binding persona__nombres}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Apellidos" Binding="{Binding persona__apellidos}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Nombres" Binding="{Binding persona__nombres}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Legajo" Binding="{Binding persona__legajo}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Dto Jud" Binding="{Binding departamento_judicial__nombre}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Dto Jud Inf" Binding="{Binding departamento_judicial_informado__nombre}"></DataGridTextColumn>
                                 </DataGrid.Columns>
                             </DataGrid>
                         </Expander>
                         <Expander IsExpanded="False" Header="Altas Aprobadas">
-                            <DataGrid Name="altasAprobadas80DataGrid" AutoGenerateColumns="False" CanUserAddRows="False">>
+                            <DataGrid Name="altasAprobadas80DataGrid" AutoGenerateColumns="False" CanUserAddRows="False">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Nombres" Binding="{Binding persona__nombres}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Apellidos" Binding="{Binding persona__apellidos}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Nombres" Binding="{Binding persona__nombres}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Legajo" Binding="{Binding persona__legajo}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Dto Jud" Binding="{Binding departamento_judicial__nombre}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Dto Jud Inf" Binding="{Binding departamento_judicial_informado__nombre}"></DataGridTextColumn>
                                 </DataGrid.Columns>
                             </DataGrid>
                         </Expander>
                         <Expander IsExpanded="False" Header="Altas Rechazadas">
-                            <DataGrid Name="altasRechazadas80DataGrid" AutoGenerateColumns="False" CanUserAddRows="False">>
+                            <DataGrid Name="altasRechazadas80DataGrid" AutoGenerateColumns="False" CanUserAddRows="False">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Nombres" Binding="{Binding persona__nombres}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Apellidos" Binding="{Binding persona__apellidos}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Nombres" Binding="{Binding persona__nombres}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Legajo" Binding="{Binding persona__legajo}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Dto Jud" Binding="{Binding departamento_judicial__nombre}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Dto Jud Inf" Binding="{Binding departamento_judicial_informado__nombre}"></DataGridTextColumn>
                                 </DataGrid.Columns>
                             </DataGrid>
                         </Expander>
                         <Expander IsExpanded="False" Header="Altas Automáticas">
-                            <DataGrid Name="altasAutomaticas80DataGrid" AutoGenerateColumns="False" CanUserAddRows="False">>
+                            <DataGrid Name="altasAutomaticas80DataGrid" AutoGenerateColumns="False" CanUserAddRows="False">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Nombres" Binding="{Binding persona__nombres}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Apellidos" Binding="{Binding persona__apellidos}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Nombres" Binding="{Binding persona__nombres}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Legajo" Binding="{Binding persona__legajo}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Dto Jud" Binding="{Binding departamento_judicial__nombre}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Dto Jud Inf" Binding="{Binding departamento_judicial_informado__nombre}"></DataGridTextColumn>
                                 </DataGrid.Columns>
                             </DataGrid>
                         </Expander>
                         <Expander IsExpanded="False" Header="Bajas Aprobadas">
-                            <DataGrid Name="bajasAprobadas80DataGrid" AutoGenerateColumns="False" CanUserAddRows="False">>
+                            <DataGrid Name="bajasAprobadas80DataGrid" AutoGenerateColumns="False" CanUserAddRows="False">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Nombres" Binding="{Binding persona__nombres}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Apellidos" Binding="{Binding persona__apellidos}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Nombres" Binding="{Binding persona__nombres}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Legajo" Binding="{Binding persona__legajo}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Dto Jud" Binding="{Binding departamento_judicial__nombre}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Dto Jud Inf" Binding="{Binding departamento_judicial_informado__nombre}"></DataGridTextColumn>
                                 </DataGrid.Columns>
                             </DataGrid>
                         </Expander>
                         <Expander IsExpanded="False" Header="Bajas Rechazadas">
-                            <DataGrid Name="bajasRechazadas80DataGrid" AutoGenerateColumns="False" CanUserAddRows="False">>
+                            <DataGrid Name="bajasRechazadas80DataGrid" AutoGenerateColumns="False" CanUserAddRows="False">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Nombres" Binding="{Binding persona__nombres}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Apellidos" Binding="{Binding persona__apellidos}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Nombres" Binding="{Binding persona__nombres}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Legajo" Binding="{Binding persona__legajo}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Dto Jud" Binding="{Binding departamento_judicial__nombre}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Dto Jud Inf" Binding="{Binding departamento_judicial_informado__nombre}"></DataGridTextColumn>
                                 </DataGrid.Columns>
                             </DataGrid>
                         </Expander>
                         <Expander IsExpanded="False" Header="Bajas Automáticas">
-                            <DataGrid Name="bajasAutomaticas80DataGrid" AutoGenerateColumns="False" CanUserAddRows="False">>
+                            <DataGrid Name="bajasAutomaticas80DataGrid" AutoGenerateColumns="False" CanUserAddRows="False">
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn Header="Nombres" Binding="{Binding persona__nombres}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Apellidos" Binding="{Binding persona__apellidos}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Nombres" Binding="{Binding persona__nombres}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Legajo" Binding="{Binding persona__legajo}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Dto Jud" Binding="{Binding departamento_judicial__nombre}"></DataGridTextColumn>
+                                        <DataGridTextColumn Header="Dto Jud Inf" Binding="{Binding departamento_judicial_informado__nombre}"></DataGridTextColumn>
                                 </DataGrid.Columns>
                             </DataGrid>
                         </Expander>
+
+
+
+
+
                     </StackPanel>
                 </GroupBox>
+
+                <GroupBox
+					Name="errorGroupBox"
+					Grid.Row="3"
+					Margin="10">
+                    <GroupBox.Header>
+                        <Label Foreground="White">Errores</Label>
+                    </GroupBox.Header>
+
+                    <Expander IsExpanded="False" Header="Errores">
+                        <ItemsControl Name="errorItemsControl">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Expander>
+
+                </GroupBox>
+
+                <GroupBox
+				    Name="guardarGroupBox"
+				    Grid.Row="4"
+				    Margin="10">
+                    <GroupBox.Header>
+                        <Label Foreground="White">Guardar procesamiento</Label>
+                    </GroupBox.Header>
+
+                    <Button Click="GuardarButton_Click">Guardar</Button>
+
+                </GroupBox>
+
             </Grid>
 
 

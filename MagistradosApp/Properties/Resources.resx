@@ -1,12 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-    <data name="ShellMenuItemViewsProcesarArchivoSueldosPageHeader" xml:space="preserve">
-		    <value>ProcesarArchivoSueldos</value>
-    </data>
-    <data name="ProcesarArchivoSueldosPageTitle" xml:space="preserve">
-		    <value>ProcesarArchivoSueldos</value>
-    </data>
-
   <!-- 
     Microsoft ResX Schema 
     
@@ -124,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ShellMenuItemViewsProcesarArchivoSueldosPageHeader" xml:space="preserve">
+    <value>Procesar Archivo Sueldos</value>
+  </data>
+  <data name="ProcesarArchivoSueldosPageTitle" xml:space="preserve">
+    <value>ProcesarArchivoSueldos</value>
+  </data>
   <data name="ShellMenuItemViewsCrearArchivoSueldosPageHeader" xml:space="preserve">
     <value>Crear Archivo de Sueldos</value>
   </data>

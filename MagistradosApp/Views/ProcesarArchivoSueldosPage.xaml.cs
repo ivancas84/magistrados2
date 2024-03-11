@@ -35,7 +35,7 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
     private Dictionary<string, List<string>> legajosProcesados; //debido a la similitud de procesamiento entre afiliaciones y tramites excepcionales, se almacenan los datos en una misma variable
     private Dictionary<string, Dictionary<string, ObservableCollection<Data_Registro>>> respuesta; //debido a la similitud de procesamiento entre afiliaciones y tramites excepcionales, se almacenan los datos en una misma variable
     IDictionary<string, Data_codigo_departamento> codigosDepartamento; //Lista de departamentos clasificados por codigo
-    List<string> errors; //errores en el procesamiento 
+    ObservableCollection<string> errors = new(); //errores en el procesamiento 
     List<EntityPersist> persists = new();
     Data_Longitud longitud;
     IDictionary<string, Data_persona_r> personasDeRegistrosRestantes;
@@ -90,6 +90,15 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
         organoOC.AddRange(data2);
         #endregion
 
+        #region Obtener codigos de departamentos judiciales del organo para definir registros de archivo
+        codigosDepartamento = ContainerApp.db.Query("codigo_departamento").
+            Where("$organo = @0").
+            Parameters(dataForm.organo).
+            ColOfDictCache().
+            ColOfObj<Data_codigo_departamento>().
+            DictOfObjByPropertyNames("codigo");
+        #endregion
+
         #region Inicializar atributos de respuesta que se visualizaran en el XAML
         respuesta = new() { //debido a la similitud de procesamiento entre afiliaciones y tramites excepcionales, se almacenan los datos en una misma variable
             { "afiliacion", new()
@@ -132,6 +141,9 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
         bajasAprobadas80DataGrid.ItemsSource = respuesta["tramite_excepcional"]["bajas_aprobadas"];
         bajasRechazadas80DataGrid.ItemsSource = respuesta["tramite_excepcional"]["bajas_rechazadas"];
         bajasAutomaticas80DataGrid.ItemsSource = respuesta["tramite_excepcional"]["bajas_automaticas"];
+
+        errorItemsControl.ItemsSource = errors;
+        
         #endregion
 
     }
@@ -287,9 +299,6 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
             var lineNumber = frame.GetFileLineNumber();
 
             string fileName = frame.GetFileName();
-            int columnNumber = frame.GetFileColumnNumber();
-            var method = frame.GetMethod();
-            var type = frame.GetMethod().DeclaringType;
 
             new ToastContentBuilder()
                 .AddText(this.Title)
@@ -300,30 +309,49 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
         
     }
 
-    private void Commit()
+    private void GuardarButton_Click(object sender, RoutedEventArgs e)
     {
-        var connection = new MySqlConnection(ContainerApp.config.connectionString);
-        connection.Open();
-        using DbTransaction tran = connection!.BeginTransaction();
-        string sql = "";
         try
         {
-            foreach (EntityPersist p in persists)
+            var connection = new MySqlConnection(ContainerApp.config.connectionString);
+            connection.Open();
+            using DbTransaction tran = connection!.BeginTransaction();
+            string sql = "";
+            try
             {
-                p.SetConn(connection!);
-                p.Exec();
+                foreach (EntityPersist p in persists)
+                {
+                    p.SetConn(connection!);
+                    p.Exec();
+                }
+
+                tran.Commit();
+                ContainerApp.db.Cache.Clear();
             }
 
-            tran.Commit();
-            ContainerApp.db.Cache.Clear();
-        }
+            catch (Exception ex)
+            {
+                tran.Rollback();
+                throw new Exception(ex.Message + " - " + sql);
+            }
+            finally
+            {
 
-        catch (Exception ex)
+                connection.Close();
+            }
+        } catch(Exception ex)
         {
-            tran.Rollback();
-            throw new Exception(ex.Message + " - " + sql);
+            #region Toast exception with fileName and lineNumber v1
+            var st = new StackTrace(ex, true); // Get the top stack frame
+            var frame = st.GetFrame(0); // Get the line number from the stack frame
+            var lineNumber = frame.GetFileLineNumber();
+            string fileName = frame.GetFileName();
+            new ToastContentBuilder()
+                .AddText(this.Title)
+                .AddText("ERROR " + fileName + "-" + lineNumber.ToString() + ": " + ex.Message)
+            .Show();
+            #endregion
         }
-        connection.Close();
     }
 
     private void ConsultarPersonasDeRegistrosRestantes()
@@ -366,19 +394,25 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
         };
 
             
-        errors = new(); //errores en el procesamiento 
+        errors.Clear(); //errores en el procesamiento 
 
         periodo = new DateTime(dataForm.periodo_anio, dataForm.periodo_mes, DateTime.Now.Day);
 
-        #region Obtener codigos de departamentos judiciales del organo para definir registros de archivo
-        codigosDepartamento = ContainerApp.db.Query("codigo_departamento").
-            Where("$organo = @0").
-            Parameters(dataForm.organo).
-            ColOfDictCache().
-            ColOfObj<Data_codigo_departamento>().
-            DictOfObjByPropertyNames("codigo");
-        #endregion
+        respuesta["afiliacion"]["altas_existentes"].Clear();
+        respuesta["afiliacion"]["altas_aprobadas"].Clear();
+        respuesta["afiliacion"]["altas_rechazadas"].Clear();
+        respuesta["afiliacion"]["altas_automaticas"].Clear();
+        respuesta["afiliacion"]["bajas_aprobadas"].Clear();
+        respuesta["afiliacion"]["bajas_rechazadas"].Clear();
+        respuesta["afiliacion"]["bajas_automaticas"].Clear();
 
+        respuesta["tramite_excepcional"]["altas_existentes"].Clear();
+        respuesta["tramite_excepcional"]["altas_aprobadas"].Clear();
+        respuesta["tramite_excepcional"]["altas_rechazadas"].Clear();
+        respuesta["tramite_excepcional"]["altas_automaticas"].Clear();
+        respuesta["tramite_excepcional"]["bajas_aprobadas"].Clear();
+        respuesta["tramite_excepcional"]["bajas_rechazadas"].Clear();
+        respuesta["tramite_excepcional"]["bajas_automaticas"].Clear();
     }
 
     private void AnalizarPeriodoProcesado(string tipo)
@@ -834,4 +868,6 @@ public partial class ProcesarArchivoSueldosPage : Page, INotifyPropertyChanged
     }
 
     private void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
+
 }
